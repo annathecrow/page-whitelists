@@ -56,6 +56,10 @@ if (!class_exists('Whitelists')) {
 			$s = get_current_screen();
 			//return ( $s instanceof WP_Screen && $s->id === 'edit-page' );
 			return ( $s instanceof WP_Screen && in_array($s->id, array('edit-page','edit-post'))); //return true if it's edit-page.php or edit-post.php
+		}		
+		function in_edit_form() {
+			$s = get_current_screen();
+			return ( $s instanceof WP_Screen && in_array($s->id, array('page','post')));
 		}
 		
 		/**
@@ -121,20 +125,29 @@ if (!class_exists('Whitelists')) {
 		 * allow/deny access to a user based on the groups they're in
 		 */		
 		public function check_access() {
+			if (! $this->in_edit_form()) {
+				return;
+			}
+			global $post;
+			$id = $post->ID;
 			$user = get_current_user_id();
 			$groups = $this->get_assigned_groups($user);
 			if (empty($groups)) {
 				return;				
 			}
-			$list = $this->get_whitelist($groups);
-			
-			//is user in group?
-			//does group access to this page?
-			//kick them out
+			$list = $this->combine_whitelists($groups);						
+			if (!in_array($id,$list)) {
+				wp_die('bang');
+			}
+		}
+		
+		public function filter_editable() {
+			if (! $this->in_edit_form()) return;
+			add_action( 'pre_get_posts', array($this, 'check_access') );
 		}
 		
 	}
-}
+};
 
 if (class_exists('Whitelists')) {
 	//installation and uninstallation hooks
@@ -148,4 +161,6 @@ if (class_exists('Whitelists')) {
 	//filter hooks	
 	add_action( 'load-edit.php', array($whitelists, 'filter_displayed') );
 	//add action on opening the post editor
+	add_action('load-post.php', array($whitelists, 'filter_editable'));
+	//add_action( 'admin_notices', array($whitelists, ''));
 }

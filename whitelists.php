@@ -17,6 +17,7 @@ if (!class_exists('Whitelists')) {
 	class Whitelists 
 	{
 		private $values = array(
+		'groups' => array(),
 		'whitelist' => array()
 		);
 		
@@ -28,11 +29,11 @@ if (!class_exists('Whitelists')) {
 		private $sim_table = array(
 			'dummy' => array(
 				'users' => array(3),
-				'pages' => array(291,289)
+				'whitelist' => array(291,289)
 			),
 			'experiment' => array(
 				'users' => array(2),
-				'pages' => array(280)
+				'whitelist' => array(280)
 			)
 		); 
 		
@@ -62,14 +63,30 @@ if (!class_exists('Whitelists')) {
 			return ( $s instanceof WP_Screen && in_array($s->id, array('page','post')));
 		}
 		
+		function is_allowed() {
+			global $post;
+			$id = $post->ID;
+			return (in_array($id,$this->values['whitelist']));
+		}
+		
 		/**
 		 * get whitelisted pages of a given whitelist
 		 */
 		public function get_whitelist($group) {
-			$whitelist = $this->sim_table[$group]['pages'];
+			$whitelist = $this->sim_table[$group]['whitelist'];
 			return $whitelist;
 		}
 		
+		
+		public function update_whitelist() {
+			$user = get_current_user_id();
+			$groups = $this->get_assigned_groups($user);
+			//if YES, get whitelist for restricted, add filter
+			//if not, return
+			if (empty($groups)) {
+				return;				
+			}
+		}
 		
 		/**
 		 * combine whitelists of all groups user is a member of
@@ -78,7 +95,7 @@ if (!class_exists('Whitelists')) {
 			//return array of allowed pages
 			$allowed_pages = array();
 			foreach ($groups as $group) {
-				$allowed_pages = array_merge($allowed_pages,$this->sim_table[$group]['pages']);
+				$allowed_pages = array_merge($allowed_pages,$this->sim_table[$group]['whitelist']);
 			}			
 			return $allowed_pages;
 		}
@@ -108,42 +125,51 @@ if (!class_exists('Whitelists')) {
 		 * hide restricted pages from edit-page.php and edit-post.php listing
 		 */
 		public function filter_displayed() {
-			$user = get_current_user_id();
-			//check if user is in a restricted group
-			$groups = $this->get_assigned_groups($user);
-			//if YES, get whitelist for restricted, add filter
-			//if not, return
-			if (empty($groups)) {
-				return;				
+			if (! $this->in_pages_edit() || empty($this->values['groups'])) {
+				return;
 			}
-			$this->values['whitelist']=$this->combine_whitelists($groups);
 			add_action('pre_get_posts',array($this,'remove_restricted'));
 			 
+		}
+		
+		
+		public function test() {
+			
 		}
 		
 		/**
 		 * allow/deny access to a user based on the groups they're in
 		 */		
 		public function check_access() {
-			if (! $this->in_edit_form()) {
+			if (! $this->in_edit_form() || empty($this->values['groups'])) {
 				return;
+			}					
+			if (!is_allowed()) {
+				wp_die( __('You are not allowed to access this part of the site') );
 			}
-			global $post;
-			$id = $post->ID;
+		}
+		
+		public function filter_editable() {
+			add_action( 'pre_get_posts', array($this, 'check_access') );
+		}
+		
+		public function filter_admin_bar() {
+			if(empty($this->values['groups'])) return;
+			global $wp_admin_bar;
+			if (!$this->is_allowed()) {
+				$wp_admin_bar->remove_menu('edit');
+			};			
+		}
+		
+		
+		public function init() {
 			$user = get_current_user_id();
 			$groups = $this->get_assigned_groups($user);
 			if (empty($groups)) {
 				return;				
 			}
-			$list = $this->combine_whitelists($groups);						
-			if (!in_array($id,$list)) {
-				wp_die('bang');
-			}
-		}
-		
-		public function filter_editable() {
-			if (! $this->in_edit_form()) return;
-			add_action( 'pre_get_posts', array($this, 'check_access') );
+			$this->values['groups'] = $groups;
+			$this->values['whitelist']=$this->combine_whitelists($groups);
 		}
 		
 	}
@@ -159,8 +185,10 @@ if (class_exists('Whitelists')) {
 	$whitelists = new Whitelists();
 	
 	//filter hooks	
+	add_action('init',array($whitelists, 'init'));
 	add_action( 'load-edit.php', array($whitelists, 'filter_displayed') );
 	//add action on opening the post editor
 	add_action('load-post.php', array($whitelists, 'filter_editable'));
-	//add_action( 'admin_notices', array($whitelists, ''));
+	add_action( 'admin_notices', array($whitelists, 'test'));
+	add_action( 'wp_before_admin_bar_render', array($whitelists, 'filter_admin_bar') );
 }

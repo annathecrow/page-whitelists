@@ -38,3 +38,9 @@ add to group
 	on user creation
 	
 	
+	
+potentionally "classifiable" stuff:
+	user authorization (the thing that checks if user is allowed on a page
+	maintaining the list of allowed pages for a user
+	options (options pages, updating, creation)
+	

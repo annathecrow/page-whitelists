@@ -14,21 +14,19 @@ if (!class_exists('Whitelists')) {
 	
 	define('WL_ID','whitelists');
 	$class_dir = plugin_dir_path(__FILE__)."classes/";
-	require_once $class_dir.'/WL_Core.php';		
-	require_once $class_dir.'WL_Data.php';
 	require_once $class_dir.'WL_Dev.php';
-	
+	require_once $class_dir.'WL_Data.php';
+	require_once $class_dir.'WL_Core.php';	
 };
 
 if (class_exists('Whitelists')) {
-	//installation and uninstallation hooks
-	register_activation_hook(__FILE__, array(WL_ID, 'activate'));
-    register_deactivation_hook(__FILE__, array(WL_ID, 'deactivate'));
-	
 	
 	//instantiate the plugin class
-	$whitelists =new Whitelists();
+	$whitelists = new Whitelists();
 	
+	//installation and uninstallation hooks
+	register_activation_hook(__FILE__, array($whitelists, 'activate'));
+    register_deactivation_hook(__FILE__, array($whitelists, 'deactivate'));
 	
 	//filter hooks	
 	add_action('init',array($whitelists, 'init'));

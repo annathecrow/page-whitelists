@@ -152,7 +152,9 @@ if (!class_exists('Whitelists')) {
 		public function filter_editable() {
 			add_action( 'pre_get_posts', array($this, 'check_access') );
 		}
-		
+		/*
+		 * remove link to edit page if user isn't allowed to edit it
+		 */
 		public function filter_admin_bar() {
 			if(empty($this->values['groups'])) return;
 			global $wp_admin_bar;
@@ -161,8 +163,14 @@ if (!class_exists('Whitelists')) {
 			};			
 		}
 		
+		public function auto_assign_to_whitelist() {
+			if (empty($this->groups)) return;
+			foreach ($this->groups as $groupname) {
+				//add item to list
+			}
+		}
 		
-		public function init() {
+		function load_user_whitelists() {
 			$user = get_current_user_id();
 			$groups = $this->get_assigned_groups($user);
 			if (empty($groups)) {
@@ -170,6 +178,12 @@ if (!class_exists('Whitelists')) {
 			}
 			$this->values['groups'] = $groups;
 			$this->values['whitelist']=$this->combine_whitelists($groups);
+		}
+		
+		
+		
+		public function init() {
+			$this->load_user_whitelists();
 		}
 		
 	}
@@ -191,4 +205,16 @@ if (class_exists('Whitelists')) {
 	add_action('load-post.php', array($whitelists, 'filter_editable'));
 	add_action( 'admin_notices', array($whitelists, 'test'));
 	add_action( 'wp_before_admin_bar_render', array($whitelists, 'filter_admin_bar') );
+	add_action('new_to_auto-draft',array($whitelists, 'auto_assign_to_whitelist'));
+}
+
+
+function log_me($message) {
+    if (WP_DEBUG === true) {
+        if (is_array($message) || is_object($message)) {
+            error_log(print_r($message, true));
+        } else {
+            error_log($message);
+        }
+    }
 }

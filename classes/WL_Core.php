@@ -24,7 +24,9 @@ class Whitelists
 	); 
 	
 	public function activate() {
-		$this->data = new WL_Data(); //this object is used to talk with the custom tables in the database
+		$this->data_connect();
+		$this->data->data_setup();
+		$this->data->create_whitelist("Dummy");
 		
 	}
 	
@@ -35,6 +37,12 @@ class Whitelists
 	public function __construct() {
 		$this->init_values();
 		WL_Dev::log("main class instantiated");
+	}
+	
+	private function data_connect() {
+		if (!isset($this->data)) {
+			$this->data = new WL_Data(); //this object is used to talk with the custom tables in the database
+		}
 	}
 	
 	private function init_values() {		
@@ -174,6 +182,8 @@ class Whitelists
 	
 	public function init() {
 		$this->load_user_whitelists();
+		$this->data_connect();
+		$this->data->create_whitelist("Dummy");
 	}
 	
 }

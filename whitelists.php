@@ -21,8 +21,8 @@ if (!class_exists('Whitelists')) {
 
 if (class_exists('Whitelists')) {
 	
-	//instantiate the plugin class
-	$whitelists = new Whitelists();
+	//instantiate the plugin object
+	if (!isset($whitelists)) $whitelists = new Whitelists();
 	
 	//installation and uninstallation hooks
 	register_activation_hook(__FILE__, array($whitelists, 'activate'));
@@ -31,10 +31,10 @@ if (class_exists('Whitelists')) {
 	//filter hooks	
 	add_action('init',array($whitelists, 'init'));
 	add_action( 'load-edit.php', array($whitelists, 'filter_displayed') );
-	//add action on opening the post editor
 	add_action('load-post.php', array($whitelists, 'filter_editable'));
 	add_action( 'admin_notices', array($whitelists, 'test'));
 	add_action( 'wp_before_admin_bar_render', array($whitelists, 'filter_admin_bar') );
 	add_action('new_to_auto-draft',array($whitelists, 'auto_assign_to_whitelist'));
 }
 
+l;

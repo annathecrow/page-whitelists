@@ -49,6 +49,5 @@ potentionally "classifiable" stuff:
 Table TO-DO
 -----------
 
-check how foreign keys work (esp. so it doesn't mess with deleting posts/users by WP)
-find how to stop dbDelta from bitching on update
 write add/remove functions
+come up with a way to make sure there are no orphans (on deleting a page delete all it's references in wl tables and so on)

@@ -30,8 +30,7 @@ class Whitelists
 	public function run() {		
 		//filter hooks	
 		add_action('admin_menu',array($this, 'init_admin_menu'));
-		add_action('init',array($this->access_manager, 'access_check'));
-		
+		add_action('init',array($this->access_manager, 'access_check'));		
 		// add_action('new_to_auto-draft',array($whitelists, 'auto_assign_to_whitelist'));		
 	}
 	

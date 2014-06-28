@@ -33,12 +33,14 @@ class WL_Data {
 			time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 			UNIQUE KEY id (id)
 			);";
-		
-		$sqls[$this->list_page_table] = "CREATE TABLE $this->page_table (
+				
+		//junction table for group-user relationships
+		$sqls[$this->list_page_table] = "CREATE TABLE $this->list_page_table (
 			list_id INT NOT NULL,
-			page_id INT NOT NULL,		
+			post_id bigint(20) unsigned NOT NULL,
+			PRIMARY KEY  (list_id,post_id),
+			INDEX (post_id)
 			);";
-		
 		
 		foreach ($sqls as $table_name => $sql) {
 			try {	
@@ -58,8 +60,7 @@ class WL_Data {
 		//WL_Dev::log('trying to access table '.$table);
 		$table = $this->list_table;
 		try {
-			$query = $wpdb->prepare("SELECT * FROM $table WHERE name = '%s'",$name);
-			if ($wpdb->get_row($query) != NULL) {
+			if ($wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE name = %s",$name)) != NULL) {
 			throw new Exception("Table with this name already exists.", 1); //TODO translate
 			};			
 			$success = $wpdb->insert(
@@ -76,11 +77,11 @@ class WL_Data {
 		} catch (Exception $e) {
 			WL_Dev::log($e->getMessage());
 			//do stuff that isn't just logging. Probably should display some native WP error message (if it does even have such a thing)
-			if ($e->getCode() == 1) {return true;} else {return false;};
+			if ($e->getCode() == 1) {return array('exists',0);} else {return array('failure',0);};
 		}		
 		
 		WL_Dev::log('created whitelist '.$id.', '.$name);
-		return $id;
+		return array('created',$id); //THIS SHOULD RETURN THE WL_List OBJECT
 	}
 	
 	public function delete_whitelist($id) {

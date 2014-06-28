@@ -11,6 +11,8 @@ class WL_Data_Test extends WP_UnitTestCase {
 	
 	function test_creating() {
 		$result = $this->data->create_whitelist("mango");
-		$this->assertTrue($result === 1);
+		$this->assertEquals('exists',$result[0]); //this seems to create new whitelist with an incremented id? but the whitelist isn't in the database? whu???
 	}
+	
+	
 }

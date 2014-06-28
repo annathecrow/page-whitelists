@@ -14,45 +14,29 @@
 		<tr>
 			<th scope="col" class="manage-column id-column">ID</th>
 			<th scope="col" class="manage-column">Title</th>
-			<th scope="col" class="manage-column">Assigned to</th>
+			<th scope="col" class="manage-column">Assigned to roles</th>
+			<th scope="col" class="manage-column">Assigned to users</th>
 			<th scope="col" class="manage-column">Date</th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr id="wlist-1" class="whitelist-row alternate">
-			<th scope="row" class="id-column">1</th>
-			<td><a href="##">My Whitelist</a>
+		<?php
+			
+			foreach($lists as $ord=>$list) { ?>
+					<tr id="wlist-<?php echo $list->get_id(); ?>" class="whitelist-row <?php echo ($ord%2==0)?'alternate':''; ?>">
+			<th scope="row" class="id-column"><?php echo $list->get_id(); ?></th>
+			<td><a href="##"><?php echo $list->get_name(); ?></a>
 				<div class="row-actions">
 					<span class="edit"><a href="#">Edit</a>|</span>
 					<span class="trash"><a href="#">Delete</a></span>
 				</div>
 			</td>
-			<td>Contributor</td>
-			<td><abbr title="2014/05/23 7:52:41 AM">2014/05/23</abbr></td>
-		</tr>
-		<tr id="wlist-2" class="whitelist-row">
-			<td>2</td>
-			<td><a href="#">Special list</a>
-				<div class="row-actions">
-					<span class="edit"><a href="#">Edit</a>|</span>
-					<span class="trash"><a href="#">Delete</a></span>
-				</div>
-			</td>
-			<td>Special role</td>
-			<td><abbr title="2014/05/23 7:52:41 AM">2014/05/23</abbr></td>
-		</tr>
-		<tr id="wlist-3" class="whitelist-row alternate">
-			<td>3</td>
-			<td><a href="#">Sergeant's List</a>
-				<div class="row-actions">
-					<span class="edit"><a href="#">Edit</a>|</span>
-					<span class="trash"><a href="#">Delete</a></span>
-				</div>
-			</td>
-			<td>sergeant</td>
-			<td><abbr title="2014/05/23 7:52:41 AM">2014/05/23</abbr></td>
-		</tr>
-		<tr id="wlist_new" class="inline-edit-row quick-edit-row inline-editor" style=""><td colspan="4" class="colspanchange">
+			<td><?php echo $list->get_roles(); ?></td>
+			<td><?php echo $list->get_users(); ?></td>
+			<td><abbr title="<?php echo mysql2date( 'Y/m/d h:i:s A', $list->get_time(),true); ?>"><?php echo mysql2date( 'Y/m/d', $list->get_time(),true); ?></abbr></td>
+		</tr>			
+			<?php }; ?>
+		<tr id="wlist_new" class="inline-edit-row quick-edit-row inline-editor" style=""><td colspan="5" class="colspanchange">
 
 		<fieldset><div class="inline-edit-col">
 			<h4>Create New...</h4>
@@ -68,10 +52,10 @@
 			</ul>
 			<span class="title">Assigned to roles</span>
 			<ul class="cat-checklist">
-				<li id="role-2"><label class="selectit"><input value="2" type="checkbox" name="roles[]" id="role-id-2"> Editor</label></li>
-				<li id="role-3"><label class="selectit"><input value="3" type="checkbox" name="roles[]" id="role-id-3"> Author</label></li>
-				<li id="role-4"><label class="selectit"><input value="4" type="checkbox" name="roles[]" id="role-id-4"> Contributor</label></li>
-				<li id="role-5"><label class="selectit"><input value="5" type="checkbox" name="roles[]" id="role-id-5"> Subscriber</label></li>
+				<li id="role-editor"><label class="selectit"><input value="editor" type="checkbox" name="roles[]" id="role-id-2"> Editor</label></li>
+				<li id="role-author"><label class="selectit"><input value="author" type="checkbox" name="roles[]" id="role-id-3"> Author</label></li>
+				<li id="role-contributor"><label class="selectit"><input value="contributor" type="checkbox" name="roles[]" id="role-id-4"> Contributor</label></li>
+				<li id="role-subscriber"><label class="selectit"><input value="subscriber" type="checkbox" name="roles[]" id="role-id-5"> Subscriber</label></li>
 			</ul>	
 		</div></fieldset>
 		<fieldset>

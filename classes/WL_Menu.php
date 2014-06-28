@@ -66,9 +66,9 @@ class WL_Menu {
 	}
 	
 	public function render_lists_page() {
-		require_once $this->settings->get_template_path()."lists_page.php";
 		$lists = $this->data->get_whitelists(); //returns all lists from the database as WL_List objects
-		
+		require_once $this->settings->get_template_path()."lists_page.php";
+
 		//load existing whitelists
 		//Create New...
 			//add pages from a list (checkboxes?)

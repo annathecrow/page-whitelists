@@ -9,10 +9,31 @@ class WL_Data_Test extends WP_UnitTestCase {
 	}
 	
 	
-	function test_creating() {
+	function test_create_whitelist_single() {
 		$result = $this->data->create_whitelist("mango");
-		$this->assertEquals('exists',$result[0]); //this seems to create new whitelist with an incremented id? but the whitelist isn't in the database? whu???
+		//$this->assertEquals('created',$result[0]);
+		$this->assertInstanceOf('WL_List',$result);
 	}
 	
+	function test_create_whitelist_multiples() {
+			$this->data->create_whitelist("mango"); //mango once
+			$result = $this->data->create_whitelist("mango"); //mango twice
+			$this->assertTrue($result); //no two mangoes!
+	}
 	
+	function test_get_whitelists_count() {
+		$this->data->create_whitelist("mango");
+		$this->data->create_whitelist("apple");
+		$array = $this->data->get_whitelists();
+		$this->assertCount(2,$array);
+	}
+	
+	function test_get_whitelists_type() {
+		$this->data->create_whitelist("mango");
+		$this->data->create_whitelist("apple");
+		$array = $this->data->get_whitelists();
+		foreach ($array as $list) {
+			$this->assertInstanceOf('WL_List',$list); //this will try every member of $array and fail on first that doesn't pass
+		}		
+	}
 }

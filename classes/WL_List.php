@@ -12,12 +12,25 @@ class WL_List {
 		
 	}
 	
+	public function get_id() {
+		return $this->id;
+	}
+	
+	public function get_name() {
+		return $this->name;
+	}
+	
+	public function get_time() {
+		return $this->time;
+	}
+	
 	public function get_users() {
 		//if not set $this->users get them from somewhere
+		return "";
 	}
 	
 	public function get_roles() {
-		
+		return "";
 	}
 	
 	public function get_pages() {

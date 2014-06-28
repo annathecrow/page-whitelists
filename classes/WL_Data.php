@@ -39,7 +39,7 @@ class WL_Data {
 			list_id INT NOT NULL,
 			post_id bigint(20) unsigned NOT NULL,
 			PRIMARY KEY  (list_id,post_id),
-			INDEX (post_id)
+			KEY post_id (post_id)
 			);";
 		
 		foreach ($sqls as $table_name => $sql) {
@@ -105,13 +105,27 @@ class WL_Data {
 		
 	}
 	
-	public function add_whitelist_to_role($list_id,$role_id) {
-		//add list-editing capability to this role 
+	public function add_whitelist_to_role($list_id,$role_name) {
+		 $role = get_role($role_name);
+		 $role->add_cap('edit_whitelist_'.$list_id);
 	}
 	
-	public function remove_whitelist_from_role($list_id, $role_id) {
-		
+	public function remove_whitelist_from_role($list_id, $role_name) {
+		$role = get_role($role_name);
+		 $role->add_cap('edit_whitelist_'.$list_id);
 	}
+	
+	public function add_whitelist_to_user($list_id,$user_id) {
+		 $user = get_user_by('id',$user_id);
+		 $user->add_cap('edit_whitelist_'.$list_id);
+	}
+	
+	public function remove_whitelist_from_user($list_id, $user_id) {
+		$user = get_user_by('id',$user_id);
+		$user->add_cap('edit_whitelist_'.$list_id);
+	}
+	
+	
 	
 	
 	public function get_whitelists() {

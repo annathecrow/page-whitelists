@@ -54,34 +54,37 @@ class WL_Data {
 	
 		
 	public function create_whitelist($name) {
-		//check if name doesn't exist yet - if it does, warn for it (TODO: implement Ajax form field validation for this)
-		//this should really use try throw catch...
 		global $wpdb;
+		$id = 0;
+		$time = date('Y-m-d H:i:s');
 		//WL_Dev::log('trying to access table '.$table);
 		$table = $this->list_table;
 		try {
-			if ($wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE name = %s",$name)) != NULL) {
-			throw new Exception("Table with this name already exists.", 1); //TODO translate
+			$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE name = %s",$name));
+			if ($row != NULL) {
+				$id = $row->id;
+				throw new Exception("Whitelist with this name already exists.", 1); //TODO translate
 			};			
 			$success = $wpdb->insert(
 			$this->list_table,
 			array(
 				'name' => $name,
-				'time' => date('Y-m-d H:i:s')
+				'time' => $time
 				)
 			);
 			if (!$success) {
-				throw new Exception("Table row could not be written.",2); //TODO translate
+				throw new Exception("Table row could not be written.",0); //TODO translate
 			}
 			$id = $wpdb->insert_id;
 		} catch (Exception $e) {
 			WL_Dev::log($e->getMessage());
 			//do stuff that isn't just logging. Probably should display some native WP error message (if it does even have such a thing)
-			if ($e->getCode() == 1) {return array('exists',0);} else {return array('failure',0);};
+			if ($e->getCode()==1) {return true;} else {return false;}
 		}		
 		
 		WL_Dev::log('created whitelist '.$id.', '.$name);
-		return array('created',$id); //THIS SHOULD RETURN THE WL_List OBJECT
+		//return array('created',$id); //THIS SHOULD RETURN THE WL_List OBJECT
+		return new WL_List($id,$name,$time);
 	}
 	
 	public function delete_whitelist($id) {
@@ -119,8 +122,22 @@ class WL_Data {
 		//fetch from database
 		//create WL_List from each row
 		//return as array
-		$query = $wpdb->prepare("SELECT * FROM %s",$this->list_table);
-		$array_of_lists = $wpdb->get_results($query,ARRAY_A);
+		$query = "SELECT * FROM $this->list_table";
+		$raw_lists = $wpdb->get_results($query,ARRAY_A);
+		foreach ($raw_lists as $list) {
+			$array_of_lists[] = new WL_List($list['id'],$list['name'],$list['time']);
+		}
+		
+		//okay, a problem: the WL_List object should, presumably, have all the info about a list. As in, users, roles, pages. That means I need to poll two databases AND do a pretty complicated sifting of users/roles to get it. And for a listing of lists, I don't even need all that info, because I'm not gonna USE it.
+		//BUT, if I'm trying to approach this logically, an object that has half the data here and all the data elsewhere is a BAAAD idea.
+		//BUT, you're supposed to poll as few db tables as possible. 
+		
+		//options: 
+			//fetch it all, don't care about the overhead.
+			//fetch it partially, deal with incomplete objects later.
+			//don't create objects, it's just for html listing anyway.
+			//don't have the user/roles and the pages info in the object at all. Fetch it as needed. Maybe store it after the first fetch so it won't have to do it repeatedly in one run.
+		
 		return $array_of_lists;
 	}
 	

@@ -15,7 +15,6 @@ class WL_Data {
 		$prefix = $wpdb->prefix;
 		$wl_table_prefix = $prefix."wl_";
 		$this->list_table = $wl_table_prefix."list";
-		$this->list_role_table = $wl_table_prefix."list_role";
 		$this->list_page_table = $wl_table_prefix."list_page";
 		//shouldn't this shite be in WP Options?
 				 
@@ -28,28 +27,18 @@ class WL_Data {
 		$sqls = array();
 		
 		//whitelists
-		$sqls[$list_table] = "CREATE TABLE $this->list_table (
+		$sqls[$this->list_table] = "CREATE TABLE $this->list_table (
 			id INT NOT NULL AUTO_INCREMENT,
 			name tinytext NOT NULL,
 			time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 			UNIQUE KEY id (id)
 			);";
 		
-		//junction table for list-group relationships
-		$sqls[$list_role_table] = "CREATE TABLE $this->list_role_table (
+		$sqls[$this->list_page_table] = "CREATE TABLE $this->page_table (
 			list_id INT NOT NULL,
-			role_id INT NOT NULL,
-			PRIMARY KEY  (list_id,role_id),
-			INDEX (role_id)			
+			page_id INT NOT NULL,		
 			);";
 		
-		//junction table for group-user relationships
-		$sqls[$list_page_table] = "CREATE TABLE $this->list_page_table (
-			list_id INT NOT NULL,
-			post_id bigint(20) unsigned NOT NULL,
-			PRIMARY KEY  (list_id,post_id),
-			INDEX (post_id)
-			);";
 		
 		foreach ($sqls as $table_name => $sql) {
 			try {	
@@ -66,11 +55,11 @@ class WL_Data {
 		//check if name doesn't exist yet - if it does, warn for it (TODO: implement Ajax form field validation for this)
 		//this should really use try throw catch...
 		global $wpdb;
+		//WL_Dev::log('trying to access table '.$table);
 		$table = $this->list_table;
-		WL_Dev::log('trying to access table '.$table);
-		
 		try {
-			if ($wpdb->get_row("SELECT * FROM $table WHERE name = '$name'") != NULL) {
+			$query = $wpdb->prepare("SELECT * FROM $table WHERE name = '%s'",$name);
+			if ($wpdb->get_row($query) != NULL) {
 			throw new Exception("Table with this name already exists.", 1); //TODO translate
 			};			
 			$success = $wpdb->insert(
@@ -81,17 +70,17 @@ class WL_Data {
 				)
 			);
 			if (!$success) {
-				throw new Exception("Table row could not be written."); //TODO translate
+				throw new Exception("Table row could not be written.",2); //TODO translate
 			}
 			$id = $wpdb->insert_id;
 		} catch (Exception $e) {
 			WL_Dev::log($e->getMessage());
 			//do stuff that isn't just logging. Probably should display some native WP error message (if it does even have such a thing)
-			return false;
+			if ($e->getCode() == 1) {return true;} else {return false;};
 		}		
 		
 		WL_Dev::log('created whitelist '.$id.', '.$name);
-		return $wpdb->insert_id;
+		return $id;
 	}
 	
 	public function delete_whitelist($id) {
@@ -121,6 +110,19 @@ class WL_Data {
 	}
 	
 	
+	public function get_whitelists() {
+		global $wpdb;
+		//what am I doing. SERIOUSLY what am I DOING. THere is supposed to be some class or some shit that corresponds to the list, and I don't know what the hell THIS IS ALL SO COMPLICATED OKAY I HAVEN'T STUDIED FOR THIS MY IT BACKGROUND IS BASICALLY "POKED INTO IT LONG ENOUGH UNTIL IT STUCK" AND ALL THIS OOP AND BEST PRACTICES AND SQL ESCAPING IS JUST SO MUCH OVER MY HEAD I FEEL LIKE TRYING TO GARGLE ACID
+		
+		
+		//fetch from database
+		//create WL_List from each row
+		//return as array
+		$query = $wpdb->prepare("SELECT * FROM %s",$this->list_table);
+		$array_of_lists = $wpdb->get_results($query,ARRAY_A);
+		return $array_of_lists;
+	}
+	
 	/*
 	 * good news: WP has a function to add tables to database.
 	 * bad news: it's fussy as bitch and it HAS NO DOCUMENTATION. 
@@ -128,3 +130,4 @@ class WL_Data {
 	 * Kingdom for a framework.
 	 */
 }
+	 

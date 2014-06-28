@@ -52,9 +52,9 @@
 			<td>sergeant</td>
 			<td><abbr title="2014/05/23 7:52:41 AM">2014/05/23</abbr></td>
 		</tr>
-		<tr id="wlist_new" class="inline-edit-row inline-edit-row-post inline-edit-post quick-edit-row quick-edit-row-post inline-edit-post alternate inline-editor" style=""><td colspan="4" class="colspanchange">
+		<tr id="wlist_new" class="inline-edit-row quick-edit-row inline-editor" style=""><td colspan="4" class="colspanchange">
 
-		<fieldset class="inline-edit-col-left"><div class="inline-edit-col">
+		<fieldset><div class="inline-edit-col">
 			<h4>Create New...</h4>
 	
 			<label>
@@ -63,50 +63,30 @@
 			</label>
 			<span class="title">Assigned to users</span>
 			<ul class="cat-checklist">
-				<li id="category-2" class="popular-category"><label class="selectit"><input value="2" type="checkbox" name="post_category[]" id="in-category-2"> aktuality</label>
-					<ul class="children">
-						<li id="category-4" class="popular-category"><label class="selectit"><input value="4" type="checkbox" name="post_category[]" id="in-category-4"> news</label></li>
-					</ul>
-				</li>
-				<li id="category-7"><label class="selectit"><input value="7" type="checkbox" name="post_category[]" id="in-category-7"> Nezařazené</label></li>
-				<li id="category-8" class="popular-category"><label class="selectit"><input value="8" type="checkbox" name="post_category[]" id="in-category-8"> test</label></li>
-				<li id="category-1" class="popular-category"><label class="selectit"><input value="1" type="checkbox" name="post_category[]" id="in-category-1"> Uncategorized</label></li>
+				<li id="user-2"><label class="selectit"><input value="2" type="checkbox" name="users[]" id="user-id-2"> Colonel z Kentucky</label></li>
+				<li id="category-3"><label class="selectit"><input value="3" type="checkbox" name="users[]" id="user-id-3"> Sergeant</label></li>
 			</ul>
 			<span class="title">Assigned to roles</span>
 			<ul class="cat-checklist">
-				<li id="category-2" class="popular-category"><label class="selectit"><input value="2" type="checkbox" name="post_category[]" id="in-category-2"> aktuality</label>
-					<ul class="children">
-						<li id="category-4" class="popular-category"><label class="selectit"><input value="4" type="checkbox" name="post_category[]" id="in-category-4"> news</label></li>
-					</ul>
-				</li>
-				<li id="category-7"><label class="selectit"><input value="7" type="checkbox" name="post_category[]" id="in-category-7"> Nezařazené</label></li>
-				<li id="category-8" class="popular-category"><label class="selectit"><input value="8" type="checkbox" name="post_category[]" id="in-category-8"> test</label></li>
-				<li id="category-1" class="popular-category"><label class="selectit"><input value="1" type="checkbox" name="post_category[]" id="in-category-1"> Uncategorized</label></li>
+				<li id="role-2"><label class="selectit"><input value="2" type="checkbox" name="roles[]" id="role-id-2"> Editor</label></li>
+				<li id="role-3"><label class="selectit"><input value="3" type="checkbox" name="roles[]" id="role-id-3"> Author</label></li>
+				<li id="role-4"><label class="selectit"><input value="4" type="checkbox" name="roles[]" id="role-id-4"> Contributor</label></li>
+				<li id="role-5"><label class="selectit"><input value="5" type="checkbox" name="roles[]" id="role-id-5"> Subscriber</label></li>
 			</ul>	
 		</div></fieldset>
-	
-		<fieldset class="inline-edit-col-right"><div class="inline-edit-col">
-			<span class="title">Whitelisted pages</span>
-			<ul class="cat-checklist">
-				<li id="category-2" class="popular-category"><label class="selectit"><input value="2" type="checkbox" name="post_category[]" id="in-category-2"> aktuality</label>
-					<ul class="children">
-						<li id="category-4" class="popular-category"><label class="selectit"><input value="4" type="checkbox" name="post_category[]" id="in-category-4"> news</label></li>
-					</ul>
-				</li>
-				<li id="category-7"><label class="selectit"><input value="7" type="checkbox" name="post_category[]" id="in-category-7"> Nezařazené</label></li>
-				<li id="category-8" class="popular-category"><label class="selectit"><input value="8" type="checkbox" name="post_category[]" id="in-category-8"> test</label></li>
-				<li id="category-1" class="popular-category"><label class="selectit"><input value="1" type="checkbox" name="post_category[]" id="in-category-1"> Uncategorized</label></li>
-			</ul>
-
-	
-		</div></fieldset>
-			<p class="submit inline-edit-save">
+		<fieldset>
+			<div class="inline-edit-col">
+				<span class="title">Whitelisted pages</span>
+				<ul class="cat-checklist">
+					<li id="page-289"><label class="selectit"><input value="289" type="checkbox" name="pages[]" id="page-id-289"> Sergeant's very own page</label></li>
+					<li id="page-280"><label class="selectit"><input value="280" type="checkbox" name="pages[]" id="page-id-280"> Colonel can't touch this</label></li>
+				</ul>
+			</div>
+		</fieldset>
+		<p class="submit inline-edit-save">
 			<a accesskey="c" href="#inline-edit" class="button-secondary cancel alignleft">Cancel</a>
-			<input type="hidden" id="_inline_edit" name="_inline_edit" value="6c6891c483">				<a accesskey="s" href="#inline-edit" class="button-primary save alignright">Save</a>
-				<span class="spinner"></span>
-						<input type="hidden" name="post_view" value="list">
-			<input type="hidden" name="screen" value="edit-post">
-						<span class="error" style="display:none"></span>
+			<a accesskey="s" href="#inline-edit" class="button-primary save alignright">Save</a>
+			<span class="error" style="display:none"></span>
 			<br class="clear">
 		</p>
 		</td></tr>

@@ -4,12 +4,13 @@ class WL_List {
 	private $id;
 	private $name;
 	private $time;
+	private $cap;
 	
 	public function __construct($id, $name, $time) {
 		$this->id = $id;
 		$this->name = $name;
 		$this->time = $time;
-		
+		$this->cap = 'edit_whitelist_'.$id;		
 	}
 	
 	public function get_id() {
@@ -24,7 +25,17 @@ class WL_List {
 		return $this->time;
 	}
 	
+	public function get_cap() {
+		return $this->cap;
+	}
+	
 	public function get_users() {
+		if (isset($this->users)) {
+			WL_Dev::log("users array exists.");
+			WL_Dev::log($this->users);
+			return $this->users;
+		} 
+		
 		$query_args = array(
 			'orderby'=>'ID'
 		);
@@ -32,22 +43,33 @@ class WL_List {
 		$users = $user_query->results;
 		$assigned_users= array();
 		foreach($users as $key=>$user) {
-			if (array_key_exists('edit_whitelist_'.$this->id, $user->caps)){
+			if (array_key_exists($this->cap, $user->caps)){
 				$assigned_users[] = $user;
 			};
 		}
+		$this->users = $assigned_users;
 		return $assigned_users;
 	}
 	
 	public function get_roles() {
-		//get all roles
-		//check which have assigned this list
-		//return them as an array of WP_Role instances
-		return "";
+		if (isset($this->roles)) {
+			WL_Dev::log("roles array exists.");
+			WL_Dev::log($this->roles);
+			return $this->roles;
+		}
+		$all_roles = get_editable_roles();
+		$assigned_roles = array();
+		foreach ($all_roles as $role_name=>$role_data) {
+			if (array_key_exists($this->cap,$role_data['capabilities'])) {
+				$assigned_roles[] = get_role($role_name);
+			}
+		}
+		$this->roles = $assigned_roles;
+		return $assigned_roles;
 	}
 	
 	public function get_pages() {
-		
+		//return assigned pages
 	}
 	
 	public function add_user($user) {
@@ -61,7 +83,14 @@ class WL_List {
 			} else {
 				throw new Exception('$user is neither string nor an instance of WP_User.');
 			}
-			$user->add_cap('edit_whitelist_'.$this->id);
+			$user->add_cap($this->cap);
+			if (isset($this->users)) {
+				WL_Dev::log("users array exists, adding.");
+				$this->users[]=$user;
+			} else {
+				WL_Dev::log("users array doesn't exist, creating.");
+				$this->users = array($user);
+			} 
 			return true;
 		} catch (Exception $e) {
 			WL_Dev::log($e->getMessage());
@@ -80,7 +109,15 @@ class WL_List {
 			} else {
 				throw new Exception('$user is neither numeric nor an instance of WP_User.');
 			}
-			$user->remove_cap('edit_whitelist_'.$this->id);
+			$user->remove_cap($this->cap);
+			if (!isset($this->users)) {
+				WL_Dev::log("roles array doesn't exist, fetching.");
+				$this->get_users();
+			} else {
+				WL_Dev::log("roles array exists.");
+				WL_Dev::log($this->users);
+			}
+			unset($this->users[in_array($user, $this->users)]);
 			return true;
 		} catch (Exception $e) {
 			WL_Dev::log($e->getMessage());
@@ -99,7 +136,15 @@ class WL_List {
 			} else {
 				throw new Exception('$role is neither string nor an instance of WP_User.');
 			}
-			$role->add_cap('edit_whitelist_'.$this->id);
+			$role->add_cap($this->cap);
+			if (isset($this->roles)) {
+				WL_Dev::log("role array exists, adding.");
+				WL_Dev::log($this->roles);
+				$this->roles[]=$role;
+			} else {
+				WL_Dev::log("role array doesn't exist, creating.");
+				$this->roles = array($role);
+			}
 			return true;
 		} catch (Exception $e) {
 			WL_Dev::log($e->getMessage());
@@ -118,7 +163,15 @@ class WL_List {
 			} else {
 				throw new Exception('$role is neither string nor an instance of WP_User.');
 			}
-			$role->remove_cap('edit_whitelist_'.$this->id);
+			$role->remove_cap($this->cap);
+			if (!isset($this->roles)) {
+				WL_Dev::log("roles array doesn't exist, fetching.");
+				$this->get_roles();
+			} else {
+				WL_Dev::log("roles array exists.");
+				WL_Dev::log($this->roles);
+			}
+			unset($this->roles[in_array($role, $this->roles)]);
 			return true;
 		} catch (Exception $e) {
 			WL_Dev::log($e->getMessage());
@@ -126,15 +179,15 @@ class WL_List {
 		}	
 	}
 	
-	public function create() {
+	public function add_page($page) {
 		
 	}
 	
-	public function update() {
+	public function remove_page($page) {
 		
 	}
 	
-	public function delete() {
-		
+	public function rename($new_name) {
+		//
 	}
 }

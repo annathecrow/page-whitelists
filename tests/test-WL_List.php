@@ -54,19 +54,27 @@ class WL_List_Test extends WP_UnitTestCase {
 	function test_remove_user($user_id) {
 		$this->list->remove_user($user_id);
 		$this->assertFalse($this->can_edit($user_id,$this->list));
+		return $user_id;
 	}
 	
+	/**
+	 * @depends test_remove_user
+	 */
+	function test_remove_user_param($user_id) {
+		$users = $this->list->get_users();
+		$this->assertFalse(in_array($user_id,$users));
+	}
 	
 	function test_get_users() {
-		
 		$user_ids = $this->factory->user->create_many(5);
 		$user_ids = $this->factory->user->create_many(3);
 		foreach ($user_ids as $user_id) {
+			WL_Dev::log("tgu: adding user ".$user_id.":");
 			$this->list->add_user($user_id);
 		}
+		
 		$returned = $this->list->get_users();
 		$this->assertInternalType('array',$returned);
-		$GLOBALS['silent'] = true;
 		return array('assigned'=>$user_ids,'returned'=>$returned);
 	}
 	
@@ -74,8 +82,9 @@ class WL_List_Test extends WP_UnitTestCase {
 	 * @depends test_get_users
 	 */
 	function test_get_users_length($users) {
+		WL_Dev::log($users);
 		$this->assertEquals(sizeof($users['assigned']),sizeof($users['returned']));
-		return ($users);
+		return ($users);		
 	}
 	
 	/**
@@ -178,5 +187,63 @@ class WL_List_Test extends WP_UnitTestCase {
 		$success = $list1->rename('orange');
 		$this->assertFalse($success);
 	}
+	
+	
+	function test_add_page_success() {
+		//$GLOBALS['silent'] = false;
+		$page_id = $this->factory->post->create(array('post_type'=>'page'));
+		$success = $this->list->add_page($page_id);
+		$this->assertTrue($success);
+		return $page_id;
+	}
+	
+	/**
+	 * @depends test_add_page_success
+	 */
+	function test_remove_page_success($page_id) {
+		$GLOBALS['silent'] = false;
+		$page_id = $this->factory->post->create(array('post_type'=>'page'));
+		$success = $this->list->add_page($page_id);
+		$this->assertTrue($success);
+		$success = $this->list->remove_page($page_id);
+		$this->assertTrue($success);
+		$GLOBALS['silent'] = true;
+	}
+	
+	//I should probably write more tests to see if it didn't get left in the param, or in the db... meeeeeh. Gonna live dangerously!
+	
+	function test_get_pages() {
+		$page_ids = $this->factory->post->create_many(5,array('post_type'=>'page'));
+		$page_ids = $this->factory->post->create_many(3,array('post_type'=>'page'));
+		foreach ($page_ids as $page_id) {
+			WL_Dev::log("adding page ".$page_id);
+			$this->list->add_page($page_id);
+		}
+		
+		$returned = $this->list->get_pages();
+		$this->assertInternalType('array',$returned);
+		return array('assigned'=>$page_ids,'returned'=>$returned);		
+	}
+	
+	/**
+	 * @depends test_get_pages
+	 */
+	function test_get_pages_length($pages) {
+		$this->assertEquals(sizeof($pages['assigned']),sizeof($pages['returned']));
+		return ($pages);		
+	}
+	
+	/**
+	 * @depends test_get_pages_length
+	 */	
+	function test_get_pages_type($pages) {
+		$is_type = true;
+		foreach ($pages['returned'] as $page_id) {
+			$is_type = (is_numeric($page_id));
+		}
+		$this->assertTrue($is_type);
+	}
+	
+	
 	
 }

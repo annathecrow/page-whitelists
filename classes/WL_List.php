@@ -5,12 +5,19 @@ class WL_List {
 	private $name;
 	private $time;
 	private $cap;
+	private $data;
 	
-	public function __construct($id, $name, $time) {
-		$this->id = $id;
-		$this->name = $name;
-		$this->time = $time;
-		$this->cap = 'edit_whitelist_'.$id;		
+	
+	/**
+	 * 
+	 * 
+	 */
+	public function __construct(WL_Data &$data,Array $list_info) { 
+		$this->data = $data;
+		$this->id = $list_info['id'];
+		$this->name = $list_info['name'];
+		$this->time = $list_info['time'];
+		$this->cap = 'edit_whitelist_'.$this->id;		
 	}
 	
 	public function get_id() {
@@ -179,15 +186,39 @@ class WL_List {
 		}	
 	}
 	
-	public function add_page($page) {
-		
+	public function add_page($page_id) {
+		//add page id to db
+		//add page to param
 	}
 	
-	public function remove_page($page) {
+	public function remove_page($page_id) {
 		
 	}
 	
 	public function rename($new_name) {
 		//
+		try {
+			if (!$this->data->get_whitelist_by('name', $new_name)) {
+				global $wpdb;
+				$success = $wpdb->update(
+					$this->data->get_list_table(), 
+					array(
+						'name' => $new_name
+					), 
+					array ('id'=>$this->id)
+				);
+				if (!$success) {
+					throw new Exception("Database coulnd't be updated.");
+				} else {
+					$this->name = $new_name;
+					return true;					
+				}
+			} else {
+				throw new Exception("list with such a name already exists");
+			}
+		} catch(Exception $e) {
+			WL_Dev::error($e);
+			return false;
+		}
 	}
 }

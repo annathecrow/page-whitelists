@@ -8,7 +8,14 @@ class WL_List_Test extends WP_UnitTestCase {
 		
 		$this->data = New WL_Data();
 		$this->data->initialize();
-		$this->list = new WL_List(1,'cocoNOT',date("Y-m-d H:i:s"));
+		$list_info = array(
+			'id' => 1,
+			'name' => 'cocoNOT',
+			'time' => date("Y-m-d H:i:s")
+		);
+		
+		$this->list = new WL_List($this->data,$list_info);
+		
 	}
 	
 	static function setupBeforeClass() {
@@ -145,4 +152,31 @@ class WL_List_Test extends WP_UnitTestCase {
 		}
 		$this->assertTrue($is_type);
 	}	
+	
+	function test_rename_success() {
+		$list = $this->data->create_whitelist('banana');
+		$success = $list->rename('papaya');
+		$this->assertTrue($success);
+	}
+	
+	function test_rename_param() {
+		$list = $this->data->create_whitelist('banana');
+		$success = $list->rename('papaya');
+		$this->assertEquals('papaya',$list->get_name());
+	}
+	
+	function test_rename_db() {
+		$list = $this->data->create_whitelist('banana');
+		$success = $list->rename('papaya');
+		$db_list = $this->data->get_whitelist_by('name','papaya'); 
+		$this->assertEquals($list,$db_list);
+	}
+	
+	function test_rename_failure() {
+		$list1 = $this->data->create_whitelist('banana');
+		$list2 = $this->data->create_whitelist('orange');
+		$success = $list1->rename('orange');
+		$this->assertFalse($success);
+	}
+	
 }

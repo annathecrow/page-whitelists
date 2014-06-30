@@ -6,7 +6,6 @@
 class WL_Data {
 	
 	private $list_table;
-	private $list_role_table;
 	private $list_page_table;
 	
 	public function __construct() {
@@ -52,6 +51,13 @@ class WL_Data {
 		
 	}
 	
+	public function get_list_table() {
+		return $this->list_table;
+	}
+	
+	public function get_list_page_table() {
+		return $this->list_page_table;
+	}
 		
 	public function create_whitelist($name) {
 		global $wpdb;
@@ -73,7 +79,12 @@ class WL_Data {
 					} else {
 						$id = $wpdb->insert_id;
 						WL_Dev::log('created whitelist '.$id.', '.$name);
-						return new WL_List($id,$name,$time);
+						$list_info = array(
+							'id' => $id,
+							'name' => $name,
+							'time' => $time,
+						);
+						return new WL_List($this, $list_info);
 					}
 			} else {
 				throw new Exception("Whitelist with this name already exists.", 1); 
@@ -136,12 +147,7 @@ class WL_Data {
 		
 	}
 	
-	public function rename_whitelist($list) {
-		//if it's id, get list
-		//try to get list under the name
-		//if there is one, return false
-		//if there isn't, update database, return true
-	}
+	
 	
 	public function create_role($name, $caps) {
 		//create new role
@@ -171,7 +177,12 @@ class WL_Data {
 					break;
 			}
 			if ($row != NULL) {
-				$list = new WL_List($row->id,$row->name,$row->time);
+				$list_info = array(
+					'id' => $row->id,
+					'name' => $row->name,
+					'time' => $row->time
+				);
+				$list = new WL_List($this, $list_info);
 				return $list;
 			} else {
 				throw new Exception("Whitelist doesn't exist.");
@@ -187,7 +198,7 @@ class WL_Data {
 		$query = "SELECT * FROM $this->list_table";
 		$raw_lists = $wpdb->get_results($query,ARRAY_A);
 		foreach ($raw_lists as $list) {
-			$array_of_lists[] = new WL_List($list['id'],$list['name'],$list['time']);
+			$array_of_lists[] = new WL_List($this,$list);
 		}
 		return $array_of_lists;
 	}

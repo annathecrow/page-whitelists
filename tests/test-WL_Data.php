@@ -9,6 +9,14 @@ class WL_Data_Test extends WP_UnitTestCase {
 		
 	}
 	
+	static function setupBeforeClass() {
+		echo "\nWL_Data tests: ";
+	}
+	
+	static function tearDownAfterClass() {
+		echo "\n";
+	}
+	
 	//toolbox
 	
 	private function can_edit($user_id,$list) {
@@ -28,20 +36,27 @@ class WL_Data_Test extends WP_UnitTestCase {
 	function test_create_whitelist_single() {
 		$result = $this->data->create_whitelist("mango");	
 		$this->assertInstanceOf('WL_List',$result);
+		return $result;
 	}
 	
-	function test_create_whitelist_multiples() {
-		$this->data->create_whitelist("mango"); //mango once
+	function test_create_whitelist_duplicate() {
+		$result = $this->data->create_whitelist("mango");
 		$result = $this->data->create_whitelist("mango"); //mango twice
 		$this->assertTrue($result); //no two mangoes!
 		
 	}
 	
-	function test_get_whitelist() {
+	function test_get_whitelist_by() {
 		$result = $this->data->create_whitelist("mango");
-		$this->assertInstanceOf('WL_List',$result);
-		$list = $this->data->get_whitelist($result->get_id());
+		$list = $this->data->get_whitelist_by('id',$result->get_id());
 		$this->assertInstanceOf('WL_List',$list);
+		return $result;
+	}
+	
+	function test_delete_whitelist_success() {
+		$result = $this->data->create_whitelist("mango");
+		$success = $this->data->delete_whitelist($result->get_id());
+		$this->assertTrue($success[0]);	
 	}
 	
 	function test_get_all_whitelists_count() {
@@ -55,14 +70,12 @@ class WL_Data_Test extends WP_UnitTestCase {
 		$this->data->create_whitelist("mango");
 		$this->data->create_whitelist("apple");
 		$array = $this->data->get_all_whitelists();
+		$is_type = true;
 		foreach ($array as $list) {
-			$this->assertInstanceOf('WL_List',$list); //this will try every member of $array and fail on first that doesn't pass
-		}		
+			$is_type = (get_class($list)==='WL_List');
+		}
+		$this->assertTrue($is_type);		
 	}
-
-	function test_delete_whitelist_success() {
-		$result = $this->data->create_whitelist("mango");
-		$success = $this->data->delete_whitelist($result->get_id());
-		$this->assertTrue($success[0]);	
-	}
+	
+	
 }

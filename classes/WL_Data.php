@@ -60,7 +60,7 @@ class WL_Data {
 		//WL_Dev::log('trying to access table '.$table);
 		$table = $this->list_table;
 		try {
-			if ($this->get_whitelist_by_name($name)==false) {
+			if ($this->get_whitelist_by('name',$name)==false) {
 				$success = $wpdb->insert(
 					$this->list_table,
 					array(
@@ -90,7 +90,7 @@ class WL_Data {
 	public function delete_whitelist($id) {
 		global $wpdb;
 		try {
-			$list = $this->get_whitelist($id); 
+			$list = $this->get_whitelist_by('id',$id); 
 			if ($list===false) {
 				throw new Exception("Whitelist doesn't exist.", 2);
 			} else {	
@@ -104,8 +104,7 @@ class WL_Data {
 					$query_args = array(
 						'orderby'=>'ID'
 					);
-					$user_query = new WP_User_Query($query_args);
-					$users = $user_query->results;
+					$users = $list->get_users();
 					foreach($users as $user) {
 						$list->remove_user($user->data->ID);
 					}
@@ -137,6 +136,13 @@ class WL_Data {
 		
 	}
 	
+	public function rename_whitelist($list) {
+		//if it's id, get list
+		//try to get list under the name
+		//if there is one, return false
+		//if there isn't, update database, return true
+	}
+	
 	public function create_role($name, $caps) {
 		//create new role
 		//
@@ -150,44 +156,30 @@ class WL_Data {
 	}
 	//not sure if these are supposed to be here. They're... kinda not what this class is for, right? Ugh.
 	
-	public function get_whitelist($id) {
-		//get single whitelist
+	public function get_whitelist_by($tag,$value) {
 		global $wpdb;
 		try {
-			$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $this->list_table WHERE id = %d",$id));
-			if ($row != NULL) {
-				$list = new WL_List($row->id,$row->name,$row->time);
-		
-	
-	
-			return $list;
-			} else {
-				WL_Dev::log("Whitelist doesn't exist.");
-				return false;
+			switch ($tag) {
+				case 'id':
+					$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $this->list_table WHERE id = %d",$value));
+					break;
+				case 'name':
+					$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $this->list_table WHERE name = %s",$value));
+					break;
+				default:
+					throw new Exception("Non-existent whitelist field.");
+					break;
 			}
-		} catch (Exception $e) {
-			WL_Dev::log($e->getMessage);
-			return false;
-		}	
-	}
-	
-	public function get_whitelist_by_name($name) {
-		global $wpdb;
-		try {
-			$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $this->list_table WHERE name = %s",$name));
 			if ($row != NULL) {
 				$list = new WL_List($row->id,$row->name,$row->time);
-				WL_Dev::log("whitelist exists, id is ".$list->get_id());
 				return $list;
 			} else {
-				WL_Dev::log("Whitelist doesn't exist.");
-				return false;
+				throw new Exception("Whitelist doesn't exist.");
 			}
 		} catch (Exception $e) {
-			WL_Dev::log($e->getMessage);
+			WL_Dev::error($e);
 			return false;
-		}
-		
+		} 
 	}
 	
 	public function get_all_whitelists() {

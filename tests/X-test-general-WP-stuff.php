@@ -2,6 +2,14 @@
 
 class General_Test extends WP_UnitTestCase {
 	
+	static function setupBeforeClass() {
+		echo "\nGeneral tests: ";
+	}
+	
+	static function tearDownAfterClass() {
+		echo "\n";
+	}
+	
 	function test_user_exists() {
 		$user_id = $this->factory->user->create();
 		$user = get_user_by('id',$user_id);

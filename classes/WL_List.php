@@ -56,6 +56,16 @@ class WL_List {
 		return $assigned_users;
 	}
 	
+	public function the_users($delimiter = ", ") {
+		$users = $this->get_users();
+		//WL_Dev::log($users);
+		$namearray = array();
+		foreach ($users as $user) {
+			$namearray[] = $user->user_login;
+		}
+		echo implode($delimiter,$namearray);
+	}
+	
 	public function get_roles() {
 		if (isset($this->roles)) {
 			return $this->roles;
@@ -71,6 +81,14 @@ class WL_List {
 		return $assigned_roles;
 	}
 	
+	public function the_roles($delimiter = ", ") {
+		$roles = $this->get_roles();
+		$namearray = array();
+		foreach ($roles as $role) {
+			$namearray[] = $role->name;
+		}
+		echo implode($delimiter,$namearray);
+	}
 	public function get_pages() {
 		if (isset($this->pages)) return $this->pages;
 		global $wpdb;

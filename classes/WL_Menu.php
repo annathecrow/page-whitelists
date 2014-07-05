@@ -20,14 +20,15 @@ class WL_Menu {
 			array($this,'render_lists_page')  
 		);
 		
+		/*
 		add_submenu_page( 
-			'wl_lists', 
-			'Roles',
-			'Roles',
-			'manage_options', 
-			'$wl_roles', 
-			array($this,'render_roles_page')
-			);
+					'wl_lists', 
+					'Roles',
+					'Roles',
+					'manage_options', 
+					'$wl_roles', 
+					array($this,'render_roles_page')
+					);*/
 		
 		add_submenu_page( 
 			'wl_lists', 
@@ -66,7 +67,8 @@ class WL_Menu {
 	}
 	
 	public function render_lists_page() {
-		$lists = $this->data->get_whitelists(); //returns all lists from the database as WL_List objects
+		
+		$lists = $this->data->get_all_whitelists(); //returns all lists from the database as WL_List objects
 		require_once $this->settings->get_template_path()."lists_page.php";
 
 		//load existing whitelists
@@ -80,5 +82,19 @@ class WL_Menu {
 			//(assigned to Users - add, remove)
 	}
 	
+	public function ajax_delete() {
+		$success = 'true';
+		die($success);
+	}
+	
+	public function ajax_load() {
+		//return data for edit form and an optional whitelist
+	}
+	
+	public function ajax_save() {
+		//create new whitelist from ajaxed data, or update an existing whitelist
+		//needed: hidden field with id
+		
+	}
 	
 }

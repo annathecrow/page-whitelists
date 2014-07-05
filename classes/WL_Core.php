@@ -2,10 +2,12 @@
 
 class Whitelists 
 {
-	public function __construct($data,$settings) {
+	public function __construct(&$data,&$settings) {
 		$this->data = $data;
 		$this->settings = $settings;		
 		$this->access_manager = new WL_Access_Manager();
+		$this->admin = new WL_Admin($this->data,$this->settings);
+		
 	}
 	
 	public function install() {
@@ -20,18 +22,12 @@ class Whitelists
 		
 	}
 	
-	public function get_path() {
-		return plugin_dir_path(__FILE__);
-	}
-	
-	public function init_admin_menu() {
-		$this->admin_menu = new WL_Menu($this->data,$this->settings);
-	}
-	
 	public function run() {		
 		//filter hooks	
-		add_action('admin_menu',array($this, 'init_admin_menu'));
-		add_action('init',array($this->access_manager, 'access_check'));
+		add_action('init',array($this->access_manager, 'access_check'));	
+		add_action('admin_menu',array($this->admin, 'add_menus'));
+		add_action('admin_enqueue_scripts',array($this->admin,'enqueue_scripts'));
+		
 		// add_action('new_to_auto-draft',array($whitelists, 'auto_assign_to_whitelist'));		
 	}
 	

@@ -40,3 +40,8 @@
 			<br class="clear">
 		</p>
 		</td></tr>
+		
+
+
+
+<div id="message" class="updated" <!--"error" for red border --><p>Whitelist <strong>created</strong>.</p></div>

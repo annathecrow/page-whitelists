@@ -59,6 +59,10 @@ class WL_Data {
 		return $this->list_page_table;
 	}
 		
+	/**
+	 * create whitelist
+	 * @param $name
+	 */
 	public function create_whitelist($name) {
 		global $wpdb;
 		$id = 0;

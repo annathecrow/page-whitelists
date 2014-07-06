@@ -1,6 +1,5 @@
 <div class="wrap">
 <h2><?php echo "Whitelists"; ?></h2>
-<div id="message" class="updated" <!--"error" for red border --><p>Whitelist <strong>created</strong>.</p></div>
 <p>Creating/editing/deleting whitelists.</p>
 <style>
 	.id-column {
@@ -26,10 +25,10 @@
 			foreach($lists as $ord=>$list) { ?>
 					<tr id="wlist-<?php echo $list->get_id(); ?>" class="whitelist-row <?php echo ($ord%2==0)?'alternate':''; ?>">
 			<th scope="row" class="id-column"><?php echo $list->get_id(); ?></th>
-			<td><a href="##"><?php echo $list->get_name(); ?></a>
+			<td><a href="##" class="list-name"><?php echo $list->get_name(); ?></a>
 				<div class="row-actions">
-					<span class="edit"><a href="#">Edit</a>|</span>
-					<span class="trash"><a href="#">Delete</a></span>
+					<span class="edit"><a href="#" id="edit-wlist-<?php echo $list->get_id(); ?>">Edit</a>|</span>
+					<span class="trash"><a href="#" id="delete-wlist-<?php echo $list->get_id(); ?>">Delete</a></span>
 				</div>
 			</td>
 			<td><?php $list->the_roles();	?></td>
@@ -39,7 +38,7 @@
 			<?php }; ?>
 	</tbody>
 </table>
-<p><a href="#">Create new...</a>
+<p><a href="#" id="create-wlist">Create new...</a>
 </p>
 <form action="options.php" method="post"> 
 </form></div>

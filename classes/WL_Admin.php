@@ -14,6 +14,13 @@ class WL_Admin {
 	
 	
 	public function add_menus() {
+		//$this->data->create_whitelist("mango");
+		$this->data->create_whitelist("mango");
+		$this->data->create_whitelist("grape");
+		$this->data->create_whitelist("radish");
+		$this->data->create_whitelist("millenium");
+		$this->data->create_whitelist("junior");
+		
 		add_menu_page( 
 			$this->settings->get_plugin_title(), //label of the sidebar link
 			$this->settings->get_plugin_title(), //title of the main options page
@@ -44,8 +51,19 @@ class WL_Admin {
 	}
 	
 	public function enqueue_scripts($hook) {
-		if( 'admin.php?page=wl_lists' != $hook ) return;
-		wp_enqueue_script( 'wl_lists_js', $this->settings->get_template_path(). 'js/wl_lists.js' );
+		WL_Dev::log("trying to enqueue scripts");
+		$screen = get_current_screen(); 
+		if($screen->id != 'toplevel_page_wl_lists') {
+			WL_Dev::log("not on the right page");
+			return;
+		}
+		$script_path = $this->settings->get_template_url(). 'js/wl_lists.js';
+		wp_enqueue_script('wl_lists_js', $script_path, array('jquery'),'1.0.0',true);
+	}
+	
+	public function register_ajax() {
+		WL_Dev::log('registering ajax');
+		add_action('wp_ajax_wl_delete', array($this,'ajax_delete'));
 	}
 	
  	public function render_settings_page() {
@@ -87,18 +105,17 @@ class WL_Admin {
 	}
 	
 	public function ajax_delete() {
-		$success = 'true';
-		die($success);
+		$id = $_POST['id'];
+		$result = $this->data->delete_whitelist($id);
+		if ($result[0]) {
+			$reply = 'success';
+		} else {
+			$reply = $result[1];
+		}
+		die($reply);
 	}
 	
 	public function ajax_load() {
-		//return data for edit form and an optional whitelist
 	}
-	
-	public function ajax_save() {
-		//create new whitelist from ajaxed data, or update an existing whitelist
-		//needed: hidden field with id
-		
-	}
-	
+
 }

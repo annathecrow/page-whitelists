@@ -15,11 +15,22 @@ class WL_Admin {
 	
 	public function add_menus() {
 		//$this->data->create_whitelist("mango");
-		$this->data->create_whitelist("mango");
-		$this->data->create_whitelist("grape");
+		//$this->data->create_whitelist("apple");
+		//$this->data->create_whitelist("grape");
 		$this->data->create_whitelist("radish");
 		$this->data->create_whitelist("millenium");
 		$this->data->create_whitelist("junior");
+		
+		$apple = $this->data->get_whitelist_by('name','apple');
+		//$grape = $this->data->get_whitelist_by('name','grape');
+		
+		//$apple->add_page(289);
+		//$apple->add_page(300);
+		//$apple->add_user(3);
+		
+		//$grape->add_page(19);
+		//$grape->add_role('editor');
+		
 		
 		add_menu_page( 
 			$this->settings->get_plugin_title(), //label of the sidebar link
@@ -64,6 +75,7 @@ class WL_Admin {
 	public function register_ajax() {
 		WL_Dev::log('registering ajax');
 		add_action('wp_ajax_wl_delete', array($this,'ajax_delete'));
+		add_action('wp_ajax_wl_load', array($this,'ajax_load'));
 	}
 	
  	public function render_settings_page() {
@@ -116,6 +128,84 @@ class WL_Admin {
 	}
 	
 	public function ajax_load() {
+		/*
+		header('Cache-Control: no-cache, must-revalidate'); //don't cache
+				$year_exp = date('Y')+5;  
+				$date_exp = date('D, n M ').$year_exp.date(' H:i:s e');
+				header('Expires: '.$date_exp);
+				header('Content-type: application/json');*/
+		
+		
+		//FIRST STEP: build a "fresh" data array
+		$data = array();
+		
+		$data['pages'] = array();
+		$query = new WP_Query('post_type=page');
+		while ($query->have_posts()) {
+			$query->the_post();
+			$data['pages'][] = array(
+				'title'=> $query->post->post_title,
+				'id' => $query->post->ID,
+				'assigned'=>false
+			);
+		} //TODO add page hierarchy (parent/child; automatically mark children in editor)
+		wp_reset_postdata();
+		
+		$data['users'] = array();
+		$query_args = array(
+			'orderby'=>'ID'
+		);
+		$user_query = new WP_User_Query($query_args);
+		$users = $user_query->results;
+		foreach($users as $user) {
+			$data['users'][] = array(
+				'login' => $user->user_login,
+				'id' => $user->ID,
+				'assigned' => false
+			); 
+		}
+		
+		$all_roles = get_editable_roles();
+		//which roles shouldn't be assignable? "admin", "superadmin"?
+		$data['roles'] = array();
+		foreach ($all_roles as $rolename=>$roledata) {
+			$data['roles'][$rolename] = false;
+		}
+		
+		if (isset($_POST['id'])) {
+			$id = $_POST['id'];
+			$list = $this->data->get_whitelist_by('id',$id);
+			$assigned_pages = $list->get_page_ids();
+			foreach ($data['pages'] as $key=>$page) {
+				if (in_array($page['id'],$assigned_pages)) {
+					$data['pages'][$key]['assigned']=true;
+				}
+			} 
+			$assigned_users = $list->get_user_logins();
+			foreach ($data['users'] as $key=>$user) {
+				if (in_array($user['login'],$assigned_users)) {
+					$data['users'][$key]['assigned']=true;
+				}
+			}
+			 
+			$assigned_roles = $list->get_role_names();
+			foreach ($data['roles'] as $key=>$role) {
+				if (in_array($key,$assigned_roles)) {
+					$data['roles'][$key] = true;
+				}
+			}  
+			//add data			
+		} else {
+			$id = 0;
+		}
+		
+		die(json_encode($data)); 		
+	}
+	
+	public function ajax_save() {
+		//create new whitelist from ajaxed data, or update an existing whitelist
+		//needed: hidden field with id
+		
 	}
 
 }

@@ -127,7 +127,7 @@ class WL_Data {
 					foreach($roles as $role) {
 						$list->remove_role($role->name);
 					}
-					$pages = $list->get_pages();
+					$pages = $list->get_page_ids();
 					foreach($pages as $page_id) {
 						$list->remove_page($page_id);
 					}

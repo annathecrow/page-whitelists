@@ -2,7 +2,7 @@
 	//these will be built by JavaScript, here for reference.
 ?>
 
-<tr id="wlist_new" class="inline-edit-row quick-edit-row inline-editor" style=""><td colspan="5" class="colspanchange">
+<tr id="wlist_new" class="inline-edit-row quick-edit-row inline-editor" style=""><td colspan="6" class="colspanchange">
 
 		<fieldset><div class="inline-edit-col">
 			<h4>Create New...</h4>

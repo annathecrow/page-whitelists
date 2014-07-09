@@ -16,6 +16,7 @@
 			<th scope="col" class="manage-column">Title</th>
 			<th scope="col" class="manage-column">Assigned to roles</th>
 			<th scope="col" class="manage-column">Assigned to users</th>
+			<th scope="col" class="manage-column">Assigned pages</th>
 			<th scope="col" class="manage-column">Date</th>
 		</tr>
 	</thead>
@@ -33,6 +34,7 @@
 			</td>
 			<td><?php $list->the_roles();	?></td>
 			<td><?php $list->the_users(); ?></td>
+			<td><?php $list->the_pages(); ?></td>
 			<td><abbr title="<?php echo mysql2date( 'Y/m/d h:i:s A', $list->get_time(),true); ?>"><?php echo mysql2date( 'Y/m/d', $list->get_time(),true); ?></abbr></td>
 		</tr>			
 			<?php }; ?>

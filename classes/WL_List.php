@@ -124,9 +124,9 @@ class WL_List {
 		try {			
 			if (is_numeric($user)) {
 				$user = get_user_by('id',$user);
-				if (!$user) {throw new Exception('User not found.');};
+				if (!$user) {throw new Exception('User not found.',0);};
 			} else if (get_class($user) !== 'WP_User') {
-				throw new Exception('$user is neither id nor an instance of WP_User.');
+				throw new Exception('$user is neither id nor an instance of WP_User.',0);
 			}
 			if (!isset($this->users)) {
 					$this->get_users();
@@ -144,9 +144,9 @@ class WL_List {
 		try {			
 			if (is_numeric($user)) {
 				$user = get_user_by('id',$user);
-				if (!$user) {throw new Exception('User not found.');}
+				if (!$user) {throw new Exception('User not found.',0);}
 			} else if (get_class($user) !== 'WP_User') {
-				throw new Exception('$user is neither numeric nor an instance of WP_User.');
+				throw new Exception('$user is neither numeric nor an instance of WP_User.',0);
 			}
 			if (!isset($this->users)) {
 				$this->get_users();
@@ -164,10 +164,10 @@ class WL_List {
 		try {			
 			if (is_string($role)) {
 				$role = get_role($role);
-				if ($role == null) throw new Exception('Role not found.');
+				if ($role == null) throw new Exception('Role not found.',0);
 			} else if (get_class($role) === 'WP_Role') {
 			} else {
-				throw new Exception('$role is neither string nor an instance of WP_User.');
+				throw new Exception('$role is neither string nor an instance of WP_User.',0);
 			}
 			if (!isset($this->roles)) {
 				$this->get_roles();
@@ -185,10 +185,10 @@ class WL_List {
 		try {			
 			if (is_string($role)) {
 				$role = get_role($role);
-				if ($role == null) throw new Exception('Role not found.');
+				if ($role == null) throw new Exception('Role not found.',0);
 			} else if (get_class($role) === 'WP_Role') {
 			} else {
-				throw new Exception('$role is neither string nor an instance of WP_User.');
+				throw new Exception('$role is neither string nor an instance of WP_User.',0);
 			}
 			
 			if (!isset($this->roles)) {
@@ -198,19 +198,22 @@ class WL_List {
 			unset($this->roles[in_array($role, $this->roles)]);
 			return true;
 		} catch (Exception $e) {
-			WL_Dev::log($e->getMessage());
+			WL_Dev::error($e);
 			return false;
 		}	
 	}
 	
 	public function add_page($page_id) {
-		//first check if the page already isn't assigned, so I don't get database errors about duplicate assignments
+		if(!isset($this->page_ids)) $this->get_page_ids();
 		try {
+			if (in_array($page_id,$this->page_ids)) {
+				throw new Exception ("Page already added to this list.",1);
+			}
 			$page = get_post($page_id);
 			if ($page === null) {
-				throw new Exception("Page with this id doesn't exist.");
+				throw new Exception("Page with this id doesn't exist.",0);
 			} else if ($page->post_type !='page') {
-				throw new Exception("This id doesn't belong to a page.");
+				throw new Exception("This id doesn't belong to a page.",0);
 			} else {
 				global $wpdb;
 				$success = $wpdb->insert(
@@ -221,7 +224,7 @@ class WL_List {
 					)				
 				);
 				if (!$success) {
-					throw new Exception("Coulnd't write into database.");
+					throw new Exception("Coulnd't write into database.",0);
 				} else {
 					if (!isset($this->page_ids)) {
 						$this->get_page_ids();
@@ -232,8 +235,13 @@ class WL_List {
 				}
 			} 
 		} catch (Exception $e) {
-			WL_Dev::error($e);
-			return false;
+			if ($e->getCode()==1) {
+				WL_Dev::log($e->getMessage());
+				return true;
+			} else {
+				WL_Dev::error($e);
+				return false;
+			}
 		}
 	}
 	
@@ -241,9 +249,9 @@ class WL_List {
 		try {
 			$page = get_post($page_id);
 			if ($page === null) {
-				throw new Exception("Page with this id doesn't exist.");
+				throw new Exception("Page with this id doesn't exist.",0);
 			} else if ($page->post_type !='page') {
-				throw new Exception("This id doesn't belong to a page.");
+				throw new Exception("This id doesn't belong to a page.",0);
 			} else {
 				global $wpdb;
 				$success = $wpdb->delete(
@@ -254,7 +262,7 @@ class WL_List {
 					)				
 				);
 				if (!$success) {
-					throw new Exception("Coulnd't delete from database.");
+					throw new Exception("Coulnd't delete from database.",0);
 				} else {
 					if (!isset($this->page_ids)) {
 						$this->get_page_ids();
@@ -283,17 +291,22 @@ class WL_List {
 					array ('id'=>$this->id)
 				);
 				if (!$success) {
-					throw new Exception("Database coulnd't be updated.");
+					throw new Exception("Database coulnd't be updated.",0);
 				} else {
 					$this->name = $new_name;
 					return true;					
 				}
 			} else {
-				throw new Exception("list with such a name already exists");
+				throw new Exception("list with such a name already exists",1);
 			}
 		} catch(Exception $e) {
-			WL_Dev::error($e);
-			return false;
+			if ($e->getCode()==1) {
+				WL_Dev::log($e->getMessage());
+				return true;
+			} else {
+				WL_Dev::error($e);
+				return false;
+			}
 		}
 	}
 }

@@ -53,5 +53,8 @@ TODO
 	- get data from new wl form
 	- supply data to edit wl form
 	- get data from edit wl form
+	
+	
+- add to whitelist on Create page... 
 
 

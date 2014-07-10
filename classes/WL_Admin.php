@@ -199,25 +199,46 @@ class WL_Admin {
 	}
 	
 	public function ajax_save() {
-		WL_Dev::log($_POST);
-		$name = $_POST['name'];
-		//if empty string, then die with an error
-		$pages = explode($_POST['pages']);
-		//if empty string, do nothing
+		//WL_Dev::log($_POST);
+		
+		if (!isset($_POST['name'])) {
+			die("error,name missing");
+		} else {
+			$name = $_POST['name'];
+		};			
+		
+ 		$pages = explode($_POST['pages']);
 		$users = explode($_POST['users']);
-		//if empty string, do nothing
 		$users = explode($_POST['roles']);
-		//if empty string, do nothing
-		$id = $_POST['id'];
-		//if empty, try to create new whitelist
-		//if it exists under the name, die with an error
-		//if numeric, get the whitelist
-		//if not found, die with an error
 		
-		//add pages 
-		//add users
-		//add roles
+		if (!isset($_POST['id'])) {
+			$list = $this->data->create_whitelist($name);
+			if ($list) {
+				die('error,name-in-use');
+			} elseif (!$list) {
+				die('error,unknown');
+			}		
+		} else {
+			$list = $this->data->get_whitelist_by('id',$_POST['id']);
+			if (!$list) {
+				die('error,not-found');
+			}
+		}
 		
+		foreach ($pages as $page_id) {
+			$list->add_page($page_id);
+			//what if the page doesn't exist?
+		}
+		
+		foreach ($users as $user_id) {
+			$list->add_user($user_id);
+		}
+		
+		foreach ($roles as $role_name) {
+			$list->add_role($role_name);
+		}
+		
+		//if ($list->get_name())
 		//if no error, die with the data to populate default tr
 		die('done');
 		

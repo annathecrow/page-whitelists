@@ -95,8 +95,13 @@ class WL_Data {
 				//throw exception
 			}
 		} catch (Exception $e) {
-			WL_Dev::log($e->getMessage());
-			if ($e->getCode()==1) {return true;} else {return false;}
+			if ($e->getCode()==1) {
+				WL_Dev::log($e->getMessage());
+				return true;
+			} else {
+				WL_Dev::error($e);
+				return false;
+			}
 		}		
 		
 		
@@ -180,7 +185,7 @@ class WL_Data {
 					$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $this->list_table WHERE name = %s",$value));
 					break;
 				default:
-					throw new Exception("Non-existent whitelist field.");
+					throw new Exception("Non-existent whitelist field.",0);
 					break;
 			}
 			if ($row != NULL) {
@@ -192,7 +197,7 @@ class WL_Data {
 				$list = new WL_List($this, $list_info);
 				return $list;
 			} else {
-				throw new Exception("Whitelist doesn't exist.");
+				throw new Exception("Whitelist doesn't exist.",0);
 			}
 		} catch (Exception $e) {
 			WL_Dev::error($e);

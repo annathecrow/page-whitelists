@@ -1,13 +1,21 @@
 $ = jQuery;
 editing = false;
 
-function notice(message) {
-	console.log("noticing");
-	notice = $('<div id="message" class="updated below-h2"><p>'+message+'</p></div>');
-	notice.hide();
-	notice.insertAfter(".wrap h2");
-	notice.fadeIn();
-	//possibly a timeout and remove?
+function throwNotice(success,message) {
+	$(document).scrollTop(0);
+	var noticeClass = (success)?"updated":"error";
+	if (typeof notice == 'undefined') {
+		notice = $('<div id="message" class="below-h2 '+noticeClass+'"><p>'+message+'</p></div>');
+		notice.hide();
+		notice.insertAfter(".wrap h2");
+		notice.fadeIn();	
+	} else {
+		notice.fadeOut('fast', function(){
+			notice.find("p").text(message);
+			notice.removeClass("updated").removeClass("error").addClass(noticeClass);
+			notice.fadeIn();	
+		});		
+	}	
 }
 
 function buildEditWindow(data,line,id) {
@@ -33,7 +41,7 @@ function buildEditWindow(data,line,id) {
 	
 	pagesList = editWindow.find("#pages-list");
 	$.each(data.pages, function(key,page){
-		var item = $('<li id="page-'+page.id+'"><label class="selectit"><input value="'+page.id+'" type="checkbox" name="pages[]" id="page-id-'+page.id+'"> '+page.title+'</label></li>');
+		var item = $('<li id="page-'+page.id+'"><label class="selectit"><input value="'+page.id+'" type="checkbox" name="pages[]" id="page-id-'+page.id+'"> '+page.title+' ('+page.id+')</label></li>');
 		if (page.assigned) {
 			item.find("input").prop('checked',true);
 		}
@@ -55,16 +63,19 @@ function buildEditWindow(data,line,id) {
 		if (line.hasClass("alternate")) {
 			editWindow.addClass("alternate");
 		};
-		line.replaceWith(editWindow);
+		line.after(editWindow);
+		line.detach();
+		
 		$("#wlist-edit-cancel").click(function(){
 			editWindow.replaceWith(line);
 			editing=false;
 		});
-		//replaces line
-		//somehow take over the "alternate" class?
-		//after saving, line will be "put back" with new content
 	}
 	$("#wlist-edit-save").click(function(){
+		if (titleInput.attr("value")=='') {
+			//inform user somehow
+			return false;
+		}
 		console.log($("#wlist-edit-form").serializeArray());
 		var pagesArray = [];
 		pagesList.find('input:checked').each(function(key,item){
@@ -90,17 +101,25 @@ function buildEditWindow(data,line,id) {
 					'users': usersArray.join(),
 					'roles': rolesArray.join()
 					}, 
-				success: function(response) { 
-					console.log(response);
-					//add the editor as the last line of the table
-					//fill it out
-					//add ids to the buttons
-					//???
-					//PROFIT!
-					editing = false;
+				success: function(response) {
+					result = $.parseJSON(response);
+					if (result.success) {
+						console.log(result);
+						line.find(".wlist-name").text(result.name);
+						line.find(".wlist-users").text(result.users.join(", "));
+						line.find(".wlist-roles").text(result.roles.join(", "));
+						line.find(".wlist-pages").text(result.pages.join(", "));
+						editWindow.replaceWith(line);
+						throwNotice(true,"Whitelist successfully " + result.message+".");
+						editing = false;	
+					} else {
+						var message = "Error";
+						throwNotice(false,message);
+					}
 				}
 		   
-	});
+		});
+		return false;
 		
 	});	
 	
@@ -129,8 +148,7 @@ $("span.trash a").click(function(){
 			line.fadeOut('fast',function(){					
 				line.nextAll().toggleClass('alternate');
 				line.remove();
-				$(document).scrollTop(0);
-				notice("Whitelist successfully deleted.");
+				throwNotice(true,"Whitelist successfully deleted.");
 				
 			});
 		}
@@ -143,6 +161,7 @@ $("span.trash a").click(function(){
 $("#create-wlist").click(function(){
 	if (editing) {
 		//already editing/creating
+		console.log('editing is false');
 		return false;
 	} else {
 		editing=true;
@@ -157,13 +176,7 @@ $("#create-wlist").click(function(){
 	    dataType: 'json',
 	    success: function(response) { 
 	        console.log(response);
-	        buildEditWindow(response);
-	        //add the editor as the last line of the table
-	        //fill it out
-	        //add ids to the buttons
-	        //???
-	        //PROFIT!
-			editing = false;
+	        buildEditWindow(response);			
 	    }   
 	});
 	//get data from AJAX
@@ -174,11 +187,12 @@ $("#create-wlist").click(function(){
 });
 
 $("span.edit a").click(function(){
-	if (editing) {
-		//already editing/creating
+	if (editing) {		
+		console.log('editing is false');
 		//maybe ask if user wants to cancel edit and start editing this list?
 		return false;
 	} else {
+		console.log('editing now');
 		editing=true;
 	}
 		
@@ -198,9 +212,9 @@ $("span.edit a").click(function(){
 	    success: function(response) { 
 	        console.log(response);
 	        buildEditWindow(response, line, id);
-			editing = false;
 			//do nothing right now
 	    }   
 	});
+	return false;
 });
 

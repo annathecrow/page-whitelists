@@ -15,7 +15,7 @@ class WL_List {
 	 * 
 	 * 
 	 */
-	public function __construct(WL_Data &$data,Array $list_info) { 
+	public function __construct(WL_Data $data,Array $list_info) { 
 		$this->data = $data;
 		$this->id = $list_info['id'];
 		$this->name = $list_info['name'];

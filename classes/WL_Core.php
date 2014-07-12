@@ -2,10 +2,10 @@
 
 class Whitelists 
 {
-	public function __construct(&$data,&$settings) {
+	public function __construct($data,$settings) {
 		$this->data = $data;
 		$this->settings = $settings;		
-		$this->access_manager = new WL_Access_Manager();
+		$this->access_manager = new WL_Access_Manager($this->data);
 		$this->admin = new WL_Admin($this->data,$this->settings);
 		
 	}

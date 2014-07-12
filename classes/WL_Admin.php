@@ -7,30 +7,13 @@ class WL_Admin {
 	private $settings;
 	private $data;
 	
-	function __construct(&$data,&$settings) {
+	function __construct($data,$settings) {
 		$this->settings = $settings;
 		$this->data = $data;
 	}
 	
 	
 	public function add_menus() {
-		//$this->data->create_whitelist("mango");
-		//$this->data->create_whitelist("apple");
-		//$this->data->create_whitelist("grape");
-		$this->data->create_whitelist("radish");
-		$this->data->create_whitelist("millenium");
-		$this->data->create_whitelist("junior");
-		
-		//$apple = $this->data->get_whitelist_by('name','apple');
-		//$grape = $this->data->get_whitelist_by('name','grape');
-		
-		//$apple->add_page(289);
-		//$apple->add_page(300);
-		//$apple->add_user(3);
-		
-		//$grape->add_page(19);
-		//$grape->add_role('editor');
-		
 		
 		add_menu_page( 
 			$this->settings->get_plugin_title(), //label of the sidebar link

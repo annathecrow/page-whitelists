@@ -17,7 +17,7 @@
 			<th scope="col" class="manage-column">Assigned to roles</th>
 			<th scope="col" class="manage-column">Assigned to users</th>
 			<th scope="col" class="manage-column">Assigned pages</th>
-			<th scope="col" class="manage-column">Date</th>
+			<!-- <th scope="col" class="manage-column">Date</th> -->
 		</tr>
 	</thead>
 	<tbody>
@@ -35,7 +35,7 @@
 			<td class="wlist-roles"><?php $list->the_roles();	?></td>
 			<td class="wlist-users"><?php $list->the_users(); ?></td>
 			<td class="wlist-pages"><?php $list->the_pages(); ?></td>
-			<td class="wlist-time"><abbr title="<?php echo mysql2date( 'Y/m/d h:i:s A', $list->get_time(),true); ?>"><?php echo mysql2date( 'Y/m/d', $list->get_time(),true); ?></abbr></td>
+			<!--<td class="wlist-time"><abbr title="<?php echo mysql2date( 'Y/m/d h:i:s A', $list->get_time(),true); ?>"><?php echo mysql2date( 'Y/m/d', $list->get_time(),true); ?></abbr></td>-->
 		</tr>			
 			<?php }; ?>
 	</tbody>

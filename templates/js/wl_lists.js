@@ -19,7 +19,7 @@ function throwNotice(success,message) {
 }
 
 function buildEditWindow(data,line,id) {
-	editWindow = $('<tr id="wlist-new" class="inline-edit-row quick-edit-row inline-editor" style=""><td colspan="6" class="colspanchange"><fieldset class="inline-edit-col-left"><div class="inline-edit-col"><h4></h4><label><span class="title">Title</span><span class="input-text-wrap"><input type="text" name="wlist_title" id="wlist-title" value=""></span></label><span class="title">Whitelisted pages</span><ul class="cat-checklist" id="pages-list"></ul></div></fieldset><fieldset class="inline-edit-col-right"><div class="inline-edit-col"><span class="title">Assigned to users</span><ul class="cat-checklist" id="users-list"></ul><span class="title">Assigned to roles</span><ul class="cat-checklist" id="roles-list"></ul></div></fieldset><input type="hidden" id="wlist-id" name="wlist-id" value=""><p class="submit inline-edit-save"><a accesskey="c" href="#inline-edit" class="button-secondary cancel alignleft" id="wlist-edit-cancel">Cancel</a><a accesskey="s" href="#inline-edit" id="wlist-edit-save" class="button-primary save alignright">Save</a><span class="error" style="display:none"></span><br class="clear"></p></td></tr>');
+	editWindow = $('<tr id="wlist-new" class="inline-edit-row quick-edit-row inline-editor" style=""><td colspan="5" class="colspanchange"><fieldset class="inline-edit-col-left"><div class="inline-edit-col"><h4></h4><label><span class="title">Title</span><span class="input-text-wrap"><input type="text" name="wlist_title" id="wlist-title" value=""></span></label><span class="title">Whitelisted pages</span><ul class="cat-checklist" id="pages-list"></ul></div></fieldset><fieldset class="inline-edit-col-right"><div class="inline-edit-col"><span class="title">Assigned to users</span><ul class="cat-checklist" id="users-list"></ul><span class="title">Assigned to roles</span><ul class="cat-checklist" id="roles-list"></ul></div></fieldset><input type="hidden" id="wlist-id" name="wlist-id" value=""><p class="submit inline-edit-save"><a accesskey="c" href="#inline-edit" class="button-secondary cancel alignleft" id="wlist-edit-cancel">Cancel</a><a accesskey="s" href="#inline-edit" id="wlist-edit-save" class="button-primary save alignright">Save</a><span class="error" style="display:none"></span><br class="clear"></p></td></tr>');
 		
 	usersList = editWindow.find("#users-list");
 	$.each(data.users,function(key,user){
@@ -53,6 +53,7 @@ function buildEditWindow(data,line,id) {
 		editWindow.find("h4").text("Create New...");
 		editWindow.appendTo("#wl-lists tbody");
 		$("#wlist-edit-cancel").click(function(){
+			console.log("cancelling new");
 			editWindow.remove();
 			editing=false;
 		});
@@ -67,6 +68,7 @@ function buildEditWindow(data,line,id) {
 		line.detach();
 		
 		$("#wlist-edit-cancel").click(function(){
+			console.log("cancelling editing");
 			editWindow.replaceWith(line);
 			editing=false;
 		});
@@ -105,10 +107,15 @@ function buildEditWindow(data,line,id) {
 					result = $.parseJSON(response);
 					if (result.success) {
 						console.log(result);
-						line.find(".wlist-name").text(result.name);
-						line.find(".wlist-users").text(result.users.join(", "));
-						line.find(".wlist-roles").text(result.roles.join(", "));
-						line.find(".wlist-pages").text(result.pages.join(", "));
+						if (line == undefined) {
+							line = $('<tr id="wlist-'+result.id+'" class="whitelist-row"><th scope="row" class="id-column">'+result.id+'</th><td><a href="#" class="wlist-name"></a><div class="row-actions"><span class="edit"><a href="#" id="edit-wlist-'+result.id+'">Edit</a>|</span><span class="trash"><a href="#" id="delete-wlist-'+result.id+'">Delete</a></span></div></td><td class="wlist-roles"></td><td class="wlist-users"></td><td class="wlist-pages"></td></tr>');
+							line.appendTo("#wl-lists tbody");
+						} else {
+							line.find(".wlist-name").text(result.name);
+							line.find(".wlist-users").text(result.users.join(", "));
+							line.find(".wlist-roles").text(result.roles.join(", "));
+							line.find(".wlist-pages").text(result.pages.join(", "));
+						}
 						editWindow.replaceWith(line);
 						throwNotice(true,"Whitelist successfully " + result.message+".");
 						editing = false;	
@@ -161,10 +168,16 @@ $("span.trash a").click(function(){
 $("#create-wlist").click(function(){
 	if (editing) {
 		//already editing/creating
-		console.log('editing is false');
-		return false;
+		answer = confirm("You have unsaved changes. Do you want to continue?");
+		if (!answer) {
+			return false;
+		} else {
+			//fold down current edit window
+			editWindow.find("#wlist-edit-cancel").click();
+			editing=true;
+		}
 	} else {
-		editing=true;
+		editing = true;
 	}
 	
 	$.ajax({ 
@@ -188,12 +201,16 @@ $("#create-wlist").click(function(){
 
 $("span.edit a").click(function(){
 	if (editing) {		
-		console.log('editing is false');
-		//maybe ask if user wants to cancel edit and start editing this list?
-		return false;
+		answer = confirm("You have unsaved changes. Do you want to continue?");
+		if (!answer) {
+			return false;
+		} else {
+			//fold down current edit window
+			editWindow.find("#wlist-edit-cancel").click();
+			editing=true;
+		}
 	} else {
-		console.log('editing now');
-		editing=true;
+		editing = true;
 	}
 		
 	caller = $(this);

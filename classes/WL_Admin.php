@@ -44,12 +44,14 @@ class WL_Admin {
 		
 	}
 	
-	public function enqueue_scripts($hook) {
+	public function enqueue_assets($hook) {
 		$screen = get_current_screen(); 
 		if($screen->id != 'toplevel_page_wl_lists') {
 			return;
 		}
 		$script_path = $this->settings->get_template_url(). 'js/wl_lists.js';
+		$style_path = $this->settings->get_template_url(). 'css/wl_lists.css';
+		wp_enqueue_style('style-name', $style_path);
 		wp_enqueue_script('wl_lists_js', $script_path, array('jquery'),'1.0.0',true);
 	}
 	

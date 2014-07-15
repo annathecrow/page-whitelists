@@ -1,0 +1,19 @@
+#wlist-form fieldset.wl-col {
+	width: 33.3%;
+}
+
+#wlist-form fieldset.inline-edit-col-left {
+	float: left;
+}
+
+#wlist-form fieldset.inline-edit-col-right {
+	float: right;
+}
+
+@media only screen and (max-width: 782px) {
+	#wlist-form fieldset.wl-col {
+		width:100%;
+	}
+}
+
+

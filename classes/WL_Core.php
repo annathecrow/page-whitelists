@@ -23,13 +23,11 @@ class Whitelists
 	}
 	
 	public function run() {		
-		//filter hooks	
+		//filter hooks
 		add_action('init',array($this->access_manager, 'access_check'));	
 		add_action('admin_menu',array($this->admin, 'add_menus'));
-		add_action('admin_enqueue_scripts',array($this->admin,'enqueue_scripts'));
-		add_action('admin_init',array($this->admin,'register_ajax'));
-		
-		// add_action('new_to_auto-draft',array($whitelists, 'auto_assign_to_whitelist'));		
+		add_action('admin_enqueue_scripts',array($this->admin,'enqueue_assets'));
+		add_action('admin_init',array($this->admin,'register_ajax'));		
 	}
 	
 	

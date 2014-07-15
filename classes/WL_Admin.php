@@ -101,6 +101,8 @@ class WL_Admin {
 	
 	public function ajax_delete() {
 		$id = $_POST['id'];
+		$passed = check_ajax_referer( 'delete-wlist-'.$id, 'nonce', false);
+		if (!$passed) die('nonce failed');
 		$result = $this->data->delete_whitelist($id);
 		if ($result[0]) {
 			$reply = 'success';
@@ -113,7 +115,6 @@ class WL_Admin {
 	public function ajax_load() {
 		//FIRST STEP: build a "fresh" data array
 		$data = array();
-		
 		$data['pages'] = array();
 		$query = new WP_Query('post_type=page');
 		while ($query->have_posts()) {
@@ -176,18 +177,17 @@ class WL_Admin {
 			}  
 			$data['name'] = $list->get_name();
 			$data['id'] = $list->get_id();
-			$data['time'] = $list->get_time();			
+			$data['time'] = $list->get_time();
+			$data['nonce'] = wp_create_nonce("edit-wlist".$list->get_id());
 		} else {
-			$id = 0;
+			$data['id'] = '';
+			$data['nonce'] = wp_create_nonce("create-wlist");
 		}
-		
 		die(json_encode($data)); 		
 	}
 	
 	public function ajax_save() {
-		//WL_Dev::log($_POST);
-		
-		try {
+		try {		
 			if ($_POST['name']=='') {
 				throw new Exception("name-missing");
 			} else {
@@ -195,6 +195,8 @@ class WL_Admin {
 			};			
 			
 			if ($_POST['id']=='') {
+				$passed = check_ajax_referer( 'create-wlist', 'nonce', false);
+				if (!$passed) throw new Exception("nonce-failed");	
 				$list = $this->data->create_whitelist($name);
 				if (!$list) {
 					throw new Exception("unknown");				
@@ -204,6 +206,8 @@ class WL_Admin {
 					$list_status = "created";
 				}		
 			} else {
+				$passed = check_ajax_referer( 'edit-wlist'.$_POST['id'], 'nonce', false);
+				if (!$passed) throw new Exception("nonce-failed");	
 				$list = $this->data->get_whitelist_by('id',$_POST['id']);
 				if (!$list) {
 					throw new Exception("not-found");
@@ -283,6 +287,7 @@ class WL_Admin {
 				"users"=>$list->get_user_logins(),
 				"roles"=>$list->get_role_names(),
 			);
+			$result['deleteNonce'] = ($list_status=="created")?wp_create_nonce("delete-wlist-".$list->get_id()):null;
 			if (!$success) {
 				$result['success']=false;
 				$result['message']='addition-errors';

@@ -3,3 +3,5 @@ TO DO
 
 - JS: loaders
 - display accurate post totals on edit.php
+- USE NONCE ON DELETE WHITELIST
+- (use nonce on update whitelist?)

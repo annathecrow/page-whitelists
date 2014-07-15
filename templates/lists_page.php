@@ -26,10 +26,10 @@
 			foreach($lists as $ord=>$list) { ?>
 					<tr id="wlist-<?php echo $list->get_id(); ?>" class="whitelist-row <?php echo ($ord%2==0)?'alternate':''; ?>">
 			<th scope="row" class="id-column"><?php echo $list->get_id(); ?></th>
-			<td><a href="##" class="wlist-name"><?php echo $list->get_name(); ?></a>
+			<td><span class="wlist-name"><?php echo $list->get_name(); ?></span>
 				<div class="row-actions">
 					<span class="edit"><a href="#" id="edit-wlist-<?php echo $list->get_id(); ?>">Edit</a>|</span>
-					<span class="trash"><a href="#" id="delete-wlist-<?php echo $list->get_id(); ?>">Delete</a></span>
+					<span class="trash"><a href="<?php echo wp_create_nonce("delete-wlist-".$list->get_id()); ?>" id="delete-wlist-<?php echo $list->get_id(); ?>">Delete</a></span>
 				</div>
 			</td>
 			<td class="wlist-pages"><?php $list->the_pages(); ?></td>

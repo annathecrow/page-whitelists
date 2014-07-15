@@ -19,8 +19,12 @@ function throwNotice(success,message) {
 }
 
 function buildEditWindow(data,line,id) {
-	editWindow = $('<tr id="wlist-new" class="inline-edit-row quick-edit-row inline-editor" style=""><td colspan="5" class="colspanchange"><fieldset class="inline-edit-col-left"><div class="inline-edit-col"><h4></h4><label><span class="title">Title</span><span class="input-text-wrap"><input type="text" name="wlist_title" id="wlist-title" value=""></span></label><span class="title">Whitelisted pages</span><ul class="cat-checklist" id="pages-list"></ul></div></fieldset><fieldset class="inline-edit-col-right"><div class="inline-edit-col"><span class="title">Assigned to users</span><ul class="cat-checklist" id="users-list"></ul><span class="title">Assigned to roles</span><ul class="cat-checklist" id="roles-list"></ul></div></fieldset><input type="hidden" id="wlist-id" name="wlist-id" value=""><p class="submit inline-edit-save"><a accesskey="c" href="#inline-edit" class="button-secondary cancel alignleft" id="wlist-edit-cancel">Cancel</a><a accesskey="s" href="#inline-edit" id="wlist-edit-save" class="button-primary save alignright">Save</a><span class="error" style="display:none"></span><br class="clear"></p></td></tr>');
-		
+	titleHtml = '<fieldset class="inline-edit-col"><div class="inline-edit-col"><h4></h4><label><span class="title">Title</span><span class="input-text-wrap"><input type="text" name="wlist_title" id="wlist-title" value=""></span></label></div></fieldset>';
+	pagesHtml = '<fieldset class="inline-edit-col-left wl-col"><div class="inline-edit-col"><span class="title">Whitelisted pages</span><ul class="cat-checklist" id="pages-list"></ul></div></fieldset>';
+	usersHtml = '<fieldset class="inline-edit-col-center wl-col"><div class="inline-edit-col"><span class="title">Assigned to users</span><ul class="cat-checklist" id="users-list"></ul></div></fieldset>';
+	rolesHtml = '<fieldset class="inline-edit-col-right wl-col"><div class="inline-edit-col"><span class="title">Assigned to roles</span><ul class="cat-checklist" id="roles-list"></ul></div></fieldset>';
+	bottomHtml = '<input type="hidden" id="wlist-id" name="wlist-id" value=""><p class="submit inline-edit-save"><a accesskey="c" href="#inline-edit" class="button-secondary cancel alignleft" id="wlist-edit-cancel">Cancel</a><a accesskey="s" href="#inline-edit" id="wlist-edit-save" class="button-primary save alignright">Save</a><span class="error" style="display:none"></span><br class="clear"></p>';
+	editWindow = $('<tr id="wlist-form" class="inline-edit-row quick-edit-row inline-editor" style=""><td colspan="5" class="colspanchange">'+titleHtml+pagesHtml+rolesHtml+usersHtml+bottomHtml+'</td></tr>');
 	usersList = editWindow.find("#users-list");
 	$.each(data.users,function(key,user){
 		var item = $('<li id="user-'+user.id+'"><label class="selectit"><input value="'+user.id+'" type="checkbox" name="users[]" id="user-id-'+user.id+'"> '+user.login+'</label></li>');
@@ -108,14 +112,13 @@ function buildEditWindow(data,line,id) {
 					if (result.success) {
 						console.log(result);
 						if (line == undefined) {
-							line = $('<tr id="wlist-'+result.id+'" class="whitelist-row"><th scope="row" class="id-column">'+result.id+'</th><td><a href="#" class="wlist-name"></a><div class="row-actions"><span class="edit"><a href="#" id="edit-wlist-'+result.id+'">Edit</a>|</span><span class="trash"><a href="#" id="delete-wlist-'+result.id+'">Delete</a></span></div></td><td class="wlist-roles"></td><td class="wlist-users"></td><td class="wlist-pages"></td></tr>');
+							line = $('<tr id="wlist-'+result.id+'" class="whitelist-row"><th scope="row" class="id-column">'+result.id+'</th><td><a href="#" class="wlist-name"></a><div class="row-actions"><span class="edit"><a href="#" id="edit-wlist-'+result.id+'">Edit</a>|</span><span class="trash"><a href="#" id="delete-wlist-'+result.id+'">Delete</a></span></div></td><td class="wlist-pages"></td><td class="wlist-roles"></td><td class="wlist-users"></td></tr>');
 							line.appendTo("#wl-lists tbody");
-						} else {
-							line.find(".wlist-name").text(result.name);
-							line.find(".wlist-users").text(result.users.join(", "));
-							line.find(".wlist-roles").text(result.roles.join(", "));
-							line.find(".wlist-pages").text(result.pages.join(", "));
-						}
+						} 
+						line.find(".wlist-name").text(result.name);
+						line.find(".wlist-users").text(result.users.join(", "));
+						line.find(".wlist-roles").text(result.roles.join(", "));
+						line.find(".wlist-pages").text(result.pages.join(", "));	
 						editWindow.replaceWith(line);
 						throwNotice(true,"Whitelist successfully " + result.message+".");
 						editing = false;	
@@ -178,6 +181,7 @@ $("#create-wlist").click(function(){
 		}
 	} else {
 		editing = true;
+		$(this).append('<img class="spin" src="" />')
 	}
 	
 	$.ajax({ 

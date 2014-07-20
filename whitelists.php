@@ -1,11 +1,10 @@
 <?php
 /*
 Plugin Name: Whitelists
-Version: 0.2-alpha
-Description: limit user access to pages 
-Author: YOUR NAME HERE
-Author URI: YOUR SITE HERE
-Plugin URI: PLUGIN SITE HERE
+Version: 0.3-alpha
+Description: This plugin allows administrators to limit access only to selected pages - either for single users, or for entire roles (also works with roles created by other plugins).  
+Author: Anna Frankova
+Author URI: http://corvidism.com
 Text Domain: whitelists
 Domain Path: /languages
 */

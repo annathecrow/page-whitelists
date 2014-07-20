@@ -22,7 +22,5 @@ class WL_Dev {
 	    if (WP_DEBUG === true && (!isset($GLOBALS['silent'])||$GLOBALS['silent']===false)) {
 	    	error_log($exception->getMessage()." -- on line ".$exception->getLine());
 	    }
-	}
-	
-	
+	}	
 }

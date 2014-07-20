@@ -2,10 +2,8 @@
 	<?php foreach($all_wlists as $list) {
 		//WL_Dev::log($assigned_wlists);
 		if (!in_array($post->ID, $list->get_page_ids())) {
-			WL_Dev::log("not in whitelist");
 			$check = "";
 		} else {
-			WL_Dev::log("in whitelist");
 			$check = 'checked="checked"';
 		}
 		?>

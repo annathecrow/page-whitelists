@@ -141,6 +141,7 @@ class WL_Admin {
 	/***************** AJAX **********************/
 	
 	public function ajax_delete() {
+		if (!current_user_can("manage_options")) die('user not allowed to edit settings');
 		$id = $_POST['id'];
 		$passed = check_ajax_referer( 'delete-wlist-'.$id, 'nonce', false);
 		if (!$passed) die('nonce failed');
@@ -228,7 +229,10 @@ class WL_Admin {
 	}
 	
 	public function ajax_save() {
-		try {		
+		try {
+			if (!current_user_can("manage_options")) {
+				throw new Exception("insufficient capabilities");
+			}	
 			if ($_POST['name']=='') {
 				throw new Exception("name-missing");
 			} else {

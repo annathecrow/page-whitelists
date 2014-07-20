@@ -1,5 +1,18 @@
 $ = jQuery;
 editing = false;
+spinner = $("#spinner");
+spinner.tackRight = function(element) {
+	this.appendTo(element);
+	this.show();
+};
+spinner.tackLeft = function(element) {
+	this.prependTo(element);
+	this.show();
+};
+spinner.tearOff = function() {
+	this.hide();
+	this.detach();
+};
 
 function throwNotice(success,message) {
 	$(document).scrollTop(0);
@@ -53,11 +66,13 @@ function buildEditWindow(data,line,id) {
 	});
 	var titleInput = editWindow.find("#wlist-title");
 	var idInput = editWindow.find("#wlist-id");
+	var editWindowTitle = editWindow.find("h4"); 
 	if (line===undefined) {
-		editWindow.find("h4").text("Create New...");
+		editWindowTitle.text("Create New...");
 		editWindow.appendTo("#wl-lists tbody");
 		$("#wlist-edit-cancel").click(function(){
 			console.log("cancelling new");
+			spinner.tackRight(editWindowTitle);
 			editWindow.remove();
 			editing=false;
 		});
@@ -74,13 +89,17 @@ function buildEditWindow(data,line,id) {
 		$("#wlist-edit-cancel").click(function(){
 			//maybe scroll up again?
 			console.log("cancelling editing");
+			spinner.tackRight(editWindowTitle);
 			editWindow.replaceWith(line);
 			editing=false;
 		});
 	}
 	
 	$("#wlist-edit-save").click(function(){
+		spinner.tackRight(editWindowTitle);
 		if (titleInput.attr("value")=='') {
+			throwNotice(false,"cannot save a whitelist without a name.");
+			//spinner.tearOff();
 			//inform user somehow
 			return false;
 		}
@@ -132,6 +151,7 @@ function buildEditWindow(data,line,id) {
 						var message = "Error";
 						throwNotice(false,result.message);
 					}
+					spinner.tearOff();
 				}
 		   
 		});
@@ -155,9 +175,8 @@ function createWlist(e) {
 		}
 	} else {
 		editing = true;
-		$(e.currentTarget).append('<img class="spin" src="" />')
 	}
-	
+	spinner.tackRight($(e.currentTarget));
 	$.ajax({ 
 	    type: 'POST', 
 	    url: ajaxurl, 
@@ -166,6 +185,7 @@ function createWlist(e) {
 			}, 
 	    dataType: 'json',
 	    success: function(response) { 
+	    	spinner.tearOff();
 	        console.log(response);
 	        buildEditWindow(response);			
 	    }   
@@ -188,11 +208,14 @@ function editWlist(e) {
 			editing=true;
 		}
 	} else {
-		editing = true;
-	}
+		editing = true;		
+		
+	}	
 	var caller = $(e.currentTarget);
-	id = caller.attr("id").replace("edit-wlist-","");
 	line = caller.closest("tr");
+	spinner.tackRight(line.find(".wlist-name"));
+	id = caller.attr("id").replace("edit-wlist-","");
+	
 	
 	$.ajax({ 
 	    type: 'POST', 
@@ -204,6 +227,7 @@ function editWlist(e) {
 	    dataType: 'json',
 	    success: function(response) { 
 	        console.log(response);
+	        spinner.tearOff();
 	        buildEditWindow(response, line, id);
 			//do nothing right now
 	    }   
@@ -223,7 +247,7 @@ function deleteWlist(e) {
 	answer = confirm("Are you sure you want to delete whitelist '"+name+"'?");
 	
 	if (!answer) {return false;}
-	
+	spinner.tackRight(line.find(".wlist-name"));
 	var data = {
 		'action': 'wl_delete',
 		'nonce' : caller.attr("href"),

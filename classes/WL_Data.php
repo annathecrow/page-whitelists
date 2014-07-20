@@ -9,14 +9,11 @@ class WL_Data {
 	private $list_page_table;
 	
 	public function __construct() {
-		//WL_Dev::log("data class instantiated");
 		global $wpdb;
 		$prefix = $wpdb->prefix;
 		$wl_table_prefix = $prefix."wl_";
 		$this->list_table = $wl_table_prefix."list";
-		$this->list_page_table = $wl_table_prefix."list_page";
-		//shouldn't this shite be in WP Options?
-				 
+		$this->list_page_table = $wl_table_prefix."list_page";		 
 	}
 	
 	public function initialize() {
@@ -33,7 +30,7 @@ class WL_Data {
 			UNIQUE KEY id (id)
 			);";
 				
-		//junction table for group-user relationships
+		//junction table for list-page relationships
 		$sqls[$this->list_page_table] = "CREATE TABLE $this->list_page_table (
 			list_id INT NOT NULL,
 			page_id bigint(20) unsigned NOT NULL,
@@ -159,21 +156,6 @@ class WL_Data {
 		
 	}
 	
-	
-	
-	public function create_role($name, $caps) {
-		//create new role
-		//
-		$id = 0; 
-		return $id;
-	}
-	
-	
-	public function delete_role($id) {
-		
-	}
-	//not sure if these are supposed to be here. They're... kinda not what this class is for, right? Ugh.
-	
 	public function get_whitelist_by($tag,$value) {
 		global $wpdb;
 		try {
@@ -223,6 +205,7 @@ class WL_Data {
 			} else if (get_class($user) !== 'WP_User') {
 				throw new Exception('$user is neither id nor an instance of WP_User.',0);
 			}
+			//WL_Dev::log("getting user whitelists for user $user->user_login");
 			$all_whitelists = $this->get_all_whitelists();
 			$whitelist_ids = array();
 			foreach ($user->allcaps as $cap => $v) {
@@ -253,7 +236,6 @@ class WL_Data {
 			$empty_list_failsafe = false;
 			$pages = array_merge($pages, $list->get_page_ids());
 		}
-		
 		if ($empty_list_failsafe) {
 			return false;
 		} else {
@@ -261,5 +243,22 @@ class WL_Data {
 		}
 		
 	}
+	
+	function remove_page_from_all($page_id) {
+		//WL_Dev::log("removing all links to page from database");
+		try {
+			global $wpdb;
+			if (!get_post_type($page_id)=='page') return;
+			$success = $wpdb->delete($this->list_page_table,array('page_id'=>$page_id));
+			if (!$success) {
+				throw new Exception("No corresponding entries in the database.");
+			}
+			WL_Dev::log("page removed from $success lists.");
+		} catch (Exception $e) {
+			WL_Dev::log($e->getMessage());
+		}	
+		//remove all references to this page from database
+	}
+	
 }
 	 

@@ -31,7 +31,7 @@ class WL_Admin {
 					'manage_options', 
 					'$wl_roles', 
 					array($this,'render_roles_page')
-					);*/
+					);
 		
 		add_submenu_page( 
 			'wl_lists', 
@@ -40,7 +40,7 @@ class WL_Admin {
 			'manage_options', 
 			'$wl_settings', 
 			array($this,'render_settings_page')
-			);
+			); */
 		
 	}
 	

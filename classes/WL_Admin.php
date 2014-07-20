@@ -72,6 +72,7 @@ class WL_Admin {
 	}
 	
 	public function add_metabox() {
+		if (!current_user_can('manage_options')) return;
 		add_meta_box(
 			'wlist-metabox',
 			'Associated Whitelists',
@@ -82,13 +83,40 @@ class WL_Admin {
 	}
 	
 	public function render_metabox($post) {
-		wp_nonce_field('wlist_onpage_edit');
+		wp_nonce_field(-1,'wlist_onpage_edit');
 		$all_wlists = $this->data->get_all_whitelists();
 		require_once $this->settings->get_template_path()."metabox.php";		
 	}
 	
-	public function save_metabox($post_id) {
-		//do thing to save data from metabox
+	public function save_metabox($page_id) {
+		WL_Dev::log("saving post $page_id");
+		if (!isset( $_POST['wlist_onpage_edit'])) {
+			WL_Dev::log("nonce not set");
+			return;
+		} //nonce not set
+		if (!wp_verify_nonce( $_POST['wlist_onpage_edit'])) {
+			WL_Dev::log("nonce not validated");
+			return;
+		}//nonce not validated
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			WL_Dev::log("just an autosave");	
+			return;
+		} //just an autosave
+		if (!current_user_can('edit_post',$page_id)) {
+			WL_Dev::log("user can't edit this post.");
+			return;
+		} //user can't edit post
+		
+		$wlists = (isset($_POST['wlists']))?$_POST['wlists']:array();
+		
+		$all_whitelists = $this->data->get_all_whitelists();
+		foreach ($all_whitelists as $list) {
+			if (!in_array($list->get_id(), $wlists)) {
+				$list->remove_page($page_id);
+			} else {
+				$list->add_page($page_id);
+			}
+		}
 	}
 	
 	/***************** SCRIPTS AND STYLES **********************/

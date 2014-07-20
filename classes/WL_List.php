@@ -230,7 +230,7 @@ class WL_List {
 					)				
 				);
 				if (!$success) {
-					throw new Exception("Coulnd't write into database.",0);
+					throw new Exception("Couldn't write into database.",0);
 				} else {
 					if (!isset($this->page_ids)) {
 						$this->get_page_ids();
@@ -268,7 +268,7 @@ class WL_List {
 					)				
 				);
 				if (!$success) {
-					throw new Exception("Coulnd't delete from database.",0);
+					throw new Exception("Not in database.",1);
 				} else {
 					if (!isset($this->page_ids)) {
 						$this->get_page_ids();
@@ -280,8 +280,13 @@ class WL_List {
 				}
 			}
 		} catch (Exception $e) {
-			WL_Dev::error($e);
-			return false;
+			if ($e->getCode()==1) {
+				WL_Dev::log($e->getMessage());
+				return true;
+			} else {
+				WL_Dev::error($e);
+				return false;
+			}
 		}	
 	}
 	

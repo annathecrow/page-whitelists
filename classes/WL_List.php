@@ -4,6 +4,7 @@ class WL_List {
 	private $id;
 	private $name;
 	private $time;
+	private $strict;
 	private $cap;
 	private $data;
 	private $users;
@@ -20,6 +21,7 @@ class WL_List {
 		$this->id = $list_info['id'];
 		$this->name = $list_info['name'];
 		$this->time = $list_info['time'];
+		$this->strict = ($list_info['strict']||$list_info['strict']==1)?true:false;
 		$this->cap = 'edit_whitelist_'.$this->id;		
 	}
 	
@@ -37,6 +39,11 @@ class WL_List {
 	
 	public function get_cap() {
 		return $this->cap;
+	}
+	
+	public function is_strict() {
+		WL_Dev::log($this->strict);
+		return ($this->strict);
 	}
 	
 	public function get_users() {
@@ -156,6 +163,7 @@ class WL_List {
 				$this->get_users();
 			}
 			$user->remove_cap($this->cap);
+			//if the user isn't in any other strict wl, give them back 'create_pages'
 			unset($this->users[in_array($user, $this->users)]);
 			return true;
 		} catch (Exception $e) {
@@ -194,7 +202,7 @@ class WL_List {
 				if ($role == null) throw new Exception('Role not found.',0);
 			} else if (get_class($role) === 'WP_Role') {
 			} else {
-				throw new Exception('$role is neither string nor an instance of WP_User.',0);
+				throw new Exception('$role is neither string nor an instance of WP_Role.',0);
 			}
 			
 			if (!isset($this->roles)) {
@@ -309,11 +317,39 @@ class WL_List {
 					return true;					
 				}
 			} else {
-				throw new Exception("list with such a name already exists",0);
+				throw new Exception("list with such a name already exists",1);
 			}
 		} catch(Exception $e) {
-			WL_Dev::log($e->getMessage());
-			return false;
+			if ($e->getCode()==1) {
+				WL_Dev::log($e->getMessage());
+				return true;
+			} else {
+				WL_Dev::error($e);
+				return false;
+			}
 		}
+	}
+	
+	function set_strict($strict = true) {
+		try {
+			$strict_num = ($strict)?1:0;
+			global $wpdb;
+				$success = $wpdb->update(
+					$this->data->get_list_table(), 
+					array(
+						'strict' => $strict_num
+					), 
+					array ('id'=>$this->id)
+				);
+				if (!$success) {
+					throw new Exception("Database coulnd't be updated.",0);
+				} else {
+					$this->strict = $strict;
+					return true;					
+				}			
+		} catch (Exception $e) {
+			WL_Dev::error($e);
+			return false;
+		} 
 	}
 }

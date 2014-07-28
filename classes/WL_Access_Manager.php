@@ -71,18 +71,37 @@ class WL_Access_Manager {
 		};
 	}
 	
-	function auto_add_page($post) {
+	function new_page_check($post) {
 		if (get_post_type($post) != 'page') return;
 		$lists = $this->data->get_user_whitelists($post->post_author);
-		$page_id = $post->ID;
-		foreach ($lists as $list) {
-			$list->add_page($page_id);
-		}	
+		if (sizeof($lists)==0) return;
+		if ($this->can_create_pages($user)) {
+			WL_Dev::log("user can create pages");
+			
+			$page_id = $post->ID;
+			foreach ($lists as $list) {
+				$list->add_page($page_id);
+			}
+		} else {
+			wp_die(__('You are not allowed to create new pages.'));
+		}		
 	}
 	
 	function access_check() {
 		if (is_admin()) add_action( 'pre_get_posts', array($this, 'run_page_filters') );
 		//find the right hook that won't million times over but still will work
 		add_action( 'wp_before_admin_bar_render', array($this, 'filter_admin_bar') );
+	}
+	
+	function remove_menus() {
+		//how do I check for rights? Do I use a capability? Do I roll through the lists every time?
+		$remove_menu_items = array(__('Links'));
+		global $menu;
+		end ($menu);
+		while (prev($menu)){
+			$item = explode(' ',$menu[key($menu)][0]);
+			if(in_array($item[0] != NULL?$item[0]:"" , $remove_menu_items)){
+			unset($menu[key($menu)]);}
+		}
 	}
 }

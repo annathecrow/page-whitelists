@@ -26,6 +26,7 @@ class WL_Data {
 		$sqls[$this->list_table] = "CREATE TABLE $this->list_table (
 			id INT NOT NULL AUTO_INCREMENT,
 			name tinytext NOT NULL,
+			strict tinyint(1)  NOT NULL,
 			time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 			UNIQUE KEY id (id)
 			);";
@@ -60,7 +61,7 @@ class WL_Data {
 	 * create whitelist
 	 * @param $name
 	 */
-	public function create_whitelist($name) {
+	public function create_whitelist($name,$strict = 1) {
 		global $wpdb;
 		$id = 0;
 		$time = date('Y-m-d H:i:s');
@@ -72,7 +73,8 @@ class WL_Data {
 					$this->list_table,
 					array(
 						'name' => $name,
-						'time' => $time
+						'time' => $time,
+						'strict' => $strict
 						)
 					);
 					if (!$success) {
@@ -84,6 +86,7 @@ class WL_Data {
 							'id' => $id,
 							'name' => $name,
 							'time' => $time,
+							'strict' => $strict
 						);
 						return new WL_List($this, $list_info);
 					}
@@ -174,7 +177,8 @@ class WL_Data {
 				$list_info = array(
 					'id' => $row->id,
 					'name' => $row->name,
-					'time' => $row->time
+					'time' => $row->time,
+					'strict' => $row->strict,
 				);
 				$list = new WL_List($this, $list_info);
 				return $list;
@@ -209,6 +213,36 @@ class WL_Data {
 			$all_whitelists = $this->get_all_whitelists();
 			$whitelist_ids = array();
 			foreach ($user->allcaps as $cap => $v) {
+				if (strpos($cap,"edit_whitelist_")!== false) {
+					$whitelist_ids[] = str_replace("edit_whitelist_", "", $cap);
+				}
+			}
+			$whitelists = array();
+			foreach ($all_whitelists as $list) {
+				if (in_array($list->get_id(),$whitelist_ids)) {
+					$whitelists[] = $list;
+				};
+			}
+			return $whitelists;	
+		} catch (Exception $e) {
+			WL_Dev::error($e);
+			return false;
+		}	
+	}
+	
+	public function get_role_whitelists($role) {
+		try {			
+			if (is_string($role)) {
+				$role = get_role($role);
+				if ($role == null) throw new Exception('Role not found.',0);
+			} else if (get_class($role) === 'WP_Role') {
+			} else {
+				throw new Exception('$role is neither string nor an instance of WP_Role.',0);
+			}
+			//WL_Dev::log("getting user whitelists for user $user->user_login");
+			$all_whitelists = $this->get_all_whitelists();
+			$whitelist_ids = array();
+			foreach ($user->capabilities as $cap => $v) {
 				if (strpos($cap,"edit_whitelist_")!== false) {
 					$whitelist_ids[] = str_replace("edit_whitelist_", "", $cap);
 				}

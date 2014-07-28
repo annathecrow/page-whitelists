@@ -27,12 +27,12 @@ function whitelists_activate() {
 	$wl_data = new WL_Data();
 	$wl_settings = new WL_Settings(__FILE__);
 	$whitelists = new Whitelists($wl_data,$wl_settings);
-	$whitelists->install();
+	$whitelists->activate();
 }
 
 function whitelists_deactivate() {
 	$wl_data = new WL_Data();
 	$wl_settings = new WL_Settings(__FILE__);
 	$whitelists = new Whitelists($wl_data,$wl_settings);
-	$whitelists->uninstall();
+	$whitelists->deactivate();
 }

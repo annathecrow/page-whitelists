@@ -11,28 +11,21 @@ Domain Path: /languages
 	
 //installation and uninstallation hooks
 register_activation_hook(__FILE__, 'whitelists_activate');
-register_deactivation_hook(__FILE__, 'whitelists_deactivate');
 
 foreach ( glob( plugin_dir_path( __FILE__ )."classes/*.php" ) as $file )
     include_once $file;
 
 $wl_data = new WL_Data();
-$wl_settings = new WL_Settings(__FILE__);
-$whitelists = new Whitelists($wl_data,$wl_settings);
+$whitelists = new Whitelists($wl_data,__FILE__);
 $whitelists->run();
 
-
-
 function whitelists_activate() {
+	global $wpdb;
+	$prefix = $wpdb->prefix;
+	$wl_table_prefix = $prefix."wl_";			
+	update_option('wlist_list_table',$wl_table_prefix."list");
+	update_option('wlist_list_page_table',$wl_table_prefix."list_page");
+	update_option('wlist_plugin_title','Whitelists');
 	$wl_data = new WL_Data();
-	$wl_settings = new WL_Settings(__FILE__);
-	$whitelists = new Whitelists($wl_data,$wl_settings);
-	$whitelists->activate();
-}
-
-function whitelists_deactivate() {
-	$wl_data = new WL_Data();
-	$wl_settings = new WL_Settings(__FILE__);
-	$whitelists = new Whitelists($wl_data,$wl_settings);
-	$whitelists->deactivate();
+	$wl_data->initialize();
 }

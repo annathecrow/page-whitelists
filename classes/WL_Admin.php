@@ -4,73 +4,31 @@
  * creates settings page
  */
 class WL_Admin {
-	private $settings;
 	private $data;
 	
-	function __construct($data,$settings) {
-		$this->settings = $settings;
+	function __construct($data,$file) {
+		$this->template_path = plugin_dir_path($file)."templates/";
+		$this->template_url = plugin_dir_url($file)."templates/";
 		$this->data = $data;
 	}
 	
 	
 	public function add_menus() {
-		
+		$plugin_title = get_option("wlist_plugin_title");
 		
 		
 		add_menu_page( 
-			$this->settings->get_plugin_title(), //label of the sidebar link
-			$this->settings->get_plugin_title(), //title of the main options page
+			$plugin_title, //label of the sidebar link
+			$plugin_title, //title of the main options page
 			'manage_options',
 			'wl_lists', //the slug of the options page
 			array($this,'render_lists_page')  
-		);
-		
-		/*
-		add_submenu_page( 
-					'wl_lists', 
-					'Roles',
-					'Roles',
-					'manage_options', 
-					'$wl_roles', 
-					array($this,'render_roles_page')
-					);
-		
-		add_submenu_page( 
-			'wl_lists', 
-			'Settings',
-			'Settings',
-			'manage_options', 
-			'$wl_settings', 
-			array($this,'render_settings_page')
-			); */
-		
-	}
-	
- 	public function render_settings_page() {
-		require_once $this->settings->get_template_path()."settings_page.php";
-		//whitelists as strict?
-		//how to combine wlists
-		//...???
-	}
-	
-	public function render_roles_page() {
-		require_once $this->settings->get_template_path()."roles_page.php";
-		//load existing roles into a table
-		//Create New...
-			//a table of permissions, possibly with explanations?
-			//assign whitelist
-		//Edit
-			//table of permissions
-			//assigned whitelists - add, remove
-		//Delete
-		
-		//should have similar look and feel as the rest of WP
-		
+		);	
 	}
 	
 	public function render_lists_page() {
 		$lists = $this->data->get_all_whitelists();
-		require_once $this->settings->get_template_path()."lists_page.php";
+		require_once $this->template_path."lists_page.php";
 	}
 	
 	public function add_metabox() {
@@ -87,7 +45,7 @@ class WL_Admin {
 	public function render_metabox($post) {
 		wp_nonce_field(-1,'wlist_onpage_edit');
 		$all_wlists = $this->data->get_all_whitelists();
-		require_once $this->settings->get_template_path()."metabox.php";		
+		require_once $this->template_path."metabox.php";		
 	}
 	
 	public function save_metabox($page_id) {
@@ -128,8 +86,8 @@ class WL_Admin {
 		if($screen->id != 'toplevel_page_wl_lists') {
 			return;
 		}
-		$script_path = $this->settings->get_template_url(). 'js/wl_lists.js';
-		$style_path = $this->settings->get_template_url(). 'css/wl_lists.css';
+		$script_path = $this->template_url. 'js/wl_lists.js';
+		$style_path = $this->template_url. 'css/wl_lists.css';
 		wp_enqueue_style('style-name', $style_path);
 		wp_enqueue_script('wl_lists_js', $script_path, array('jquery'),'1.0.0',true);
 	}

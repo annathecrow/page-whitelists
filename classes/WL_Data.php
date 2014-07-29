@@ -9,11 +9,8 @@ class WL_Data {
 	private $list_page_table;
 	
 	public function __construct() {
-		global $wpdb;
-		$prefix = $wpdb->prefix;
-		$wl_table_prefix = $prefix."wl_";
-		$this->list_table = $wl_table_prefix."list";
-		$this->list_page_table = $wl_table_prefix."list_page";		 
+		$this->list_table = get_option("wlist_list_table");
+		$this->list_page_table = get_option("wlist_list_page_table");		 
 	}
 	
 	public function initialize() {

@@ -56,10 +56,6 @@ class WL_Access_Manager {
 		$query->set('post__in',$pages);
 	}
 	
-	function filter_creation() {
-		if (!can_create_new) wp_die(__('You are not allowed to create new pages.'));
-	}
-	
 	function filter_editable() {
 		global $post;
 		$page_id = $post->ID;
@@ -72,7 +68,6 @@ class WL_Access_Manager {
 	function run_page_filters($query) {
 		//WL_Dev::log("running page filters");
 		if ($this->on_edit_page_form()) {
-			$this->filter_creation();
 			$this->filter_editable();
 		};
 		if ($this->on_page_listing()) {
@@ -81,15 +76,18 @@ class WL_Access_Manager {
 	}
 	
 	function filter_admin_bar() {
-		//edit link 
 		global $wp_admin_bar;
+		if (!$this->can_create_new()) {
+			$wp_admin_bar->remove_node('new-page');			
+		};
 		global $post;
 		if (is_admin() || get_post_type($post)!='page') return;
 		$page_id = $post->ID;
-		//WL_Dev::log("running filter_admin_bar on page $page_id");
 		if (!$this->has_access($page_id)) {
-			$wp_admin_bar->remove_menu('edit');
+			$wp_admin_bar->remove_menu('edit');			
 		};
+		
+		
 	}
 	
 	function new_page_check($post) {
@@ -105,8 +103,8 @@ class WL_Access_Manager {
 		}		
 	}
 	function css_cleanup() {
-		WL_Dev::log("adding css style");
-		echo '<style>.edit-php.post-type-page .add-new-h2 {display:none;}</style>';
+		//WL_Dev::log("adding css style");
+		echo '<style>.edit-php.post-type-page .add-new-h2,.post-php.post-type-page .add-new-h2 {display:none;}</style>';
 	}
 
 	function filter_menus() {
@@ -118,11 +116,9 @@ class WL_Access_Manager {
 	function access_check() {
 		if (current_user_can("manage_options")) return;
 		if (is_admin()) add_action( 'pre_get_posts', array($this, 'run_page_filters') );
-		//find the right hook that won't million times over but still will work
 		add_action( 'wp_before_admin_bar_render', array($this, 'filter_admin_bar') );
 		add_action('admin_menu',array($this, 'filter_menus'));
 		add_action('new_to_auto-draft', array($this,'new_page_check'), 10, 3);
-		//remove menus goes here
 	}
 	
 	

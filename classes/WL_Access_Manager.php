@@ -33,6 +33,21 @@ class WL_Access_Manager {
 		}
 	}
 	
+	function can_create_new($user = null) {
+		if ($user == null) {
+			$user = wp_get_current_user();
+		}
+		$lists = $this->data->get_user_whitelists($user);
+		if (sizeof($lists)==0) return true;
+		foreach ($lists as $list) {
+			if ($list->is_strict()) {
+				return false;
+			}
+		}
+		return true;
+		//if user doesn't belong to a strict whitelist, return true
+	}
+	
 	function filter_displayed($query) {		
 		//WL_Dev::log("running filter_displayed");
 		$user = wp_get_current_user();
@@ -41,18 +56,23 @@ class WL_Access_Manager {
 		$query->set('post__in',$pages);
 	}
 	
+	function filter_creation() {
+		if (!can_create_new) wp_die(__('You are not allowed to create new pages.'));
+	}
+	
 	function filter_editable() {
 		global $post;
 		$page_id = $post->ID;
 		//WL_Dev::log("running filter_editable on page $page_id");
 		if (!$this->has_access($page_id)) {
-			wp_die( __('You are not allowed to access this part of the site') );
+			wp_die( __('You are not allowed to edit this page.') );
 		}
 	}
 	
 	function run_page_filters($query) {
 		//WL_Dev::log("running page filters");
 		if ($this->on_edit_page_form()) {
+			$this->filter_creation();
 			$this->filter_editable();
 		};
 		if ($this->on_page_listing()) {
@@ -61,6 +81,7 @@ class WL_Access_Manager {
 	}
 	
 	function filter_admin_bar() {
+		//edit link 
 		global $wp_admin_bar;
 		global $post;
 		if (is_admin() || get_post_type($post)!='page') return;
@@ -73,11 +94,8 @@ class WL_Access_Manager {
 	
 	function new_page_check($post) {
 		if (get_post_type($post) != 'page') return;
-		$lists = $this->data->get_user_whitelists($post->post_author);
-		if (sizeof($lists)==0) return;
-		if ($this->can_create_pages($user)) {
+		if ($this->can_create_new()) {
 			WL_Dev::log("user can create pages");
-			
 			$page_id = $post->ID;
 			foreach ($lists as $list) {
 				$list->add_page($page_id);
@@ -86,22 +104,26 @@ class WL_Access_Manager {
 			wp_die(__('You are not allowed to create new pages.'));
 		}		
 	}
+	function css_cleanup() {
+		WL_Dev::log("adding css style");
+		echo '<style>.edit-php.post-type-page .add-new-h2 {display:none;}</style>';
+	}
+
+	function filter_menus() {
+		if ($this->can_create_new()) return;
+		add_action('admin_head',array($this, 'css_cleanup'));
+		$page = remove_submenu_page( 'edit.php?post_type=page', 'post-new.php?post_type=page' );
+	}
 	
 	function access_check() {
+		if (current_user_can("manage_options")) return;
 		if (is_admin()) add_action( 'pre_get_posts', array($this, 'run_page_filters') );
 		//find the right hook that won't million times over but still will work
 		add_action( 'wp_before_admin_bar_render', array($this, 'filter_admin_bar') );
+		add_action('admin_menu',array($this, 'filter_menus'));
+		add_action('new_to_auto-draft', array($this,'new_page_check'), 10, 3);
+		//remove menus goes here
 	}
 	
-	function remove_menus() {
-		//how do I check for rights? Do I use a capability? Do I roll through the lists every time?
-		$remove_menu_items = array(__('Links'));
-		global $menu;
-		end ($menu);
-		while (prev($menu)){
-			$item = explode(' ',$menu[key($menu)][0]);
-			if(in_array($item[0] != NULL?$item[0]:"" , $remove_menu_items)){
-			unset($menu[key($menu)]);}
-		}
-	}
+	
 }

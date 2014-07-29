@@ -192,6 +192,7 @@ class WL_Data {
 		global $wpdb;
 		$query = "SELECT * FROM $this->list_table ORDER BY id";
 		$raw_lists = $wpdb->get_results($query,ARRAY_A);
+		$array_of_lists = array(); 
 		foreach ($raw_lists as $list) {
 			$array_of_lists[] = new WL_List($this,$list);
 		}

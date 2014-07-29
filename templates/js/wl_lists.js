@@ -32,18 +32,17 @@ function throwNotice(success,message) {
 }
 
 function buildEditWindow(data,line,id) {
+	//console.log(data);
 	titleHtml = '<fieldset class="inline-edit-col" id="title-block"><h4></h4><div class="inline-edit-col"><label class="left"><span class="title">Title</span><span class="input-text-wrap"><input type="text" name="wlist_title" id="wlist-title" value=""></span></label><label class="right"><span>Allow creation of new pages</span><span><input type="checkbox" name="wlist_strict" id="wlist-strict" value=""></span></label></div></fieldset>';
 	pagesHtml = '<fieldset class="inline-edit-col-left wl-col"><div class="inline-edit-col"><span class="title">Whitelisted pages</span><ul class="cat-checklist" id="pages-list"></ul></div></fieldset>';
 	usersHtml = '<fieldset class="inline-edit-col-center wl-col"><div class="inline-edit-col"><span class="title">Assigned to users</span><ul class="cat-checklist" id="users-list"></ul></div></fieldset>';
 	rolesHtml = '<fieldset class="inline-edit-col-right wl-col"><div class="inline-edit-col"><span class="title">Assigned to roles</span><ul class="cat-checklist" id="roles-list"></ul></div></fieldset>';
 	bottomHtml = '<p class="submit inline-edit-save"><a accesskey="c" href="#" class="button-secondary cancel alignleft" id="wlist-edit-cancel">Cancel</a><a accesskey="s" href="#" id="wlist-edit-save" class="button-primary save alignright">Save</a><span class="error" style="display:none"></span><br class="clear"></p>';
 	editWindow = $('<tr id="wlist-form" class="inline-edit-row quick-edit-row inline-editor" style=""><td colspan="6" class="colspanchange">'+titleHtml+pagesHtml+rolesHtml+usersHtml+bottomHtml+'</td></tr>');
-	if (!data.strict) {
-		console.log(data.strict);
+	if (data.strict) {
+		editWindow.find("#wlist-strict").prop('checked',false);
+	} else if (!data.strict) {
 		editWindow.find("#wlist-strict").prop('checked',true);
-		console.log('not strict');
-	} else {
-		console.log('strict');
 	}
 	usersList = editWindow.find("#users-list");
 	$.each(data.users,function(key,user){
@@ -78,7 +77,6 @@ function buildEditWindow(data,line,id) {
 		editWindowTitle.text("Create New...");
 		editWindow.appendTo("#wl-lists tbody");
 		$("#wlist-edit-cancel").click(function(){
-			console.log("cancelling new");
 			spinner.tackRight(editWindowTitle);
 			editWindow.remove();
 			editing=false;
@@ -95,7 +93,6 @@ function buildEditWindow(data,line,id) {
 		
 		$("#wlist-edit-cancel").click(function(){
 			//maybe scroll up again?
-			console.log("cancelling editing");
 			spinner.tackRight(editWindowTitle);
 			editWindow.replaceWith(line);
 			editing=false;
@@ -143,9 +140,8 @@ function buildEditWindow(data,line,id) {
 				success: function(response) {
 					result = $.parseJSON(response);
 					if (result.success) {
-						console.log(result);
 						if (line == undefined) {
-							line = $('<tr id="wlist-'+result.id+'" class="whitelist-row"><th scope="row" class="id-column">'+result.id+'</th><td><span class="wlist-name"></span><div class="row-actions"><span class="edit"><a href="#" id="edit-wlist-'+result.id+'">Edit</a>|</span><span class="trash"><a href="#" id="delete-wlist-'+result.id+'">Delete</a></span></div></td><td class="wlist-pages"></td><td class="wlist-roles"></td><td class="wlist-users"></td></tr>');
+							line = $('<tr id="wlist-'+result.id+'" class="whitelist-row"><th scope="row" class="id-column">'+result.id+'</th><td><span class="wlist-name"></span><div class="row-actions"><span class="edit"><a href="#" id="edit-wlist-'+result.id+'">Edit</a>|</span><span class="trash"><a href="#" id="delete-wlist-'+result.id+'">Delete</a></span></div></td><td class="wlist-pages"></td><td class="wlist-roles"></td><td class="wlist-users"></td><td class="wlist-strict"></td></tr>');
 							line.find("span.edit a").click(editWlist);
 							line.find("span.trash a").click(deleteWlist).attr("href",result.deleteNonce);
 							line.appendTo("#wl-lists tbody");
@@ -199,7 +195,6 @@ function createWlist(e) {
 	    dataType: 'json',
 	    success: function(response) { 
 	    	spinner.tearOff();
-	        console.log(response);
 	        buildEditWindow(response);			
 	    }   
 	});
@@ -239,7 +234,6 @@ function editWlist(e) {
 			}, 
 	    dataType: 'json',
 	    success: function(response) { 
-	        console.log(response);
 	        spinner.tearOff();
 	        buildEditWindow(response, line, id);
 			//do nothing right now
@@ -252,9 +246,7 @@ function editWlist(e) {
 function deleteWlist(e) {
 	var caller = $(e.currentTarget);
 	var id = caller.attr("id").replace("delete-wlist-","");
-	console.log(caller);
 	line = caller.closest("tr");
-	console.log(line);
 	var name = line.find(".wlist-name").text();
 	
 	answer = confirm("Are you sure you want to delete whitelist '"+name+"'?");

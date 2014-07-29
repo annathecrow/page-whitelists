@@ -183,6 +183,7 @@ class WL_Admin {
 			$data['time'] = $list->get_time();
 			$data['nonce'] = wp_create_nonce("edit-wlist".$list->get_id());
 		} else {
+			$data['strict'] = true;
 			$data['id'] = '';
 			$data['nonce'] = wp_create_nonce("create-wlist");
 		}

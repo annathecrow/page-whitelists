@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Whitelists
-Version: 0.3-alpha
+Plugin Name: Page Whitelists
+Version: 0.5-alpha
 Description: This plugin allows administrators to limit access only to selected pages - either for single users, or for entire roles (also works with roles created by other plugins).  
-Author: Anna Frankova
+Author: Corvidism
 Author URI: http://corvidism.com
 Text Domain: whitelists
 Domain Path: /languages
@@ -25,7 +25,6 @@ function whitelists_activate() {
 	$wl_table_prefix = $prefix."wl_";			
 	update_option('wlist_list_table',$wl_table_prefix."list");
 	update_option('wlist_list_page_table',$wl_table_prefix."list_page");
-	update_option('wlist_plugin_title','Whitelists');
 	$wl_data = new WL_Data();
 	$wl_data->initialize();
 }

@@ -56,6 +56,28 @@ class WL_Access_Manager {
 		$query->set('post__in',$pages);
 	}
 	
+	function repair_page_counts($views) {
+		global $wp_query;
+		global $wpdb;
+		$request = $wp_query->request; //take original request used to build this page
+		$new_requests = array();
+		$status_types = array('publish','future','draft','pending','private'); //take all possible statuses post can have
+		//build queries to get the number of each post status
+		$new_requests['all'] = preg_replace('(SELECT.*?FROM)', 'SELECT COUNT(*) FROM', $request);
+		foreach ($status_types as $type) {
+			$req = "$wpdb->posts.post_status = '$type'";		
+			$new_requests[$type] = preg_replace('(\([a-zA-Z0-9_\.]+?post_status.*?\))',"($req)",$new_requests['all']);
+			$all_types_request[] = $req;
+		}
+		$new_requests['all'] = preg_replace('(\([a-zA-Z0-9_\.]+?post_status.*?\))',"(".implode(' OR ',$all_types_request).")",$new_requests['all']); 
+		foreach ($new_requests as $type=>$req) {
+			$count = $wpdb->get_var($req); //call query, get count
+			if (isset($views[$type])) $views[$type] = preg_replace( '/\(.+\)/U', '('.$count.')', $views[$type] );
+			//replace counts in html
+		}; 
+		return $views;		
+	}
+	
 	function filter_editable() {
 		global $post;
 		$page_id = $post->ID;
@@ -116,6 +138,7 @@ class WL_Access_Manager {
 	function access_check() {
 		if (current_user_can("manage_options")) return;
 		if (is_admin()) add_action( 'pre_get_posts', array($this, 'run_page_filters') );
+		add_filter( "views_edit-page" , array($this, 'repair_page_counts'), 10, 1);
 		add_action( 'wp_before_admin_bar_render', array($this, 'filter_admin_bar') );
 		add_action('admin_menu',array($this, 'filter_menus'));
 		add_action('new_to_auto-draft', array($this,'new_page_check'), 10, 3);

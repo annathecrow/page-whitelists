@@ -2,10 +2,10 @@ page-whitelists
 ===============
 
 
-Requires at least: 3.6
-Tested up to: 3.9.1
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Requires at least: 3.6  
+Tested up to: 3.9.1  
+License: GPLv2 or later  
+License URI: http://www.gnu.org/licenses/gpl-2.0.html  
 
 
 Wordpress plugin limiting user access to pages. Allows administrators to create whitelists and assign them to either single users, or roles, and set if users are allowed to create new pages or not.
@@ -28,5 +28,5 @@ Page Whitelists is an administration tool that can be used to allow selected use
 
 ## Upgrade Notice
 
-### 1.0
+#### 1.0
 First published version.

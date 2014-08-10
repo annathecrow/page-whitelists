@@ -49,7 +49,6 @@ class WL_Access_Manager {
 	}
 	
 	function filter_displayed($query) {		
-		//WL_Dev::log("running filter_displayed");
 		$user = wp_get_current_user();
 		$pages = $this->data->get_accessible_pages($user);
 		if (!$pages) return true;
@@ -81,14 +80,12 @@ class WL_Access_Manager {
 	function filter_editable() {
 		global $post;
 		$page_id = $post->ID;
-		//WL_Dev::log("running filter_editable on page $page_id");
 		if (!$this->has_access($page_id)) {
 			wp_die( __('You are not allowed to edit this page.') );
 		}
 	}
 	
 	function run_page_filters($query) {
-		//WL_Dev::log("running page filters");
 		if ($this->on_edit_page_form()) {
 			$this->filter_editable();
 		};
@@ -125,7 +122,6 @@ class WL_Access_Manager {
 		}		
 	}
 	function css_cleanup() {
-		//WL_Dev::log("adding css style");
 		echo '<style>.edit-php.post-type-page .add-new-h2,.post-php.post-type-page .add-new-h2 {display:none;}</style>';
 	}
 

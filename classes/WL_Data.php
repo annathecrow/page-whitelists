@@ -62,7 +62,6 @@ class WL_Data {
 		global $wpdb;
 		$id = 0;
 		$time = date('Y-m-d H:i:s');
-		//WL_Dev::log('trying to access table '.$table);
 		$table = $this->list_table;
 		try {
 			if ($this->get_whitelist_by('name',$name)==false) {
@@ -78,7 +77,6 @@ class WL_Data {
 						throw new Exception("Table row could not be written.",0);
 					} else {
 						$id = $wpdb->insert_id;
-						WL_Dev::log('created whitelist '.$id.', '.$name);
 						$list_info = array(
 							'id' => $id,
 							'name' => $name,
@@ -277,7 +275,7 @@ class WL_Data {
 	}
 	
 	function remove_page_from_all($page_id) {
-		//WL_Dev::log("removing all links to page from database");
+		//remove all references to this page from database
 		try {
 			global $wpdb;
 			if (!get_post_type($page_id)=='page') return;
@@ -289,7 +287,6 @@ class WL_Data {
 		} catch (Exception $e) {
 			WL_Dev::log($e->getMessage());
 		}	
-		//remove all references to this page from database
 	}
 	
 }

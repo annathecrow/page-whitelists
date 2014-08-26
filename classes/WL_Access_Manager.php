@@ -114,6 +114,7 @@ class WL_Access_Manager {
 		if ($this->can_create_new()) {
 			WL_Dev::log("user can create pages");
 			$page_id = $post->ID;
+			$lists = $this->data->get_user_whitelists(wp_get_current_user());
 			foreach ($lists as $list) {
 				$list->add_page($page_id);
 			}

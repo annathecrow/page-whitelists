@@ -10,31 +10,30 @@ Text Domain: whitelists
 Domain Path: /languages
 */
 
-if (!class_exists('Whitelists')) {
-	
-	define('WL_ID','whitelists');
-	$class_dir = plugin_dir_path(__FILE__)."classes/";
-	require_once $class_dir.'WL_Dev.php';
-	require_once $class_dir.'WL_Data.php';
-	require_once $class_dir.'WL_Core.php';	
-};
+$wl_id = 'whitelists';	
+$wl_dir = plugin_dir_path(__FILE__);
 
-if (class_exists('Whitelists')) {
+//installation and uninstallation hooks
+register_activation_hook(__FILE__, 'whitelists_activate');
+register_deactivation_hook(__FILE__, 'whitelists_deactivate');
 	
-	//instantiate the plugin object
-	if (!isset($whitelists)) $whitelists = new Whitelists();
-	
-	//installation and uninstallation hooks
-	register_activation_hook(__FILE__, array($whitelists, 'activate'));
-    register_deactivation_hook(__FILE__, array($whitelists, 'deactivate'));
-	
-	//filter hooks	
-	add_action('init',array($whitelists, 'init'));
-	add_action( 'load-edit.php', array($whitelists, 'filter_displayed') );
-	add_action('load-post.php', array($whitelists, 'filter_editable'));
-	add_action( 'admin_notices', array($whitelists, 'test'));
-	add_action( 'wp_before_admin_bar_render', array($whitelists, 'filter_admin_bar') );
-	add_action('new_to_auto-draft',array($whitelists, 'auto_assign_to_whitelist'));
+$wl_class_dir = $wl_dir."classes/";
+require_once $wl_class_dir.'WL_Dev.php';
+require_once $wl_class_dir.'WL_Data.php';
+require_once $wl_class_dir.'WL_Access_Manager.php';
+require_once $wl_class_dir.'WL_Admin_Menu.php';
+require_once $wl_class_dir.'WL_Core.php';
+$whitelists = new Whitelists();
+$whitelists->run();
+
+
+
+function whitelists_activate() {
+	$whitelists = new Whitelists();
+	$whitelists->install();
 }
 
-l;
+function whitelists_deactivate() {
+	$whitelists = new Whitelists();
+	$whitelists->uninstall();
+}

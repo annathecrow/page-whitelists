@@ -50,4 +50,4 @@ Table TO-DO
 -----------
 
 write add/remove functions
-come up with a way to make sure there are no orphans (on deleting a page delete all it's references in wl tables and so on)
+come up with a way to make sure there are no orphans (on deleting a page delete all it's references in wl tables and so on

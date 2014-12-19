@@ -21,7 +21,7 @@ class WL_Admin {
 		$this->data->create_whitelist("millenium");
 		$this->data->create_whitelist("junior");
 		
-		$apple = $this->data->get_whitelist_by('name','apple');
+		//$apple = $this->data->get_whitelist_by('name','apple');
 		//$grape = $this->data->get_whitelist_by('name','grape');
 		
 		//$apple->add_page(289);
@@ -148,6 +148,7 @@ class WL_Admin {
 		$user_query = new WP_User_Query($query_args); 
 		$users = $user_query->results;
 		foreach($users as $user) {
+			//filter users by capabilities? what capabilities? how?
 			if (!user_can($user,"manage_options")) {
 				$data['users'][] = array(
 					'login' => $user->user_login,
@@ -201,47 +202,114 @@ class WL_Admin {
 	public function ajax_save() {
 		//WL_Dev::log($_POST);
 		
-		if (!isset($_POST['name'])) {
-			die("error,name missing");
-		} else {
-			$name = $_POST['name'];
-		};			
-		
- 		$pages = explode($_POST['pages']);
-		$users = explode($_POST['users']);
-		$users = explode($_POST['roles']);
-		
-		if (!isset($_POST['id'])) {
-			$list = $this->data->create_whitelist($name);
-			if ($list) {
-				die('error,name-in-use');
-			} elseif (!$list) {
-				die('error,unknown');
-			}		
-		} else {
-			$list = $this->data->get_whitelist_by('id',$_POST['id']);
-			if (!$list) {
-				die('error,not-found');
+		try {
+			if ($_POST['name']=='') {
+				throw new Exception("name-missing");
+			} else {
+				$name = $_POST['name'];
+			};			
+			
+			if ($_POST['id']=='') {
+				$list = $this->data->create_whitelist($name);
+				if (!$list) {
+					throw new Exception("unknown");				
+				} elseif (get_class($list)!='WL_List') {
+					throw new Exception("name-in-use");
+				} else {
+					$list_status = "created";
+				}		
+			} else {
+				$list = $this->data->get_whitelist_by('id',$_POST['id']);
+				if (!$list) {
+					throw new Exception("not-found");
+				} else {
+					$list_status = "edited";
+				}
 			}
-		}
-		
-		foreach ($pages as $page_id) {
-			$list->add_page($page_id);
-			//what if the page doesn't exist?
-		}
-		
-		foreach ($users as $user_id) {
-			$list->add_user($user_id);
-		}
-		
-		foreach ($roles as $role_name) {
-			$list->add_role($role_name);
-		}
-		
-		//if ($list->get_name())
-		//if no error, die with the data to populate default tr
-		die('done');
-		
+			
+			if ($name != $list->get_name()) {
+				$renamed = $list->rename($name);
+				if (!$renamed) {
+					throw new Exception("could-not-rename");
+				}
+			}
+			
+			$assigned_pages = $list->get_page_ids();
+			if ($_POST['pages']=='') {
+				foreach ($assigned_pages as $page) {
+					$success = $list->remove_page($page);
+				}				
+			} else {
+				$pages = explode(",",$_POST['pages']);
+				foreach ($pages as $page_id) {
+					$success = $list->add_page($page_id);
+				}
+				foreach ($assigned_pages as $page_id) {
+					if (!in_array($page_id,$pages)) {
+						$list->remove_page($page_id);
+					}
+				}
+			}
+			
+			$assigned_users = $list->get_users();
+			if ($_POST['users']=='') {
+				foreach ($assigned_users as $user) {
+					$success = $list->remove_user($user);
+				}
+			} else {
+				$users = explode(",",$_POST['users']);
+					foreach ($users as $user_id) {
+					$success = $list->add_user($user_id);
+				}				
+				foreach ($assigned_users as $user) {
+					if (!in_array($user->ID,$users)) {
+						$list->remove_user($user);
+					}
+				}
+			} 
+			$assigned_roles = $list->get_roles();
+			if ($_POST['roles']=='') {
+				foreach ($assigned_roles as $role) {
+					$success = $list->remove_role($role);
+				}
+			} else {
+				$roles = explode(",",$_POST['roles']);
+					foreach ($roles as $role_name) {
+					$success = $list->add_role($role_name);
+				}
+				
+				foreach ($assigned_roles as $role) {
+					if (!in_array($role->name,$roles)) {
+						$success = $list->remove_role($role);
+					}
+				}	
+			}
+			
+			//I need to return: id, name, time, pages, users, roles
+			WL_Dev::log("this is get_page_ids array:");
+			WL_Dev::log($list->get_page_ids());
+			$result = array(
+				"success"=>true,
+				"id"=>$list->get_id(),
+				"name"=>$list->get_name(),
+				"message"=>$list_status,
+				//"time"=>$list->get_time(), //will we update time on editing???
+				"pages"=>$list->get_page_ids(),				
+				"users"=>$list->get_user_logins(),
+				"roles"=>$list->get_role_names(),
+			);
+			if (!$success) {
+				$result['success']=false;
+				$result['message']='addition-errors';
+			}
+			WL_Dev::log($result);
+			die(json_encode($result));
+		} catch (Exception $e) {
+			$result = array(
+				"success"=>false,
+				"message" => $e->getMessage()
+			);
+			die(json_encode($result));
+		}		
 	}
-
 }

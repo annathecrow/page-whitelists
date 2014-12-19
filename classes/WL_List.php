@@ -66,7 +66,7 @@ class WL_List {
 		foreach ($users as $user) {
 			$namearray[] = $user->user_login;
 		}
-		
+		sort($namearray);
 		return $namearray;
 	}
 	
@@ -95,12 +95,14 @@ class WL_List {
 		foreach ($roles as $role) {
 			$namearray[] = $role->name;
 		}
+		sort($namearray);
 		return $namearray;
 	}
 	
 	public function the_roles($delimiter = ", ") {
 		echo implode($delimiter,$this->get_role_names());
 	}
+	
 	public function get_page_ids() {
 		if (isset($this->page_ids)) return $this->page_ids;
 		global $wpdb;
@@ -111,10 +113,10 @@ class WL_List {
 		foreach($result as $page_item) {
 			$pages[] = $page_item['page_id'];
 		}
+		sort($pages);
 		$this->page_ids = $pages;
 		return $pages;
-	}
-	
+	}	
 	public function the_pages($delimiter = ", ") {
 		$page_ids = $this->get_page_ids();
 		echo implode($delimiter,$page_ids);
@@ -131,8 +133,10 @@ class WL_List {
 			if (!isset($this->users)) {
 					$this->get_users();
 				} 			
-			$user->add_cap($this->cap);
-			$this->users[]=$user;
+			if (!in_array($user, $this->users)) {
+				$user->add_cap($this->cap);
+				$this->users[]=$user;
+			}			
 			return true;		
 		} catch (Exception $e) {
 			WL_Dev::error($e);
@@ -172,11 +176,13 @@ class WL_List {
 			if (!isset($this->roles)) {
 				$this->get_roles();
 			}
-			$role->add_cap($this->cap);
-			$this->roles[]=$role;
+			if (!in_array($role,$this->roles)) {
+				$this->roles[]=$role;
+				$role->add_cap($this->cap);
+			}			
 			return true;
 		} catch (Exception $e) {
-			WL_Dev::log($e->getMessage());
+			WL_Dev::error($e);
 			return false;
 		}		
 	}
@@ -268,6 +274,7 @@ class WL_List {
 						$this->get_page_ids();
 					} else {
 						unset($this->page_ids[in_array($page_id, $this->page_ids)]);
+						$this->page_ids = array_values($this->page_ids);
 					}					
 					return true;
 				}
@@ -297,16 +304,11 @@ class WL_List {
 					return true;					
 				}
 			} else {
-				throw new Exception("list with such a name already exists",1);
+				throw new Exception("list with such a name already exists",0);
 			}
 		} catch(Exception $e) {
-			if ($e->getCode()==1) {
-				WL_Dev::log($e->getMessage());
-				return true;
-			} else {
-				WL_Dev::error($e);
-				return false;
-			}
+			WL_Dev::log($e->getMessage());
+			return false;
 		}
 	}
 }

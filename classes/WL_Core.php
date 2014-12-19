@@ -24,7 +24,7 @@ class Whitelists
 	}
 	
 	public function init_admin_menu() {
-		$this->admin_menu = new WL_Menu($this->settings->get_template_path());	
+		$this->admin_menu = new WL_Menu($this->data,$this->settings);	
 	}
 	
 	public function run() {		

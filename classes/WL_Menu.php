@@ -4,14 +4,17 @@
  * creates settings page
  */
 class WL_Menu {
+	private $settings;
+	private $data;
 	
-	function __construct($template_path) {
-		$this->template_path = $template_path;
-		$this->menu_title= "Whitelists";
+	function __construct($data,$settings) {
+		$this->settings = $settings;
+		$this->data = $data;
+		
 		
 		add_menu_page( 
-			'Whitelists', //label of the sidebar link
-			$this->menu_title, //title of the options page
+			$this->settings->get_plugin_title(), //label of the sidebar link
+			$this->settings->get_plugin_title(), //title of the main options page
 			'manage_options',
 			'wl_lists', //the slug of the options page
 			array($this,'render_lists_page')  
@@ -41,14 +44,14 @@ class WL_Menu {
 	}
 	
 	public function render_settings_page() {
-		require_once $this->template_path."settings_page.php";
+		require_once $this->settings->get_template_path()."settings_page.php";
 		//whitelists as strict?
 		//how to combine wlists
 		//...???
 	}
 	
 	public function render_roles_page() {
-		require_once $this->template_path."roles_page.php";
+		require_once $this->settings->get_template_path()."roles_page.php";
 		//load existing roles into a table
 		//Create New...
 			//a table of permissions, possibly with explanations?
@@ -63,7 +66,9 @@ class WL_Menu {
 	}
 	
 	public function render_lists_page() {
-		require_once $this->template_path."lists_page.php";
+		require_once $this->settings->get_template_path()."lists_page.php";
+		$lists = $this->data->get_whitelists(); //returns all lists from the database as WL_List objects
+		
 		//load existing whitelists
 		//Create New...
 			//add pages from a list (checkboxes?)

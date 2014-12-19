@@ -17,5 +17,12 @@ class WL_Dev {
 	    }
 	}
 	
+	public static function error($exception) {
+	    ///if (WP_DEBUG === true && (!defined('PHPUNIT')||PHPUNIT===false)) {
+	    if (WP_DEBUG === true && (!isset($GLOBALS['silent'])||$GLOBALS['silent']===false)) {
+	    	error_log($exception->getMessage()." -- on line ".$exception->getLine());
+	    }
+	}
+	
 	
 }

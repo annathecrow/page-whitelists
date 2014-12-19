@@ -214,5 +214,43 @@ class WL_Data {
 		}
 		return $array_of_lists;
 	}
+	
+	public function get_user_whitelists($user) {
+		//I am choosing to do one database fetch for all the whitelists and filter them, rather than fetch each whitelist separately, in the belief that this will be faster.
+		$all_whitelists = $this->get_all_whitelists();
+		$whitelist_ids = array();
+		foreach ($user->allcaps as $cap => $v) {
+			if (strpos($cap,"edit_whitelist_")!== false) {
+				$whitelist_ids[] = str_replace("edit_whitelist_", "", $cap);
+			}
+		}
+		$whitelists = array();
+		foreach ($all_whitelists as $list) {
+			if (in_array($list->get_id(),$whitelist_ids)) {
+				$whitelists[] = $list;
+			};
+		}
+		
+		return $whitelists;
+	}
+	
+	public function get_accessible_pages($user) {
+		$whitelists = $this->get_user_whitelists($user);
+		if (sizeof($whitelists)==0) return false;
+		$pages = array();
+		$empty_list_failsafe = true;
+		foreach ($whitelists as $list) {
+			if (!$list) continue;
+			$empty_list_failsafe = false;
+			$pages = array_merge($pages, $list->get_page_ids());
+		}
+		
+		if ($empty_list_failsafe) {
+			return false;
+		} else {
+			return $pages;
+		}
+		
+	}
 }
 	 

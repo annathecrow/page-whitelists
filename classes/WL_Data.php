@@ -105,24 +105,24 @@ class WL_Data {
 		
 	}
 	
-	public function add_whitelist_to_role($list_id,$role_name) {
+	public function add_whitelist_role($list_id,$role_name) {
 		 $role = get_role($role_name);
 		 $role->add_cap('edit_whitelist_'.$list_id);
 	}
 	
-	public function remove_whitelist_from_role($list_id, $role_name) {
+	public function remove_whitelist_role($list_id, $role_name) {
 		$role = get_role($role_name);
 		 $role->add_cap('edit_whitelist_'.$list_id);
 	}
 	
-	public function add_whitelist_to_user($list_id,$user_id) {
+	public function add_whitelist_user($list_id,$user_id) {
 		 $user = get_user_by('id',$user_id);
 		 $user->add_cap('edit_whitelist_'.$list_id);
 	}
 	
-	public function remove_whitelist_from_user($list_id, $user_id) {
+	public function remove_whitelist_user($list_id, $user_id) {
 		$user = get_user_by('id',$user_id);
-		$user->add_cap('edit_whitelist_'.$list_id);
+		$user->remove_cap('edit_whitelist_'.$list_id);
 	}
 	
 	

@@ -5,9 +5,10 @@
  * (not really.) 
  */
 class WL_Dev {
-	
+
 	public static function log($message) {
-	    if (WP_DEBUG === true) {
+	    ///if (WP_DEBUG === true && (!defined('PHPUNIT')||PHPUNIT===false)) {
+	    if (WP_DEBUG === true && (!isset($GLOBALS['silent'])||$GLOBALS['silent']===false)) {
 	        if (is_array($message) || is_object($message)) {
 	            error_log(print_r($message, true));
 	        } else {

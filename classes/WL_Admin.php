@@ -14,7 +14,7 @@ class WL_Admin {
 	
 	
 	public function add_menus() {
-		$plugin_title = "Page Whitelists";
+		$plugin_title = __("Page Whitelists".'page-whitelists');
 		
 		
 		add_submenu_page( 
@@ -36,7 +36,7 @@ class WL_Admin {
 		if (!current_user_can('manage_options')) return;
 		add_meta_box(
 			'wlist-metabox',
-			__('Associated Whitelists','whitelists'),
+			__('Associated Whitelists','page-whitelists'),
 			array($this,'render_metabox'),
 			'page',
 			'side'
@@ -93,24 +93,24 @@ class WL_Admin {
 		wp_enqueue_style('style-name', $style_path);
 		wp_enqueue_script('wl_lists_js', $script_path, array('jquery'),'1.0.0',true);
 		wp_localize_script( 'wl_lists_js', 'jsi18n', array(
-			'del' => __( 'Delete', 'whitelists' ),
-			'title' => __( 'Title', 'whitelists' ),
-			'allowNew' => __('Allow creation of new pages','whitelists'),
-			'wlistedPages' => __('Whitelisted pages','whitelists'),
-			'assignedTo' => __('Assigned to users','whitelists'),
-			'asToUsers' => __('Assigned to users','whitelists'),
-			'asToRoles' => __('Assigned to roles','whitelists'),
-			'cancel' => __('Cancel','whitelists'),
-			'save' => __('Save','whitelists'),
-			'createNew' => __('Create new...','whitelists'),
-			'edit' => __('Edit','whitelists'),
-			'saveWNameErr' => __('cannot save a whitelist without a name.','whitelists'),
-			'createdSuccess' => __('Whitelist successfully created.','whitelists'),
-			'editedSuccess' => __('Whitelist successfully edited.','whitelists'),
-			'deletedSuccess' => __('Whitelist successfully deleted.','whitelists'),
-			'err' => __('Error.','whitelists'),
-			'confirmLeave' => __('You have unsaved changes. Do you want to continue?','whitelists'),
-			'confirmDelete' => __('Are you sure you want to delete whitelist {listName}?','whitelists'),
+			'del' => __( 'Delete', 'page-whitelists' ),
+			'title' => __( 'Title', 'page-whitelists' ),
+			'allowNew' => __('Allow creation of new pages','page-whitelists'),
+			'wlistedPages' => __('Whitelisted pages','page-whitelists'),
+			'assignedTo' => __('Assigned to users','page-whitelists'),
+			'asToUsers' => __('Assigned to users','page-whitelists'),
+			'asToRoles' => __('Assigned to roles','page-whitelists'),
+			'cancel' => __('Cancel','page-whitelists'),
+			'save' => __('Save','page-whitelists'),
+			'createNew' => __('Create new...','page-whitelists'),
+			'edit' => __('Edit','page-whitelists'),
+			'saveWNameErr' => __('cannot save a whitelist without a name.','page-whitelists'),
+			'createdSuccess' => __('Whitelist successfully created.','page-whitelists'),
+			'editedSuccess' => __('Whitelist successfully edited.','page-whitelists'),
+			'deletedSuccess' => __('Whitelist successfully deleted.','page-whitelists'),
+			'err' => __('Error.','page-whitelists'),
+			'confirmLeave' => __('You have unsaved changes. Do you want to continue?','page-whitelists'),
+			'confirmDelete' => __('Are you sure you want to delete whitelist {listName}?','page-whitelists'),
 ) );
 	}
 	

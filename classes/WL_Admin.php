@@ -62,10 +62,8 @@ class WL_Admin {
 	}
 	
 	public function enqueue_scripts($hook) {
-		WL_Dev::log("trying to enqueue scripts");
 		$screen = get_current_screen(); 
 		if($screen->id != 'toplevel_page_wl_lists') {
-			WL_Dev::log("not on the right page");
 			return;
 		}
 		$script_path = $this->settings->get_template_url(). 'js/wl_lists.js';
@@ -73,9 +71,9 @@ class WL_Admin {
 	}
 	
 	public function register_ajax() {
-		WL_Dev::log('registering ajax');
 		add_action('wp_ajax_wl_delete', array($this,'ajax_delete'));
 		add_action('wp_ajax_wl_load', array($this,'ajax_load'));
+		add_action('wp_ajax_wl_save', array($this,'ajax_save'));
 	}
 	
  	public function render_settings_page() {
@@ -128,14 +126,6 @@ class WL_Admin {
 	}
 	
 	public function ajax_load() {
-		/*
-		header('Cache-Control: no-cache, must-revalidate'); //don't cache
-				$year_exp = date('Y')+5;  
-				$date_exp = date('D, n M ').$year_exp.date(' H:i:s e');
-				header('Expires: '.$date_exp);
-				header('Content-type: application/json');*/
-		
-		
 		//FIRST STEP: build a "fresh" data array
 		$data = array();
 		
@@ -155,23 +145,27 @@ class WL_Admin {
 		$query_args = array(
 			'orderby'=>'ID'
 		);
-		$user_query = new WP_User_Query($query_args);
+		$user_query = new WP_User_Query($query_args); 
 		$users = $user_query->results;
 		foreach($users as $user) {
-			$data['users'][] = array(
-				'login' => $user->user_login,
-				'id' => $user->ID,
-				'assigned' => false
-			); 
+			if (!user_can($user,"manage_options")) {
+				$data['users'][] = array(
+					'login' => $user->user_login,
+					'id' => $user->ID,
+					'assigned' => false
+				);
+			}	 
 		}
 		
 		$all_roles = get_editable_roles();
-		//which roles shouldn't be assignable? "admin", "superadmin"?
 		$data['roles'] = array();
 		foreach ($all_roles as $rolename=>$roledata) {
-			$data['roles'][$rolename] = false;
+			if (!isset($roledata['capabilities']['manage_options'])) {
+				$data['roles'][$rolename] = false;	
+			}
 		}
 		
+		//SECOND STEP: mark assigned pages/roles/users
 		if (isset($_POST['id'])) {
 			$id = $_POST['id'];
 			$list = $this->data->get_whitelist_by('id',$id);
@@ -194,7 +188,9 @@ class WL_Admin {
 					$data['roles'][$key] = true;
 				}
 			}  
-			//add data			
+			$data['name'] = $list->get_name();
+			$data['id'] = $list->get_id();
+			$data['time'] = $list->get_time();			
 		} else {
 			$id = 0;
 		}
@@ -203,8 +199,27 @@ class WL_Admin {
 	}
 	
 	public function ajax_save() {
-		//create new whitelist from ajaxed data, or update an existing whitelist
-		//needed: hidden field with id
+		WL_Dev::log($_POST);
+		$name = $_POST['name'];
+		//if empty string, then die with an error
+		$pages = explode($_POST['pages']);
+		//if empty string, do nothing
+		$users = explode($_POST['users']);
+		//if empty string, do nothing
+		$users = explode($_POST['roles']);
+		//if empty string, do nothing
+		$id = $_POST['id'];
+		//if empty, try to create new whitelist
+		//if it exists under the name, die with an error
+		//if numeric, get the whitelist
+		//if not found, die with an error
+		
+		//add pages 
+		//add users
+		//add roles
+		
+		//if no error, die with the data to populate default tr
+		die('done');
 		
 	}
 

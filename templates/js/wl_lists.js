@@ -23,7 +23,7 @@ function buildEditWindow(data,line,id) {
 	pagesHtml = '<fieldset class="inline-edit-col-left wl-col"><div class="inline-edit-col"><span class="title">Whitelisted pages</span><ul class="cat-checklist" id="pages-list"></ul></div></fieldset>';
 	usersHtml = '<fieldset class="inline-edit-col-center wl-col"><div class="inline-edit-col"><span class="title">Assigned to users</span><ul class="cat-checklist" id="users-list"></ul></div></fieldset>';
 	rolesHtml = '<fieldset class="inline-edit-col-right wl-col"><div class="inline-edit-col"><span class="title">Assigned to roles</span><ul class="cat-checklist" id="roles-list"></ul></div></fieldset>';
-	bottomHtml = '<input type="hidden" id="wlist-id" name="wlist-id" value=""><p class="submit inline-edit-save"><a accesskey="c" href="#inline-edit" class="button-secondary cancel alignleft" id="wlist-edit-cancel">Cancel</a><a accesskey="s" href="#inline-edit" id="wlist-edit-save" class="button-primary save alignright">Save</a><span class="error" style="display:none"></span><br class="clear"></p>';
+	bottomHtml = '<p class="submit inline-edit-save"><a accesskey="c" href="#" class="button-secondary cancel alignleft" id="wlist-edit-cancel">Cancel</a><a accesskey="s" href="#" id="wlist-edit-save" class="button-primary save alignright">Save</a><span class="error" style="display:none"></span><br class="clear"></p>';
 	editWindow = $('<tr id="wlist-form" class="inline-edit-row quick-edit-row inline-editor" style=""><td colspan="5" class="colspanchange">'+titleHtml+pagesHtml+rolesHtml+usersHtml+bottomHtml+'</td></tr>');
 	usersList = editWindow.find("#users-list");
 	$.each(data.users,function(key,user){
@@ -72,11 +72,13 @@ function buildEditWindow(data,line,id) {
 		line.detach();
 		
 		$("#wlist-edit-cancel").click(function(){
+			//maybe scroll up again?
 			console.log("cancelling editing");
 			editWindow.replaceWith(line);
 			editing=false;
 		});
 	}
+	
 	$("#wlist-edit-save").click(function(){
 		if (titleInput.attr("value")=='') {
 			//inform user somehow
@@ -102,18 +104,22 @@ function buildEditWindow(data,line,id) {
 				data: { 
 					'action': 'wl_save',
 					'name': titleInput.attr("value"),
-					'id': idInput.attr("value"),
+					'id': data.id,
 					'pages': pagesArray.join(),
 					'users': usersArray.join(),
-					'roles': rolesArray.join()
+					'roles': rolesArray.join(),
+					'nonce': data.nonce
 					}, 
 				success: function(response) {
 					result = $.parseJSON(response);
 					if (result.success) {
 						console.log(result);
 						if (line == undefined) {
-							line = $('<tr id="wlist-'+result.id+'" class="whitelist-row"><th scope="row" class="id-column">'+result.id+'</th><td><a href="#" class="wlist-name"></a><div class="row-actions"><span class="edit"><a href="#" id="edit-wlist-'+result.id+'">Edit</a>|</span><span class="trash"><a href="#" id="delete-wlist-'+result.id+'">Delete</a></span></div></td><td class="wlist-pages"></td><td class="wlist-roles"></td><td class="wlist-users"></td></tr>');
+							line = $('<tr id="wlist-'+result.id+'" class="whitelist-row"><th scope="row" class="id-column">'+result.id+'</th><td><span class="wlist-name"></span><div class="row-actions"><span class="edit"><a href="#" id="edit-wlist-'+result.id+'">Edit</a>|</span><span class="trash"><a href="#" id="delete-wlist-'+result.id+'">Delete</a></span></div></td><td class="wlist-pages"></td><td class="wlist-roles"></td><td class="wlist-users"></td></tr>');
+							line.find("span.edit a").click(editWlist);
+							line.find("span.trash a").click(deleteWlist).attr("href",result.deleteNonce);
 							line.appendTo("#wl-lists tbody");
+							
 						} 
 						line.find(".wlist-name").text(result.name);
 						line.find(".wlist-users").text(result.users.join(", "));
@@ -124,7 +130,7 @@ function buildEditWindow(data,line,id) {
 						editing = false;	
 					} else {
 						var message = "Error";
-						throwNotice(false,message);
+						throwNotice(false,result.message);
 					}
 				}
 		   
@@ -135,40 +141,8 @@ function buildEditWindow(data,line,id) {
 	
 }
 
-/**
- * delete whitelist
- */
-$("span.trash a").click(function(){
-	caller = $(this);
-	id = caller.attr("id").replace("delete-wlist-","");
-	line = caller.closest("tr");
-	name = line.find(".list-name").text();
-	
-	answer = confirm("Are you sure you want to delete whitelist '"+name+"'?");
-	if (!answer) {return false;}
-	
-	var data = {
-		'action': 'wl_delete',
-		'id': id
-	};
-	
-	$.post(ajaxurl, data, function(response) {
-		if(response=='success') {
-			//line.css("background-color","#dd3d36");
-			line.fadeOut('fast',function(){					
-				line.nextAll().toggleClass('alternate');
-				line.remove();
-				throwNotice(true,"Whitelist successfully deleted.");
-				
-			});
-		}
-	});//end of ajax
-	
-	return false;
-});//end of delete
 
-
-$("#create-wlist").click(function(){
+function createWlist(e) {
 	if (editing) {
 		//already editing/creating
 		answer = confirm("You have unsaved changes. Do you want to continue?");
@@ -181,7 +155,7 @@ $("#create-wlist").click(function(){
 		}
 	} else {
 		editing = true;
-		$(this).append('<img class="spin" src="" />')
+		$(e.currentTarget).append('<img class="spin" src="" />')
 	}
 	
 	$.ajax({ 
@@ -201,9 +175,9 @@ $("#create-wlist").click(function(){
 	//
 	
 	return false;
-});
+}
 
-$("span.edit a").click(function(){
+function editWlist(e) {
 	if (editing) {		
 		answer = confirm("You have unsaved changes. Do you want to continue?");
 		if (!answer) {
@@ -216,11 +190,9 @@ $("span.edit a").click(function(){
 	} else {
 		editing = true;
 	}
-		
-	caller = $(this);
+	var caller = $(e.currentTarget);
 	id = caller.attr("id").replace("edit-wlist-","");
 	line = caller.closest("tr");
-	name = line.find(".list-name").text();
 	
 	$.ajax({ 
 	    type: 'POST', 
@@ -237,5 +209,43 @@ $("span.edit a").click(function(){
 	    }   
 	});
 	return false;
-});
+}
 
+
+function deleteWlist(e) {
+	var caller = $(e.currentTarget);
+	var id = caller.attr("id").replace("delete-wlist-","");
+	console.log(caller);
+	line = caller.closest("tr");
+	console.log(line);
+	var name = line.find(".wlist-name").text();
+	
+	answer = confirm("Are you sure you want to delete whitelist '"+name+"'?");
+	
+	if (!answer) {return false;}
+	
+	var data = {
+		'action': 'wl_delete',
+		'nonce' : caller.attr("href"),
+		'id': id
+	};
+	
+	$.post(ajaxurl, data, function(response) {
+		if(response=='success') {
+			//line.css("background-color","#dd3d36");
+			line.fadeOut('fast',function(){					
+				line.nextAll().toggleClass('alternate');
+				line.remove();
+				throwNotice(true,"Whitelist successfully deleted.");		
+			});
+		} else {
+			throwNotice(false, response);
+			//throw notice
+		}
+	});
+	return false;
+}
+
+$("#create-wlist").click(createWlist);
+$("span.edit a").click(editWlist);
+$("span.trash a").click(deleteWlist);

@@ -12,7 +12,7 @@ class Whitelists
 		$this->data->initialize();
 		//set up WP Options
 		//TODO manage db versions somehow see tutorial on WP page
-		$this->data->create_whitelist("Dummy");
+		//$this->data->create_whitelist("Dummy");
 
 	}
 	
@@ -25,13 +25,13 @@ class Whitelists
 	}
 	
 	public function init_admin_menu() {
-		$this->admin_menu = new WL_Menu($this->data,$this->settings);	
+		$this->admin_menu = new WL_Menu($this->data,$this->settings);
 	}
 	
 	public function run() {		
 		//filter hooks	
 		add_action('admin_menu',array($this, 'init_admin_menu'));
-		add_action('init',array($this->access_manager, 'access_check'));		
+		add_action('init',array($this->access_manager, 'access_check'));
 		// add_action('new_to_auto-draft',array($whitelists, 'auto_assign_to_whitelist'));		
 	}
 	

@@ -198,7 +198,7 @@ class WL_Data {
 	
 	public function get_all_whitelists() {
 		global $wpdb;
-		$query = "SELECT * FROM $this->list_table";
+		$query = "SELECT * FROM $this->list_table ORDER BY id";
 		$raw_lists = $wpdb->get_results($query,ARRAY_A);
 		foreach ($raw_lists as $list) {
 			$array_of_lists[] = new WL_List($this,$list);

@@ -264,6 +264,7 @@ function deleteWlist(e) {
 			});
 		} else {
 			throwNotice(false, response);
+			spinner.tearOff();
 			//throw notice
 		}
 	});

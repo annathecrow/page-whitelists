@@ -13,24 +13,14 @@ class WL_Menu {
 			'Whitelists', //label of the sidebar link
 			$this->menu_title, //title of the options page
 			'manage_options',
-			10, 
 			'wl_lists', //the slug of the options page
 			array($this,'render_lists_page')  
 		);
-// 		
-		// add_options_page(
-			// 'Whitelists', //label of the sidebar link
-			// $this->menu_title, //title of the options page
-			// 'manage_options', //what capability must a user have to use it
-			// 'wl_settings', //the slug of the options page
-			// array($this,'render_page') //function to render the page				
-		// );
 		
 		add_submenu_page( 
-			'wl_roles', 
+			'wl_lists', 
 			'Roles',
-			'Roles', 
-			10,
+			'Roles',
 			'manage_options', 
 			'$wl_roles', 
 			array($this,'render_roles_page')
@@ -39,8 +29,7 @@ class WL_Menu {
 		add_submenu_page( 
 			'wl_lists', 
 			'Settings',
-			'Settings', 
-			10,
+			'Settings',
 			'manage_options', 
 			'$wl_settings', 
 			array($this,'render_settings_page')
@@ -52,15 +41,38 @@ class WL_Menu {
 	}
 	
 	public function render_settings_page() {
-		
+		require_once $this->template_path."settings_page.php";
+		//whitelists as strict?
+		//how to combine wlists
+		//...???
 	}
 	
 	public function render_roles_page() {
-		//page where we will create/change/delete custom roles
+		require_once $this->template_path."roles_page.php";
+		//load existing roles into a table
+		//Create New...
+			//a table of permissions, possibly with explanations?
+			//assign whitelist
+		//Edit
+			//table of permissions
+			//assigned whitelists - add, remove
+		//Delete
+		
+		//should have similar look and feel as the rest of WP
+		
 	}
 	
 	public function render_lists_page() {
-		require_once $this->template_path."admin_template.php";
+		require_once $this->template_path."lists_page.php";
+		//load existing whitelists
+		//Create New...
+			//add pages from a list (checkboxes?)
+			//(possibly - add categories, tags)
+			//assign to Roles
+			//(assign to users -----> on Users page should be an option to add whitelist, too!)
+		//Edit
+			//assigned to Roles - add, remove
+			//(assigned to Users - add, remove)
 	}
 	
 	

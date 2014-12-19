@@ -1,3 +1,8 @@
+#spinner {
+	display: none;
+	margin:0 3px;
+}
+
 #wlist-form fieldset.wl-col {
 	width: 33.3%;
 }

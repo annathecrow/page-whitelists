@@ -43,5 +43,4 @@
 </table>
 <p><a href="#" id="create-wlist">Create new...</a>
 </p>
-<form action="options.php" method="post"> 
-</form></div>
+</div><img id="spinner" src="<?php echo site_url("/wp-admin/images/wpspin_light.gif");?>"/>

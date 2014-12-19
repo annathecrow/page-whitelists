@@ -17,6 +17,7 @@
 			<th scope="col" class="manage-column">Whitelisted pages</th>
 			<th scope="col" class="manage-column">Assigned to roles</th>
 			<th scope="col" class="manage-column">Assigned to users</th>
+			<th scope="col" class="manage-column">Allows creation of new pages</th>
 			<!-- <th scope="col" class="manage-column">Date</th> -->
 		</tr>
 	</thead>
@@ -35,6 +36,7 @@
 			<td class="wlist-pages"><?php $list->the_pages(); ?></td>
 			<td class="wlist-roles"><?php $list->the_roles();	?></td>
 			<td class="wlist-users"><?php $list->the_users(); ?></td>
+			<td class="wlist-strict"><?php echo ($list->is_strict())?'no':'yes';?></td>
 			
 			<!--<td class="wlist-time"><abbr title="<?php echo mysql2date( 'Y/m/d h:i:s A', $list->get_time(),true); ?>"><?php echo mysql2date( 'Y/m/d', $list->get_time(),true); ?></abbr></td>-->
 		</tr>			

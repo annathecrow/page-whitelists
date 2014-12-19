@@ -15,9 +15,35 @@
 	float: right;
 }
 
+#wlist-form fieldset#title-block {
+	margin-bottom:1em;
+}
+
+#title-block label.left {
+	width:80%;
+	float:left;
+}
+
+#title-block label.right {
+	width:18%;
+	float:right;
+	text-align:right;
+}
+
+#title-block label.right input {
+	margin-left:0.5em;
+	margin-right:0;
+}
+
 @media only screen and (max-width: 782px) {
 	#wlist-form fieldset.wl-col {
 		width:100%;
+	}
+	
+	#title-block label.right, #title-block label.left {
+		width:100%;
+		float:none;
+		text-align:left;
 	}
 }
 

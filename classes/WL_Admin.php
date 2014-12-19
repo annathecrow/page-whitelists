@@ -15,6 +15,8 @@ class WL_Admin {
 	
 	public function add_menus() {
 		
+		
+		
 		add_menu_page( 
 			$this->settings->get_plugin_title(), //label of the sidebar link
 			$this->settings->get_plugin_title(), //title of the main options page
@@ -216,7 +218,8 @@ class WL_Admin {
 				if (in_array($key,$assigned_roles)) {
 					$data['roles'][$key] = true;
 				}
-			}  
+			} 
+			$data['strict'] = $list->is_strict();
 			$data['name'] = $list->get_name();
 			$data['id'] = $list->get_id();
 			$data['time'] = $list->get_time();
@@ -242,7 +245,7 @@ class WL_Admin {
 			if ($_POST['id']=='') {
 				$passed = check_ajax_referer( 'create-wlist', 'nonce', false);
 				if (!$passed) throw new Exception("nonce-failed");	
-				$list = $this->data->create_whitelist($name);
+				$list = $this->data->create_whitelist($name,$_POST['strict']);
 				if (!$list) {
 					throw new Exception("unknown");				
 				} elseif (get_class($list)!='WL_List') {
@@ -318,8 +321,12 @@ class WL_Admin {
 					}
 				}	
 			}
+			if ($_POST['strict']=='false') {
+				$list->set_strict(false);
+			} else {
+				$list->set_strict();
+			}
 			
-			//I need to return: id, name, time, pages, users, roles
 			WL_Dev::log("this is get_page_ids array:");
 			WL_Dev::log($list->get_page_ids());
 			$result = array(
@@ -331,13 +338,14 @@ class WL_Admin {
 				"pages"=>$list->get_page_ids(),				
 				"users"=>$list->get_user_logins(),
 				"roles"=>$list->get_role_names(),
+				'strict'=>$list->is_strict(),
 			);
 			$result['deleteNonce'] = ($list_status=="created")?wp_create_nonce("delete-wlist-".$list->get_id()):null;
 			if (!$success) {
 				$result['success']=false;
 				$result['message']='addition-errors';
 			}
-			WL_Dev::log($result);
+			//WL_Dev::log($result);
 			die(json_encode($result));
 		} catch (Exception $e) {
 			$result = array(

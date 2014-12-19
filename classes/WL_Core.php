@@ -12,10 +12,7 @@ class Whitelists
 	
 	public function install() {
 		$this->data->initialize();
-		//set up WP Options
 		//TODO manage db versions somehow see tutorial on WP page
-		//$this->data->create_whitelist("Dummy");
-
 	}
 	
 	public function uninstall() {
@@ -27,8 +24,10 @@ class Whitelists
 		add_action('init',array($this->access_manager, 'access_check'));	
 		add_action('admin_menu',array($this->admin, 'add_menus'));
 		add_action('admin_enqueue_scripts',array($this->admin,'enqueue_assets'));
-		add_action('admin_init',array($this->admin,'register_ajax'));		
+		add_action('admin_init',array($this->admin,'register_ajax'));
+		add_action( 'new_to_auto-draft', array($this->access_manager,'auto_add_page'), 10, 3 );
 	}
+	
 	
 	
 }

@@ -216,22 +216,31 @@ class WL_Data {
 	}
 	
 	public function get_user_whitelists($user) {
-		//I am choosing to do one database fetch for all the whitelists and filter them, rather than fetch each whitelist separately, in the belief that this will be faster.
-		$all_whitelists = $this->get_all_whitelists();
-		$whitelist_ids = array();
-		foreach ($user->allcaps as $cap => $v) {
-			if (strpos($cap,"edit_whitelist_")!== false) {
-				$whitelist_ids[] = str_replace("edit_whitelist_", "", $cap);
+		try {			
+			if (is_numeric($user)) {
+				$user = get_user_by('id',$user);
+				if (!$user) {throw new Exception('User not found.',0);};
+			} else if (get_class($user) !== 'WP_User') {
+				throw new Exception('$user is neither id nor an instance of WP_User.',0);
 			}
-		}
-		$whitelists = array();
-		foreach ($all_whitelists as $list) {
-			if (in_array($list->get_id(),$whitelist_ids)) {
-				$whitelists[] = $list;
-			};
-		}
-		
-		return $whitelists;
+			$all_whitelists = $this->get_all_whitelists();
+			$whitelist_ids = array();
+			foreach ($user->allcaps as $cap => $v) {
+				if (strpos($cap,"edit_whitelist_")!== false) {
+					$whitelist_ids[] = str_replace("edit_whitelist_", "", $cap);
+				}
+			}
+			$whitelists = array();
+			foreach ($all_whitelists as $list) {
+				if (in_array($list->get_id(),$whitelist_ids)) {
+					$whitelists[] = $list;
+				};
+			}
+			return $whitelists;	
+		} catch (Exception $e) {
+			WL_Dev::error($e);
+			return false;
+		}	
 	}
 	
 	public function get_accessible_pages($user) {

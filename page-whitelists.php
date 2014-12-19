@@ -5,8 +5,6 @@ Version: 1.0
 Description: This plugin allows administrators to limit access only to selected pages - either for single users, or for entire roles (also works with roles created by other plugins).  
 Author: Anna Frankova
 Author URI: http://corvidism.com
-Text Domain: page-whitelists
-Domain Path: /languages
 Licence: GPL2
 
 Copyright 2014 Anna Frankova (frankova@corvidism.com)

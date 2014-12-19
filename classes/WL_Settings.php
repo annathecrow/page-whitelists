@@ -5,8 +5,9 @@
  */
 class WL_Settings {
 	
-	public function __construct($template_path) {
-		$this->template_path = $template_path;
+	public function __construct($dir) {
+		$this->plugin_dir = $dir;
+		$this->template_path = $dir."/templates/";
 		$this->plugin_title = "Whitelists";
 		
 		

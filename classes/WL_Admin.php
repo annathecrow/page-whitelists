@@ -3,15 +3,17 @@
 /**
  * creates settings page
  */
-class WL_Menu {
+class WL_Admin {
 	private $settings;
 	private $data;
 	
-	function __construct($data,$settings) {
+	function __construct(&$data,&$settings) {
 		$this->settings = $settings;
 		$this->data = $data;
-		
-		
+	}
+	
+	
+	public function add_menus() {
 		add_menu_page( 
 			$this->settings->get_plugin_title(), //label of the sidebar link
 			$this->settings->get_plugin_title(), //title of the main options page
@@ -38,13 +40,15 @@ class WL_Menu {
 			'$wl_settings', 
 			array($this,'render_settings_page')
 			);
-			
-		
-			
 		
 	}
 	
-	public function render_settings_page() {
+	public function enqueue_scripts($hook) {
+		if( 'admin.php?page=wl_lists' != $hook ) return;
+		wp_enqueue_script( 'wl_lists_js', $this->settings->get_template_path(). 'js/wl_lists.js' );
+	}
+	
+ 	public function render_settings_page() {
 		require_once $this->settings->get_template_path()."settings_page.php";
 		//whitelists as strict?
 		//how to combine wlists

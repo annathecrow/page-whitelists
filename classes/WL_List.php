@@ -38,8 +38,6 @@ class WL_List {
 	
 	public function get_users() {
 		if (isset($this->users)) {
-			WL_Dev::log("users array exists.");
-			WL_Dev::log($this->users);
 			return $this->users;
 		} 
 		
@@ -60,8 +58,6 @@ class WL_List {
 	
 	public function get_roles() {
 		if (isset($this->roles)) {
-			WL_Dev::log("roles array exists.");
-			WL_Dev::log($this->roles);
 			return $this->roles;
 		}
 		$all_roles = get_editable_roles();
@@ -76,31 +72,35 @@ class WL_List {
 	}
 	
 	public function get_pages() {
-		//return assigned pages
+		if (isset($this->pages)) return $this->pages;
+		global $wpdb;
+		$list_page_table = $this->data->get_list_page_table();
+		$query = $wpdb->prepare("SELECT * FROM $list_page_table WHERE list_id = %s",$this->id);
+		$result = $wpdb->get_results($query,ARRAY_A);
+		$pages = array();
+		foreach($result as $page_item) {
+			$pages[] = $page_item['page_id'];
+		}
+		$this->pages = $pages;
+		return $pages;
 	}
 	
 	public function add_user($user) {
 		try {			
 			if (is_numeric($user)) {
-				WL_Dev::log('$user is numeric');
 				$user = get_user_by('id',$user);
 				if (!$user) {throw new Exception('User not found.');};
-			} else if (get_class($user) === 'WP_User') {
-				WL_Dev::log('$user should be WP_User instance');
-			} else {
+			} else if (get_class($user) !== 'WP_User') {
 				throw new Exception('$user is neither string nor an instance of WP_User.');
 			}
+			if (!isset($this->users)) {
+					$this->get_users();
+				} 			
 			$user->add_cap($this->cap);
-			if (isset($this->users)) {
-				WL_Dev::log("users array exists, adding.");
-				$this->users[]=$user;
-			} else {
-				WL_Dev::log("users array doesn't exist, creating.");
-				$this->users = array($user);
-			} 
-			return true;
+			$this->users[]=$user;
+			return true;		
 		} catch (Exception $e) {
-			WL_Dev::log($e->getMessage());
+			WL_Dev::error($e);
 			return false;
 		}	
 	}
@@ -108,22 +108,15 @@ class WL_List {
 	public function remove_user($user) {
 		try {			
 			if (is_numeric($user)) {
-				WL_Dev::log('$user is numeric');
 				$user = get_user_by('id',$user);
 				if (!$user) {throw new Exception('User not found.');}
-			} else if (get_class($user) === 'WP_User') {
-				WL_Dev::log('$user should be WP_User instance');
-			} else {
+			} else if (get_class($user) !== 'WP_User') {
 				throw new Exception('$user is neither numeric nor an instance of WP_User.');
 			}
-			$user->remove_cap($this->cap);
 			if (!isset($this->users)) {
-				WL_Dev::log("roles array doesn't exist, fetching.");
 				$this->get_users();
-			} else {
-				WL_Dev::log("roles array exists.");
-				WL_Dev::log($this->users);
 			}
+			$user->remove_cap($this->cap);
 			unset($this->users[in_array($user, $this->users)]);
 			return true;
 		} catch (Exception $e) {
@@ -135,23 +128,17 @@ class WL_List {
 	public function add_role($role) {
 		try {			
 			if (is_string($role)) {
-				WL_Dev::log('$role is string');
 				$role = get_role($role);
 				if ($role == null) throw new Exception('Role not found.');
 			} else if (get_class($role) === 'WP_Role') {
-				WL_Dev::log('$role should be WP_Role instance');
 			} else {
 				throw new Exception('$role is neither string nor an instance of WP_User.');
 			}
-			$role->add_cap($this->cap);
-			if (isset($this->roles)) {
-				WL_Dev::log("role array exists, adding.");
-				WL_Dev::log($this->roles);
-				$this->roles[]=$role;
-			} else {
-				WL_Dev::log("role array doesn't exist, creating.");
-				$this->roles = array($role);
+			if (!isset($this->roles)) {
+				$this->get_roles();
 			}
+			$role->add_cap($this->cap);
+			$this->roles[]=$role;
 			return true;
 		} catch (Exception $e) {
 			WL_Dev::log($e->getMessage());
@@ -162,22 +149,17 @@ class WL_List {
 	public function remove_role($role) {
 		try {			
 			if (is_string($role)) {
-				WL_Dev::log('$role is string');
 				$role = get_role($role);
 				if ($role == null) throw new Exception('Role not found.');
 			} else if (get_class($role) === 'WP_Role') {
-				WL_Dev::log('$role should be WP_Role instance');
 			} else {
 				throw new Exception('$role is neither string nor an instance of WP_User.');
 			}
-			$role->remove_cap($this->cap);
+			
 			if (!isset($this->roles)) {
-				WL_Dev::log("roles array doesn't exist, fetching.");
 				$this->get_roles();
-			} else {
-				WL_Dev::log("roles array exists.");
-				WL_Dev::log($this->roles);
 			}
+			$role->remove_cap($this->cap);
 			unset($this->roles[in_array($role, $this->roles)]);
 			return true;
 		} catch (Exception $e) {
@@ -187,12 +169,69 @@ class WL_List {
 	}
 	
 	public function add_page($page_id) {
-		//add page id to db
-		//add page to param
+		try {
+			$page = get_post($page_id);
+			if ($page === null) {
+				throw new Exception("Page with this id doesn't exist.");
+			} else if ($page->post_type !='page') {
+				throw new Exception("This id doesn't belong to a page.");
+			} else {
+				global $wpdb;
+				$success = $wpdb->insert(
+					$this->data->get_list_page_table(),
+					array(
+						'list_id'=>$this->id,
+						'page_id'=>$page_id
+					)				
+				);
+				if (!$success) {
+					throw new Exception("Coulnd't write into database.");
+				} else {
+					if (!isset($this->pages)) {
+						$this->get_pages();
+					} else {
+						$this->pages[] = $page_id;
+					}					
+					return true;
+				}
+			} 
+		} catch (Exception $e) {
+			WL_Dev::error($e);
+			return false;
+		}
 	}
 	
 	public function remove_page($page_id) {
-		
+		try {
+			$page = get_post($page_id);
+			if ($page === null) {
+				throw new Exception("Page with this id doesn't exist.");
+			} else if ($page->post_type !='page') {
+				throw new Exception("This id doesn't belong to a page.");
+			} else {
+				global $wpdb;
+				$success = $wpdb->delete(
+					$this->data->get_list_page_table(),
+					array(
+						'list_id'=>$this->id,
+						'page_id'=>$page_id
+					)				
+				);
+				if (!$success) {
+					throw new Exception("Coulnd't delete from database.");
+				} else {
+					if (!isset($this->pages)) {
+						$this->get_pages();
+					} else {
+						unset($this->pages[in_array($page_id, $this->pages)]);
+					}					
+					return true;
+				}
+			}
+		} catch (Exception $e) {
+			WL_Dev::error($e);
+			return false;
+		}	
 	}
 	
 	public function rename($new_name) {

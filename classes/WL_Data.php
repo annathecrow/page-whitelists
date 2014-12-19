@@ -36,9 +36,9 @@ class WL_Data {
 		//junction table for group-user relationships
 		$sqls[$this->list_page_table] = "CREATE TABLE $this->list_page_table (
 			list_id INT NOT NULL,
-			post_id bigint(20) unsigned NOT NULL,
-			PRIMARY KEY  (list_id,post_id),
-			KEY post_id (post_id)
+			page_id bigint(20) unsigned NOT NULL,
+			PRIMARY KEY  (list_id,page_id),
+			KEY page_id (page_id)
 			);";
 		
 		foreach ($sqls as $table_name => $sql) {
@@ -119,10 +119,13 @@ class WL_Data {
 					foreach($users as $user) {
 						$list->remove_user($user->data->ID);
 					}
-					
-					$roles = get_editable_roles();
+					$roles = $list->get_roles();
 					foreach($roles as $role) {
-						$list->remove_role(strtolower($role['name'])); //get_editable_roles returns names capitalized, but the get_role() function needs them lowercase. *eyeroll*
+						$list->remove_role($role->name);
+					}
+					$pages = $list->get_pages();
+					foreach($pages as $page_id) {
+						$list->remove_page($page_id);
 					}
 					return array(true,'');
 				}

@@ -11,6 +11,7 @@ class Whitelists
 	public function install() {
 		$this->data->initialize();
 		//set up WP Options
+		//TODO manage db versions somehow see tutorial on WP page
 		$this->data->create_whitelist("Dummy");
 
 	}

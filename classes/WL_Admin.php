@@ -158,7 +158,7 @@ class WL_Admin {
 		//FIRST STEP: build a "fresh" data array
 		$data = array();
 		$data['pages'] = array();
-		$query = new WP_Query('post_type=page');
+		$query = new WP_Query('post_type=page&posts_per_page=-1');
 		while ($query->have_posts()) {
 			$query->the_post();
 			$data['pages'][] = array(

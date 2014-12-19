@@ -6,6 +6,9 @@ class WL_List {
 	private $time;
 	private $cap;
 	private $data;
+	private $users;
+	private $roles;
+	private $page_ids;
 	
 	
 	/**
@@ -56,14 +59,19 @@ class WL_List {
 		return $assigned_users;
 	}
 	
-	public function the_users($delimiter = ", ") {
+	public function get_user_logins() {
 		$users = $this->get_users();
 		//WL_Dev::log($users);
 		$namearray = array();
 		foreach ($users as $user) {
 			$namearray[] = $user->user_login;
 		}
-		echo implode($delimiter,$namearray);
+		
+		return $namearray;
+	}
+	
+	public function the_users($delimiter = ", ") {
+		echo implode($delimiter,$this->get_user_logins());
 	}
 	
 	public function get_roles() {
@@ -81,16 +89,20 @@ class WL_List {
 		return $assigned_roles;
 	}
 	
-	public function the_roles($delimiter = ", ") {
+	public function get_role_names() {
 		$roles = $this->get_roles();
 		$namearray = array();
 		foreach ($roles as $role) {
 			$namearray[] = $role->name;
 		}
-		echo implode($delimiter,$namearray);
+		return $namearray;
 	}
-	public function get_pages() {
-		if (isset($this->pages)) return $this->pages;
+	
+	public function the_roles($delimiter = ", ") {
+		echo implode($delimiter,$this->get_role_names());
+	}
+	public function get_page_ids() {
+		if (isset($this->page_ids)) return $this->page_ids;
 		global $wpdb;
 		$list_page_table = $this->data->get_list_page_table();
 		$query = $wpdb->prepare("SELECT * FROM $list_page_table WHERE list_id = %s",$this->id);
@@ -99,8 +111,13 @@ class WL_List {
 		foreach($result as $page_item) {
 			$pages[] = $page_item['page_id'];
 		}
-		$this->pages = $pages;
+		$this->page_ids = $pages;
 		return $pages;
+	}
+	
+	public function the_pages($delimiter = ", ") {
+		$page_ids = $this->get_page_ids();
+		echo implode($delimiter,$page_ids);
 	}
 	
 	public function add_user($user) {
@@ -109,7 +126,7 @@ class WL_List {
 				$user = get_user_by('id',$user);
 				if (!$user) {throw new Exception('User not found.');};
 			} else if (get_class($user) !== 'WP_User') {
-				throw new Exception('$user is neither string nor an instance of WP_User.');
+				throw new Exception('$user is neither id nor an instance of WP_User.');
 			}
 			if (!isset($this->users)) {
 					$this->get_users();
@@ -187,6 +204,7 @@ class WL_List {
 	}
 	
 	public function add_page($page_id) {
+		//first check if the page already isn't assigned, so I don't get database errors about duplicate assignments
 		try {
 			$page = get_post($page_id);
 			if ($page === null) {
@@ -205,10 +223,10 @@ class WL_List {
 				if (!$success) {
 					throw new Exception("Coulnd't write into database.");
 				} else {
-					if (!isset($this->pages)) {
-						$this->get_pages();
+					if (!isset($this->page_ids)) {
+						$this->get_page_ids();
 					} else {
-						$this->pages[] = $page_id;
+						$this->page_ids[] = $page_id;
 					}					
 					return true;
 				}
@@ -238,10 +256,10 @@ class WL_List {
 				if (!$success) {
 					throw new Exception("Coulnd't delete from database.");
 				} else {
-					if (!isset($this->pages)) {
-						$this->get_pages();
+					if (!isset($this->page_ids)) {
+						$this->get_page_ids();
 					} else {
-						unset($this->pages[in_array($page_id, $this->pages)]);
+						unset($this->page_ids[in_array($page_id, $this->page_ids)]);
 					}					
 					return true;
 				}

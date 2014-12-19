@@ -44,11 +44,11 @@ class Whitelists
 		if ( ! is_admin() || ! current_user_can( 'edit_pages' ) ) return FALSE;
 		$s = get_current_screen();
 		//return ( $s instanceof WP_Screen && $s->id === 'edit-page' );
-		return ( $s instanceof WP_Screen && in_array($s->id, array('edit-page','edit-post'))); //return true if it's edit-page.php or edit-post.php
+		return ( $s instanceof WP_Screen && in_array($s->id, array('edit-page'))); //return true if it's edit-page.php or edit-post.php
 	}		
 	function in_edit_form() {
 		$s = get_current_screen();
-		return ( $s instanceof WP_Screen && in_array($s->id, array('page','post')));
+		return ( $s instanceof WP_Screen && in_array($s->id, array('page')));
 	}
 	
 	function is_allowed() {

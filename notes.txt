@@ -44,3 +44,11 @@ potentionally "classifiable" stuff:
 	maintaining the list of allowed pages for a user
 	options (options pages, updating, creation)
 	
+	
+	
+Table TO-DO
+-----------
+
+check how foreign keys work (esp. so it doesn't mess with deleting posts/users by WP)
+find how to stop dbDelta from bitching on update
+write add/remove functions

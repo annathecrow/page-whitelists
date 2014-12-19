@@ -2,27 +2,11 @@
 
 class Whitelists 
 {
-	public function __construct($data,$settings) {
+	public function __construct($data,$file) {
 		$this->data = $data;
-		$this->settings = $settings;		
 		$this->access_manager = new WL_Access_Manager($this->data);
-		$this->admin = new WL_Admin($this->data,$this->settings);
+		$this->admin = new WL_Admin($this->data,$file);
 		
-	}
-	
-	public function activate() {
-		$this->data->initialize();		
-		//TODO manage db versions somehow see tutorial on WP page
-		//how to do something only on update?
-	}
-	
-	public function deactivate() {
-		
-	}
-	
-	public function uninstall() {
-		//remove database
-		//remove caps of whitelists
 	}
 	
 	public function run() {		

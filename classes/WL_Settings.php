@@ -5,9 +5,15 @@
  */
 class WL_Settings {
 	
-	public function __construct($dir) {
-		$this->plugin_dir = $dir;
-		$this->template_path = $dir."/templates/";
+	private $plugin_dir;
+	private $template_path;
+	private	$template_url;
+	private	$plugin_title;
+	
+	public function __construct($file) {
+		$this->plugin_dir = plugin_dir_path($file);
+		$this->template_path = $this->plugin_dir."templates/";
+		$this->template_url = plugin_dir_url($file)."templates/";
 		$this->plugin_title = "Whitelists";
 		
 		
@@ -20,6 +26,10 @@ class WL_Settings {
 	
 	public function get_plugin_title() {
 		return $this->plugin_title;
+	}
+	
+	public function get_template_url() {
+		return $this->template_url;
 	}
 	
 }

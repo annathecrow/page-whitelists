@@ -6,6 +6,7 @@ class WL_Data_Test extends WP_UnitTestCase {
 	function __construct() {
 		$this->data = New WL_Data();
 		$this->data->initialize();
+		//$this->dummy_user = new WP_User(1);
 	}
 	
 	

@@ -64,6 +64,7 @@ class WL_Data {
 			if ($row != NULL) {
 				$id = $row->id;
 				throw new Exception("Whitelist with this name already exists.", 1); //TODO translate
+				//THOUGHT: shouldn't this test be done somewhere else? Shouldn't this function just expect this list doesn't exist? The "name" isn't a unique key in the database. Would it really be that bad if two lists had same name?
 			};			
 			$success = $wpdb->insert(
 			$this->list_table,
@@ -78,8 +79,8 @@ class WL_Data {
 			$id = $wpdb->insert_id;
 		} catch (Exception $e) {
 			WL_Dev::log($e->getMessage());
-			//do stuff that isn't just logging. Probably should display some native WP error message (if it does even have such a thing)
 			if ($e->getCode()==1) {return true;} else {return false;}
+			//THOUGHT: should, or shouldn't this return the existing list as WL_Object?
 		}		
 		
 		WL_Dev::log('created whitelist '.$id.', '.$name);
@@ -105,8 +106,7 @@ class WL_Data {
 	}
 	
 	public function add_whitelist_to_role($list_id,$role_id) {
-		//add role-list pair to junction table
-		//add capability to edit the pages in the whitelist role
+		//add list-editing capability to this role 
 	}
 	
 	public function remove_whitelist_from_role($list_id, $role_id) {
@@ -116,36 +116,12 @@ class WL_Data {
 	
 	public function get_whitelists() {
 		global $wpdb;
-		//what am I doing. SERIOUSLY what am I DOING. THere is supposed to be some class or some shit that corresponds to the list, and I don't know what the hell THIS IS ALL SO COMPLICATED OKAY I HAVEN'T STUDIED FOR THIS MY IT BACKGROUND IS BASICALLY "POKED INTO IT LONG ENOUGH UNTIL IT STUCK" AND ALL THIS OOP AND BEST PRACTICES AND SQL ESCAPING IS JUST SO MUCH OVER MY HEAD I FEEL LIKE TRYING TO GARGLE ACID
-		
-		
-		//fetch from database
-		//create WL_List from each row
-		//return as array
 		$query = "SELECT * FROM $this->list_table";
 		$raw_lists = $wpdb->get_results($query,ARRAY_A);
 		foreach ($raw_lists as $list) {
 			$array_of_lists[] = new WL_List($list['id'],$list['name'],$list['time']);
 		}
-		
-		//okay, a problem: the WL_List object should, presumably, have all the info about a list. As in, users, roles, pages. That means I need to poll two databases AND do a pretty complicated sifting of users/roles to get it. And for a listing of lists, I don't even need all that info, because I'm not gonna USE it.
-		//BUT, if I'm trying to approach this logically, an object that has half the data here and all the data elsewhere is a BAAAD idea.
-		//BUT, you're supposed to poll as few db tables as possible. 
-		
-		//options: 
-			//fetch it all, don't care about the overhead.
-			//fetch it partially, deal with incomplete objects later.
-			//don't create objects, it's just for html listing anyway.
-			//don't have the user/roles and the pages info in the object at all. Fetch it as needed. Maybe store it after the first fetch so it won't have to do it repeatedly in one run.
-		
 		return $array_of_lists;
 	}
-	
-	/*
-	 * good news: WP has a function to add tables to database.
-	 * bad news: it's fussy as bitch and it HAS NO DOCUMENTATION. 
-	 * -- because we needed another proof I've lost my marbles. Still easier than doing the SQL mating dance manually, though.
-	 * Kingdom for a framework.
-	 */
 }
 	 

@@ -2,128 +2,118 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Page Whitelists v0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 10:27+0100\n"
-"PO-Revision-Date: 2014-07-31 10:43+0100\n"
+"POT-Creation-Date: 2014-07-31 15:49+0100\n"
+"PO-Revision-Date: 2014-07-31 15:49+0100\n"
 "Last-Translator: annathecrow <annathecrow@corvidism.com>\n"
-"Language-Team: Corvidism <annathecrow@corvidism.com>\n"
+"Language-Team: \n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e;_x\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
 "X-Poedit-Basepath: .\n"
-"Plural-Forms: nplurals=3; plural=n>=2 && n<=4 ? 1 : n==1 ? 0 : 2;\n"
-"X-Poedit-Language: Czech\n"
-"X-Poedit-Country: CZECH REPUBLIC\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: ..\n"
 
 #: ../templates/lists_page.php:2
-msgid "Whitelists"
-msgstr "Seznamy povolených stránek"
+#: ../classes/WL_Admin.php:17
+msgid "Page Whitelists"
+msgstr ""
 
 #: ../templates/lists_page.php:15
 #: ../classes/WL_Admin.php:97
 msgid "Title"
-msgstr "Název"
+msgstr ""
 
 #: ../templates/lists_page.php:16
 #: ../classes/WL_Admin.php:99
 msgid "Whitelisted pages"
-msgstr "Povolené stránky"
+msgstr ""
 
 #: ../templates/lists_page.php:17
 #: ../classes/WL_Admin.php:102
 msgid "Assigned to roles"
-msgstr "Přiřazeno rolím"
+msgstr ""
 
 #: ../templates/lists_page.php:18
 #: ../classes/WL_Admin.php:100
 #: ../classes/WL_Admin.php:101
 msgid "Assigned to users"
-msgstr "Přiřazeno uživatelům"
+msgstr ""
 
 #: ../templates/lists_page.php:19
 #: ../classes/WL_Admin.php:98
 msgid "Allow creation of new pages"
-msgstr "Povolit vytváření nových stránek"
+msgstr ""
 
 #: ../templates/lists_page.php:31
 #: ../classes/WL_Admin.php:106
 msgid "Edit"
-msgstr "Upravit"
+msgstr ""
 
 #: ../templates/lists_page.php:32
 #: ../classes/WL_Admin.php:96
 msgid "Delete"
-msgstr "Smazat"
+msgstr ""
 
 #: ../templates/lists_page.php:38
 msgid "no"
-msgstr "ne"
+msgstr ""
 
 #: ../templates/lists_page.php:38
 msgid "yes"
-msgstr "ano"
+msgstr ""
 
 #: ../templates/lists_page.php:45
 #: ../classes/WL_Admin.php:105
 msgid "Create new..."
-msgstr "Vytvořit..."
+msgstr ""
 
-#: ../classes/WL_Access_Manager.php:64
+#: ../classes/WL_Access_Manager.php:70
 msgid "You are not allowed to edit this page."
-msgstr "Nemáte povoleno editovat tuto stránku."
+msgstr ""
 
-#: ../classes/WL_Access_Manager.php:102
+#: ../classes/WL_Access_Manager.php:108
 msgid "You are not allowed to create new pages."
-msgstr "Nemáte povoleno vytvářet nové stránky."
+msgstr ""
 
 #: ../classes/WL_Admin.php:39
 msgid "Associated Whitelists"
-msgstr "Přiřazené seznamy povolených stránek"
+msgstr ""
 
 #: ../classes/WL_Admin.php:103
 msgid "Cancel"
-msgstr "Zrušit"
+msgstr ""
 
 #: ../classes/WL_Admin.php:104
 msgid "Save"
-msgstr "Uložit"
+msgstr ""
 
 #: ../classes/WL_Admin.php:107
 msgid "cannot save a whitelist without a name."
-msgstr "nelze uložit seznam bez názvu."
+msgstr ""
 
 #: ../classes/WL_Admin.php:108
 msgid "Whitelist successfully created."
-msgstr "Seznam úspěšně vytvořit."
+msgstr ""
 
 #: ../classes/WL_Admin.php:109
 msgid "Whitelist successfully edited."
-msgstr "Seznam úspěšně upraven."
+msgstr ""
 
 #: ../classes/WL_Admin.php:110
 msgid "Whitelist successfully deleted."
-msgstr "Seznam úspěšně smazán."
+msgstr ""
 
 #: ../classes/WL_Admin.php:111
 msgid "Error."
-msgstr "Chyba."
+msgstr ""
 
 #: ../classes/WL_Admin.php:112
 msgid "You have unsaved changes. Do you want to continue?"
-msgstr "Máte neuložené změny. Určitě chcete pokračovat?"
+msgstr ""
 
 #: ../classes/WL_Admin.php:113
 msgid "Are you sure you want to delete whitelist {listName}?"
-msgstr "Chcete určitě smazat seznam {listName}?"
+msgstr ""
 
-#~ msgid "Edit..."
-#~ msgstr "Upravit"
-
-#~ msgid "Page Whitelists"
-#~ msgstr "Page Whitelists"
-
-#~ msgid "Create New..."
-#~ msgstr "Vytvořit..."

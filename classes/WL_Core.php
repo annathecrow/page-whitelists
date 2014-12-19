@@ -16,7 +16,6 @@ class Whitelists
 	}
 	
 	public function load_textdomain() {
-		WL_Dev::log("loading textdomain");
 		load_plugin_textdomain( 'page-whitelists', false, dirname( plugin_basename($this->basefile) ) . '/languages/' );
 	}
 	

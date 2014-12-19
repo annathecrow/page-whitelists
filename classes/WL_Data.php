@@ -17,6 +17,7 @@ class WL_Data {
 		$this->list_table = $wl_table_prefix."list";
 		$this->list_role_table = $wl_table_prefix."list_role";
 		$this->list_page_table = $wl_table_prefix."list_page";
+		//shouldn't this shite be in WP Options?
 				 
 	}
 	
@@ -70,7 +71,7 @@ class WL_Data {
 		
 		try {
 			if ($wpdb->get_row("SELECT * FROM $table WHERE name = '$name'") != NULL) {
-			throw new Exception("Table with this name already exists.", 1);
+			throw new Exception("Table with this name already exists.", 1); //TODO translate
 			};			
 			$success = $wpdb->insert(
 			$this->list_table,
@@ -80,7 +81,7 @@ class WL_Data {
 				)
 			);
 			if (!$success) {
-				throw new Exception("Table row could not be written.");
+				throw new Exception("Table row could not be written."); //TODO translate
 			}
 			$id = $wpdb->insert_id;
 		} catch (Exception $e) {

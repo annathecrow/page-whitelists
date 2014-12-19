@@ -5,28 +5,31 @@
  */
 class WL_Data {
 	
-	private $WL_list_table;
-	private $WL_group_table;
-	private $WL_list_group_table;
-	private $WL_group_user_table;
+	private $list_table;
+	private $group_table;
+	private $list_group_table;
+	private $group_user_table;
 	
 	public function __construct() {
 		WL_Dev::log("data class instantiated");
 		global $wpdb;
 		$prefix = $wpdb->prefix;
-		$WL_table_prefix = $prefix."wl_";
-		$WL_list_table = $WL_table_prefix."list";
-		$WL_group_table = $WL_table_prefix."group";
-		$WL_list_group_table = $WL_table_prefix."list_group";
-		$WL_list_page_table = $WL_table_prefix."list_page";
-		$WL_group_user_table = $WL_table_prefix."group_user";
-		
+		$wl_table_prefix = $prefix."wl_";
+		$this->list_table = $wl_table_prefix."list";
+		$this->group_table = $wl_table_prefix."group";
+		$this->list_group_table = $wl_table_prefix."list_group";
+		$this->list_page_table = $wl_table_prefix."list_page";
+		$this->group_user_table = $wl_table_prefix."group_user";		 
+	}
+	
+	public function data_setup() {
+		global $wpdb;
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		
 		$sqls = array();
 		
 		//whitelists
-		$sqls[$WL_list_table] = "CREATE TABLE $WL_list_table (
+		$sqls[$list_table] = "CREATE TABLE $this->list_table (
 			id INT NOT NULL AUTO_INCREMENT,
 			name tinytext NOT NULL,
 			time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
@@ -34,7 +37,7 @@ class WL_Data {
 			);";
 		
 		//groups
-		$sqls[$WL_group_table] = "CREATE TABLE $WL_group_table (
+		$sqls[$group_table] = "CREATE TABLE $this->group_table (
 			id INT NOT NULL AUTO_INCREMENT,
 			name tinytext NOT NULL,
 			time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
@@ -42,66 +45,62 @@ class WL_Data {
 			);";
 		
 		//junction table for list-group relationships
-		$sqls[$WL_list_group_table] = "CREATE TABLE $WL_list_group_table (
+		$sqls[$list_group_table] = "CREATE TABLE $this->list_group_table (
 			list_id INT NOT NULL,
 			group_id INT NOT NULL,
-			PRIMARY KEY  (list_id, group_id),
-			INDEX (group_id),
-			FOREIGN KEY (list_id) 
-				REFERENCES $WL_list_table(id) 
-				ON UPDATE CASCADE,
-			FOREIGN KEY (group_id) 
-				REFERENCES $WL_group_table(id) 
-				ON UPDATE CASCADE
+			PRIMARY KEY  (list_id,group_id),
+			INDEX (group_id)			
 			);";
 		
-		
-		$post_table = $prefix."posts";
-
 		//junction table for group-user relationships
-		$sqls[$WL_list_page_table] = "CREATE TABLE $WL_list_page_table (
+		$sqls[$list_page_table] = "CREATE TABLE $this->list_page_table (
 			list_id INT NOT NULL,
 			post_id bigint(20) unsigned NOT NULL,
 			PRIMARY KEY  (list_id,post_id),
-			INDEX (post_id),
-			FOREIGN KEY (list_id) 
-				REFERENCES $WL_list_table(id) 
-				ON UPDATE CASCADE,
-			FOREIGN KEY (post_id) 
-				REFERENCES $post_table(ID) 
-				ON UPDATE CASCADE
+			INDEX (post_id)
 			);";
-		
-		$user_table = $prefix."users";
-
+			
 		//junction table for group-user relationships
-		$sqls[$WL_group_user_table] = "CREATE TABLE $WL_group_user_table (
+		$sqls[$group_user_table] = "CREATE TABLE $this->group_user_table (
 			group_id INT NOT NULL,
 			user_id bigint(20) unsigned NOT NULL,
 			PRIMARY KEY  (group_id,user_id),
-			INDEX (group_id),
-			FOREIGN KEY (group_id) 
-				REFERENCES $WL_group_table(id) 
-				ON UPDATE CASCADE,
-			FOREIGN KEY (user_id) 
-				REFERENCES $user_table(ID) 
-				ON UPDATE CASCADE
+			INDEX (group_id)
 			);";
 
 		
-		foreach ($sqls as $sql) {
-			dbDelta( $sql );
+		foreach ($sqls as $table_name => $sql) {
+			dbDelta($sql);
 		};		
 		
-		//create or update the tables
-		//load sh--stuff into params, or something 
-	}
-	
-	public function create_whitelist() {
 		
+		//create or update the tables
+		//load sh--stuff into params, or something
 	}
 	
-	public function delete_whitelist() {
+	public function create_whitelist($name) {
+		//check if name doesn't exist yet - if it does, warn for it (TODO: implement Ajax form field validation for this)
+		//this should really use try throw catch...
+		global $wpdb;
+		$table = $this->list_table;
+		WL_Dev::log('trying to access table '.$table);
+		if ($wpdb->get_row("SELECT * FROM $table WHERE name = '$name'") != NULL) {
+			WL_Dev::log('list with this name already exists');
+			return;
+		};
+		$success = $wpdb->insert(
+			$this->list_table,
+			array(
+				'name' => $name,
+				'time' => date('Y-m-d H:i:s')
+			)
+			);
+		$id = $wpdb->insert_id;
+		WL_Dev::log('created whitelist '.$id.', '.$name);
+		return $wpdb->insert_id;
+	}
+	
+	public function delete_whitelist($id) {
 		
 	}
 	

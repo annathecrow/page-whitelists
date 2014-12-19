@@ -14,10 +14,11 @@ class WL_Admin {
 	
 	
 	public function add_menus() {
-		$plugin_title = get_option("wlist_plugin_title");
+		$plugin_title = "Page Whitelists";
 		
 		
-		add_menu_page( 
+		add_submenu_page( 
+			'options-general.php',
 			$plugin_title, //label of the sidebar link
 			$plugin_title, //title of the main options page
 			'manage_options',
@@ -35,7 +36,7 @@ class WL_Admin {
 		if (!current_user_can('manage_options')) return;
 		add_meta_box(
 			'wlist-metabox',
-			'Associated Whitelists',
+			__('Associated Whitelists','whitelists'),
 			array($this,'render_metabox'),
 			'page',
 			'side'
@@ -82,14 +83,35 @@ class WL_Admin {
 	/***************** SCRIPTS AND STYLES **********************/
 	
 	public function enqueue_assets($hook) {
-		$screen = get_current_screen(); 
-		if($screen->id != 'toplevel_page_wl_lists') {
+		$screen = get_current_screen();
+		WL_Dev::log($screen->id);
+		if($screen->id != 'settings_page_wl_lists') {
 			return;
 		}
 		$script_path = $this->template_url. 'js/wl_lists.js';
 		$style_path = $this->template_url. 'css/wl_lists.css';
 		wp_enqueue_style('style-name', $style_path);
 		wp_enqueue_script('wl_lists_js', $script_path, array('jquery'),'1.0.0',true);
+		wp_localize_script( 'wl_lists_js', 'jsi18n', array(
+			'del' => __( 'Delete', 'whitelists' ),
+			'title' => __( 'Title', 'whitelists' ),
+			'allowNew' => __('Allow creation of new pages','whitelists'),
+			'wlistedPages' => __('Whitelisted pages','whitelists'),
+			'assignedTo' => __('Assigned to users','whitelists'),
+			'asToUsers' => __('Assigned to users','whitelists'),
+			'asToRoles' => __('Assigned to roles','whitelists'),
+			'cancel' => __('Cancel','whitelists'),
+			'save' => __('Save','whitelists'),
+			'createNew' => __('Create new...','whitelists'),
+			'edit' => __('Edit','whitelists'),
+			'saveWNameErr' => __('cannot save a whitelist without a name.','whitelists'),
+			'createdSuccess' => __('Whitelist successfully created.','whitelists'),
+			'editedSuccess' => __('Whitelist successfully edited.','whitelists'),
+			'deletedSuccess' => __('Whitelist successfully deleted.','whitelists'),
+			'err' => __('Error.','whitelists'),
+			'confirmLeave' => __('You have unsaved changes. Do you want to continue?','whitelists'),
+			'confirmDelete' => __('Are you sure you want to delete whitelist {listName}?','whitelists'),
+) );
 	}
 	
 	public function register_ajax() {

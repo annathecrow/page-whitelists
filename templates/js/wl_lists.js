@@ -1,4 +1,5 @@
 $ = jQuery;
+//jsi18n = i18n object containing all displayed strings to make them translateable (it's parsed in WL_Admin.php throught the gettext)  
 editing = false;
 spinner = $("#spinner");
 spinner.tackRight = function(element) {
@@ -33,11 +34,11 @@ function throwNotice(success,message) {
 
 function buildEditWindow(data,line,id) {
 	//console.log(data);
-	titleHtml = '<fieldset class="inline-edit-col" id="title-block"><h4></h4><div class="inline-edit-col"><label class="left"><span class="title">Title</span><span class="input-text-wrap"><input type="text" name="wlist_title" id="wlist-title" value=""></span></label><label class="right"><span>Allow creation of new pages</span><span><input type="checkbox" name="wlist_strict" id="wlist-strict" value=""></span></label></div></fieldset>';
-	pagesHtml = '<fieldset class="inline-edit-col-left wl-col"><div class="inline-edit-col"><span class="title">Whitelisted pages</span><ul class="cat-checklist" id="pages-list"></ul></div></fieldset>';
-	usersHtml = '<fieldset class="inline-edit-col-center wl-col"><div class="inline-edit-col"><span class="title">Assigned to users</span><ul class="cat-checklist" id="users-list"></ul></div></fieldset>';
-	rolesHtml = '<fieldset class="inline-edit-col-right wl-col"><div class="inline-edit-col"><span class="title">Assigned to roles</span><ul class="cat-checklist" id="roles-list"></ul></div></fieldset>';
-	bottomHtml = '<p class="submit inline-edit-save"><a accesskey="c" href="#" class="button-secondary cancel alignleft" id="wlist-edit-cancel">Cancel</a><a accesskey="s" href="#" id="wlist-edit-save" class="button-primary save alignright">Save</a><span class="error" style="display:none"></span><br class="clear"></p>';
+	titleHtml = '<fieldset class="inline-edit-col" id="title-block"><h4></h4><div class="inline-edit-col"><label class="left"><span class="title">'+jsi18n.title+'</span><span class="input-text-wrap"><input type="text" name="wlist_title" id="wlist-title" value=""></span></label><label class="right"><span>'+jsi18n.allowNew+'</span><span><input type="checkbox" name="wlist_strict" id="wlist-strict" value=""></span></label></div></fieldset>';
+	pagesHtml = '<fieldset class="inline-edit-col-left wl-col"><div class="inline-edit-col"><span class="title">'+jsi18n.wlistedPages+'</span><ul class="cat-checklist" id="pages-list"></ul></div></fieldset>';
+	usersHtml = '<fieldset class="inline-edit-col-center wl-col"><div class="inline-edit-col"><span class="title">'+jsi18n.asToUsers+'</span><ul class="cat-checklist" id="users-list"></ul></div></fieldset>';
+	rolesHtml = '<fieldset class="inline-edit-col-right wl-col"><div class="inline-edit-col"><span class="title">'+jsi18n.asToRoles+'</span><ul class="cat-checklist" id="roles-list"></ul></div></fieldset>';
+	bottomHtml = '<p class="submit inline-edit-save"><a accesskey="c" href="#" class="button-secondary cancel alignleft" id="wlist-edit-cancel">'+jsi18n.cancel+'</a><a accesskey="s" href="#" id="wlist-edit-save" class="button-primary save alignright">'+jsi18n.save+'</a><span class="error" style="display:none"></span><br class="clear"></p>';
 	editWindow = $('<tr id="wlist-form" class="inline-edit-row quick-edit-row inline-editor" style=""><td colspan="6" class="colspanchange">'+titleHtml+pagesHtml+rolesHtml+usersHtml+bottomHtml+'</td></tr>');
 	if (data.strict) {
 		editWindow.find("#wlist-strict").prop('checked',false);
@@ -74,7 +75,7 @@ function buildEditWindow(data,line,id) {
 	var idInput = editWindow.find("#wlist-id");
 	var editWindowTitle = editWindow.find("h4"); 
 	if (line===undefined) {
-		editWindowTitle.text("Create New...");
+		editWindowTitle.text(jsi18n.createNew);
 		editWindow.appendTo("#wl-lists tbody");
 		$("#wlist-edit-cancel").click(function(){
 			spinner.tackRight(editWindowTitle);
@@ -82,7 +83,7 @@ function buildEditWindow(data,line,id) {
 			editing=false;
 		});
 	} else {
-		editWindow.find("h4").text("Edit...");
+		editWindow.find("h4").text(jsi18n.edit+'...');
 		titleInput.attr("value",data.name);
 		idInput.attr("value",id);
 		if (line.hasClass("alternate")) {
@@ -102,7 +103,7 @@ function buildEditWindow(data,line,id) {
 	$("#wlist-edit-save").click(function(){
 		spinner.tackRight(editWindowTitle);
 		if (titleInput.attr("value")=='') {
-			throwNotice(false,"cannot save a whitelist without a name.");
+			throwNotice(false,jsi18n.saveWNameErr);
 			//spinner.tearOff();
 			//inform user somehow
 			return false;
@@ -141,7 +142,7 @@ function buildEditWindow(data,line,id) {
 					result = $.parseJSON(response);
 					if (result.success) {
 						if (line == undefined) {
-							line = $('<tr id="wlist-'+result.id+'" class="whitelist-row"><th scope="row" class="id-column">'+result.id+'</th><td><span class="wlist-name"></span><div class="row-actions"><span class="edit"><a href="#" id="edit-wlist-'+result.id+'">Edit</a>|</span><span class="trash"><a href="#" id="delete-wlist-'+result.id+'">Delete</a></span></div></td><td class="wlist-pages"></td><td class="wlist-roles"></td><td class="wlist-users"></td><td class="wlist-strict"></td></tr>');
+							line = $('<tr id="wlist-'+result.id+'" class="whitelist-row"><th scope="row" class="id-column">'+result.id+'</th><td><span class="wlist-name"></span><div class="row-actions"><span class="edit"><a href="#" id="edit-wlist-'+result.id+'">'+jsi18n.edit+'</a>|</span><span class="trash"><a href="#" id="delete-wlist-'+result.id+'">'+jsi18n.del+'</a></span></div></td><td class="wlist-pages"></td><td class="wlist-roles"></td><td class="wlist-users"></td><td class="wlist-strict"></td></tr>');
 							line.find("span.edit a").click(editWlist);
 							line.find("span.trash a").click(deleteWlist).attr("href",result.deleteNonce);
 							line.appendTo("#wl-lists tbody");
@@ -154,10 +155,11 @@ function buildEditWindow(data,line,id) {
 						strictText = (result.strict)?'no':'yes';
 						line.find(".wlist-strict").text(strictText);	
 						editWindow.replaceWith(line);
-						throwNotice(true,"Whitelist successfully " + result.message+".");
+						successNotice = (result.message=='created')?jsi18n.createdSuccess:jsi18n.editedSuccess;
+						throwNotice(true,successNotice);
 						editing = false;	
 					} else {
-						var message = "Error";
+						var message = jsi18n.err;
 						throwNotice(false,result.message);
 					}
 					spinner.tearOff();
@@ -174,7 +176,7 @@ function buildEditWindow(data,line,id) {
 function createWlist(e) {
 	if (editing) {
 		//already editing/creating
-		answer = confirm("You have unsaved changes. Do you want to continue?");
+		answer = confirm(jsi18n.confirmLeave);
 		if (!answer) {
 			return false;
 		} else {
@@ -207,7 +209,7 @@ function createWlist(e) {
 
 function editWlist(e) {
 	if (editing) {		
-		answer = confirm("You have unsaved changes. Do you want to continue?");
+		answer = confirm(jsi18n.confirmLeave);
 		if (!answer) {
 			return false;
 		} else {
@@ -249,7 +251,7 @@ function deleteWlist(e) {
 	line = caller.closest("tr");
 	var name = line.find(".wlist-name").text();
 	
-	answer = confirm("Are you sure you want to delete whitelist '"+name+"'?");
+	answer = confirm(jsi18n.confirmDelete.replace('{listName}',name));
 	
 	if (!answer) {return false;}
 	spinner.tackRight(line.find(".wlist-name"));
@@ -265,7 +267,7 @@ function deleteWlist(e) {
 			line.fadeOut('fast',function(){					
 				line.nextAll().toggleClass('alternate');
 				line.remove();
-				throwNotice(true,"Whitelist successfully deleted.");		
+				throwNotice(true,jsi18n.deletedSuccess);		
 			});
 		} else {
 			throwNotice(false, response);

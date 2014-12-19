@@ -44,23 +44,6 @@ class WL_Admin {
 		
 	}
 	
-	public function enqueue_assets($hook) {
-		$screen = get_current_screen(); 
-		if($screen->id != 'toplevel_page_wl_lists') {
-			return;
-		}
-		$script_path = $this->settings->get_template_url(). 'js/wl_lists.js';
-		$style_path = $this->settings->get_template_url(). 'css/wl_lists.css';
-		wp_enqueue_style('style-name', $style_path);
-		wp_enqueue_script('wl_lists_js', $script_path, array('jquery'),'1.0.0',true);
-	}
-	
-	public function register_ajax() {
-		add_action('wp_ajax_wl_delete', array($this,'ajax_delete'));
-		add_action('wp_ajax_wl_load', array($this,'ajax_load'));
-		add_action('wp_ajax_wl_save', array($this,'ajax_save'));
-	}
-	
  	public function render_settings_page() {
 		require_once $this->settings->get_template_path()."settings_page.php";
 		//whitelists as strict?
@@ -84,20 +67,50 @@ class WL_Admin {
 	}
 	
 	public function render_lists_page() {
-		
-		$lists = $this->data->get_all_whitelists(); //returns all lists from the database as WL_List objects
+		$lists = $this->data->get_all_whitelists();
 		require_once $this->settings->get_template_path()."lists_page.php";
-
-		//load existing whitelists
-		//Create New...
-			//add pages from a list (checkboxes?)
-			//(possibly - add categories, tags)
-			//assign to Roles
-			//(assign to users -----> on Users page should be an option to add whitelist, too!)
-		//Edit
-			//assigned to Roles - add, remove
-			//(assigned to Users - add, remove)
 	}
+	
+	public function add_metabox() {
+		add_meta_box(
+			'wlist-metabox',
+			'Associated Whitelists',
+			array($this,'render_metabox'),
+			'page',
+			'side'
+		);
+	}
+	
+	public function render_metabox($post) {
+		wp_nonce_field('wlist_onpage_edit');
+		$all_wlists = $this->data->get_all_whitelists();
+		require_once $this->settings->get_template_path()."metabox.php";		
+	}
+	
+	public function save_metabox($post_id) {
+		//do thing to save data from metabox
+	}
+	
+	/***************** SCRIPTS AND STYLES **********************/
+	
+	public function enqueue_assets($hook) {
+		$screen = get_current_screen(); 
+		if($screen->id != 'toplevel_page_wl_lists') {
+			return;
+		}
+		$script_path = $this->settings->get_template_url(). 'js/wl_lists.js';
+		$style_path = $this->settings->get_template_url(). 'css/wl_lists.css';
+		wp_enqueue_style('style-name', $style_path);
+		wp_enqueue_script('wl_lists_js', $script_path, array('jquery'),'1.0.0',true);
+	}
+	
+	public function register_ajax() {
+		add_action('wp_ajax_wl_delete', array($this,'ajax_delete'));
+		add_action('wp_ajax_wl_load', array($this,'ajax_load'));
+		add_action('wp_ajax_wl_save', array($this,'ajax_save'));
+	}
+	
+	/***************** AJAX **********************/
 	
 	public function ajax_delete() {
 		$id = $_POST['id'];

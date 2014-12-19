@@ -77,5 +77,19 @@ class WL_Data_Test extends WP_UnitTestCase {
 		$this->assertTrue($is_type);		
 	}
 	
+	/*
+	function test_delete_from_all() {
+		$list = $this->data->create_whitelist("pepperoni");
+		$user_id = $this->factory->user->create();
+		$list->add_user($user_id);
+		$page_id = $this->factory->post->create(array('post_type'=>'page'));
+		$list->add_user($page_id);
+		wp_trash_post($page_id);
+		$this->expectOutputString("page cleaned up");
+		wp_delete_post($page_id);
+		//trash page
+		//delete page
+		
+	}*/		
 	
 }

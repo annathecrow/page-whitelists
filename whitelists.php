@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Whitelists
-Version: 0.1-alpha
-Description: PLUGIN DESCRIPTION HERE
+Version: 0.2-alpha
+Description: limit user access to pages 
 Author: YOUR NAME HERE
 Author URI: YOUR SITE HERE
 Plugin URI: PLUGIN SITE HERE
@@ -35,6 +35,5 @@ function whitelists_deactivate() {
 	$wl_data = new WL_Data();
 	$wl_settings = new WL_Settings(__FILE__);
 	$whitelists = new Whitelists($wl_data,$wl_settings);
-	$whitelists = new Whitelists();
 	$whitelists->uninstall();
 }

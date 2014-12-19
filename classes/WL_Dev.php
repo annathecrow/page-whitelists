@@ -1,11 +1,10 @@
 <?php
 
-/*
- * Static functions? Aww, you know you wanna.
- * (not really.) 
- */
 class WL_Dev {
-
+	
+	/**
+	 * logs when WP Debug is on.
+	 */
 	public static function log($message) {
 	    ///if (WP_DEBUG === true && (!defined('PHPUNIT')||PHPUNIT===false)) {
 	    if (WP_DEBUG === true && (!isset($GLOBALS['silent'])||$GLOBALS['silent']===false)) {
@@ -17,6 +16,9 @@ class WL_Dev {
 	    }
 	}
 	
+	/**
+	 * logs exceptions with line numbers
+	 */
 	public static function error($exception) {
 	    ///if (WP_DEBUG === true && (!defined('PHPUNIT')||PHPUNIT===false)) {
 	    if (WP_DEBUG === true && (!isset($GLOBALS['silent'])||$GLOBALS['silent']===false)) {

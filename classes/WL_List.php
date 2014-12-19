@@ -68,7 +68,6 @@ class WL_List {
 	
 	public function get_user_logins() {
 		$users = $this->get_users();
-		//WL_Dev::log($users);
 		$namearray = array();
 		foreach ($users as $user) {
 			$namearray[] = $user->user_login;
@@ -163,7 +162,6 @@ class WL_List {
 				$this->get_users();
 			}
 			$user->remove_cap($this->cap);
-			//if the user isn't in any other strict wl, give them back 'create_pages'
 			unset($this->users[in_array($user, $this->users)]);
 			return true;
 		} catch (Exception $e) {

@@ -50,21 +50,16 @@ class WL_Admin {
 	}
 	
 	public function save_metabox($page_id) {
-		WL_Dev::log("saving post $page_id");
 		if (!isset( $_POST['wlist_onpage_edit'])) {
-			WL_Dev::log("nonce not set");
 			return;
 		} //nonce not set
 		if (!wp_verify_nonce( $_POST['wlist_onpage_edit'])) {
-			WL_Dev::log("nonce not validated");
 			return;
 		}//nonce not validated
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-			WL_Dev::log("just an autosave");	
 			return;
 		} //just an autosave
 		if (!current_user_can('edit_post',$page_id)) {
-			WL_Dev::log("user can't edit this post.");
 			return;
 		} //user can't edit post
 		
@@ -84,7 +79,6 @@ class WL_Admin {
 	
 	public function enqueue_assets($hook) {
 		$screen = get_current_screen();
-		WL_Dev::log($screen->id);
 		if($screen->id != 'settings_page_wl_lists') {
 			return;
 		}
@@ -148,7 +142,7 @@ class WL_Admin {
 				'id' => $query->post->ID,
 				'assigned'=>false
 			);
-		} //TODO add page hierarchy (parent/child; automatically mark children in editor)
+		}
 		wp_reset_postdata();
 		
 		$data['users'] = array();
@@ -158,7 +152,6 @@ class WL_Admin {
 		$user_query = new WP_User_Query($query_args); 
 		$users = $user_query->results;
 		foreach($users as $user) {
-			//filter users by capabilities? what capabilities? how?
 			if (!user_can($user,"manage_options")) {
 				$data['users'][] = array(
 					'login' => $user->user_login,
@@ -308,14 +301,11 @@ class WL_Admin {
 				$list->set_strict();
 			}
 			
-			WL_Dev::log("this is get_page_ids array:");
-			WL_Dev::log($list->get_page_ids());
 			$result = array(
 				"success"=>true,
 				"id"=>$list->get_id(),
 				"name"=>$list->get_name(),
 				"message"=>$list_status,
-				//"time"=>$list->get_time(), //will we update time on editing???
 				"pages"=>$list->get_page_ids(),				
 				"users"=>$list->get_user_logins(),
 				"roles"=>$list->get_role_names(),
@@ -326,7 +316,6 @@ class WL_Admin {
 				$result['success']=false;
 				$result['message']='addition-errors';
 			}
-			//WL_Dev::log($result);
 			die(json_encode($result));
 		} catch (Exception $e) {
 			$result = array(

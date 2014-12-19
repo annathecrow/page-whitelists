@@ -60,31 +60,28 @@ class WL_Data {
 		//WL_Dev::log('trying to access table '.$table);
 		$table = $this->list_table;
 		try {
-			$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE name = %s",$name));
-			if ($row != NULL) {
-				$id = $row->id;
-				throw new Exception("Whitelist with this name already exists.", 1); //TODO translate
-				//THOUGHT: shouldn't this test be done somewhere else? Shouldn't this function just expect this list doesn't exist? The "name" isn't a unique key in the database. Would it really be that bad if two lists had same name?
-			};			
-			$success = $wpdb->insert(
-			$this->list_table,
-			array(
-				'name' => $name,
-				'time' => $time
-				)
-			);//should't these be sql escaped?
-			if (!$success) {
-				throw new Exception("Table row could not be written.",0); //TODO translate
+			if ($this->get_whitelist_by_name($name)==false) {
+				$success = $wpdb->insert(
+					$this->list_table,
+					array(
+						'name' => $name,
+						'time' => $time
+						)
+					);
+					if (!$success) {
+						throw new Exception("Table row could not be written.",0);
+					} else {
+						$id = $wpdb->insert_id;
+						WL_Dev::log('created whitelist '.$id.', '.$name);
+						return new WL_List($id,$name,$time);
+					}
 			} else {
-				$id = $wpdb->insert_id;
-				WL_Dev::log('created whitelist '.$id.', '.$name);
-				return new WL_List($id,$name,$time);
+				throw new Exception("Whitelist with this name already exists.", 1); 
+				//throw exception
 			}
-			
 		} catch (Exception $e) {
 			WL_Dev::log($e->getMessage());
 			if ($e->getCode()==1) {return true;} else {return false;}
-			//THOUGHT: should, or shouldn't this return the existing list as WL_Object?
 		}		
 		
 		
@@ -93,8 +90,10 @@ class WL_Data {
 	public function delete_whitelist($id) {
 		global $wpdb;
 		try {
-			$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $this->list_table WHERE id = %d",$id));
-			if ($row != NULL) {
+			$list = $this->get_whitelist($id); 
+			if ($list===false) {
+				throw new Exception("Whitelist doesn't exist.", 2);
+			} else {	
 				$success = $wpdb->delete($this->list_table, array(
 					'id' => $id
 					)
@@ -108,19 +107,16 @@ class WL_Data {
 					$user_query = new WP_User_Query($query_args);
 					$users = $user_query->results;
 					foreach($users as $user) {
-						$this->remove_whitelist_user($id, $user->data->ID);
+						$list->remove_user($user->data->ID);
 					}
 					
 					$roles = get_editable_roles();
 					foreach($roles as $role) {
-						$this->remove_whitelist_role($id, strtolower($role['name'])); //get_editable_roles returns names capitalized, but the get_role() function needs them lowercase. *eyeroll*
+						$list->remove_role(strtolower($role['name'])); //get_editable_roles returns names capitalized, but the get_role() function needs them lowercase. *eyeroll*
 					}
-					
 					return array(true,'');
-				}				
-			} else {
-				throw new Exception("Whitelist doesn't exist.", 2);
-			}
+				}
+			};
 		} catch (Exception $e) {
 			WL_Dev::log($e->getMessage());
 			switch ($e->getCode()) {
@@ -135,7 +131,6 @@ class WL_Data {
 					break;
 			}
 			return array(false,$message);
-			//??
 		}
 		
 		
@@ -149,31 +144,11 @@ class WL_Data {
 		return $id;
 	}
 	
+	
 	public function delete_role($id) {
 		
 	}
-	
-	public function add_whitelist_role($list_id,$role_name) {
-		 $role = get_role($role_name);
-		 $role->add_cap('edit_whitelist_'.$list_id);
-		 //shouldn't these return a value? true/false on success failure? how would I determine this?
-	}
-	
-	public function remove_whitelist_role($list_id, $role_name) {
-		$role = get_role($role_name);
-		$role->remove_cap('edit_whitelist_'.$list_id);
-	}
-	
-	public function add_whitelist_user($list_id,$user_id) {
-		 $user = get_user_by('id',$user_id);
-		 $user->add_cap('edit_whitelist_'.$list_id);
-	}
-	
-	public function remove_whitelist_user($list_id, $user_id) {
-		$user = get_user_by('id',$user_id);
-		$user->remove_cap('edit_whitelist_'.$list_id);
-	}
-	
+	//not sure if these are supposed to be here. They're... kinda not what this class is for, right? Ugh.
 	
 	public function get_whitelist($id) {
 		//get single whitelist
@@ -182,6 +157,27 @@ class WL_Data {
 			$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $this->list_table WHERE id = %d",$id));
 			if ($row != NULL) {
 				$list = new WL_List($row->id,$row->name,$row->time);
+		
+	
+	
+			return $list;
+			} else {
+				WL_Dev::log("Whitelist doesn't exist.");
+				return false;
+			}
+		} catch (Exception $e) {
+			WL_Dev::log($e->getMessage);
+			return false;
+		}	
+	}
+	
+	public function get_whitelist_by_name($name) {
+		global $wpdb;
+		try {
+			$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $this->list_table WHERE name = %s",$name));
+			if ($row != NULL) {
+				$list = new WL_List($row->id,$row->name,$row->time);
+				WL_Dev::log("whitelist exists, id is ".$list->get_id());
 				return $list;
 			} else {
 				WL_Dev::log("Whitelist doesn't exist.");
@@ -191,7 +187,6 @@ class WL_Data {
 			WL_Dev::log($e->getMessage);
 			return false;
 		}
-		
 		
 	}
 	

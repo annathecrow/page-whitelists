@@ -240,7 +240,7 @@ class WL_Data {
 			//WL_Dev::log("getting user whitelists for user $user->user_login");
 			$all_whitelists = $this->get_all_whitelists();
 			$whitelist_ids = array();
-			foreach ($user->capabilities as $cap => $v) {
+			foreach ($role->capabilities as $cap => $v) {
 				if (strpos($cap,"edit_whitelist_")!== false) {
 					$whitelist_ids[] = str_replace("edit_whitelist_", "", $cap);
 				}

@@ -8,13 +8,13 @@ class WL_Access_Manager {
 	}
 	
 	function on_page_listing() {
-		if ( ! is_admin() || ! current_user_can( 'edit_pages' ) ) return FALSE;
+		if (!function_exists('get_current_screen') || ! is_admin() || ! current_user_can( 'edit_pages' ) ) return FALSE;
 		$s = get_current_screen();
 		return ( $s instanceof WP_Screen && $s->id === 'edit-page' );
 	}
 			
 	function on_edit_page_form() {
-		if ( ! is_admin() || !current_user_can( 'edit_pages' ) ) return false;		
+		if (!function_exists('get_current_screen') || ! is_admin() || !current_user_can( 'edit_pages' ) ) return false;		
 		$s = get_current_screen();
 		return ($s instanceof WP_Screen && $s->id === 'page');
 	}

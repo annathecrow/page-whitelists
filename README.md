@@ -13,8 +13,8 @@ Wordpress plugin limiting user access to pages. Allows administrators to create 
 Page Whitelists is an administration tool that can be used to allow selected users to edit only certain pages, leaving the rest inaccessible. This is done by creating "whitelists", and assigning them to users and/or roles. Each whitelist can also limit creation of new pages.Every page, user and role can belong to multiple whitelists. 
 
 #### Combining whitelists:
-*  Whitelists are additive - every user has access to all pages in all whitelists they're assigned to.
-*  'Strict' whitelists have priority - once a user is assigned to a whitelist that disables creation of new pages, they are not allowed to do so (even if other whitelists are 'non-strict').
+* Whitelists are additive - every user has access to all pages in all whitelists they're assigned to.
+* 'Strict' whitelists have priority - once a user is assigned to a whitelist that disables creation of new pages, they are not allowed to do so (even if other whitelists are 'non-strict').
 
 #### Known problems/conflicts
 

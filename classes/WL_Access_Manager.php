@@ -7,15 +7,15 @@ class WL_Access_Manager {
 		$this->data = $data;
 	}
 	
-	function on_page_listing() {
-		if (!function_exists('get_current_screen') || ! is_admin() || ! current_user_can( 'edit_pages' ) ) return FALSE;
-		$s = get_current_screen();
-		return ( $s instanceof WP_Screen && $s->id === 'edit-page' );
+	function on_page_listing($s) {
+		if ( ! is_admin() || ! current_user_can( 'edit_pages' ) ) return false; 
+		//apply only on backend pages and only if the user can edit pages at all
+		return true;
 	}
 			
 	function on_edit_page_form() {
-		if (!function_exists('get_current_screen') || ! is_admin() || !current_user_can( 'edit_pages' ) ) return false;		
-		$s = get_current_screen();
+		if ( ! function_exists('get_current_screen') || ! is_admin() || !current_user_can( 'edit_pages' ) ) return false;
+		$s = get_current_screen();	
 		return ($s instanceof WP_Screen && $s->id === 'page');
 	}
 	
@@ -48,8 +48,9 @@ class WL_Access_Manager {
 		//if user doesn't belong to a strict whitelist, return true
 	}
 	
-	function filter_displayed($query) {		
-		$user = wp_get_current_user();
+	function filter_displayed($query) {
+		if (!isset($query) || strpos($query->get('post_type'),'page')) return true; //if the current query doesn't display pages, do nothing		
+		$user = wp_get_current_user(); 
 		$pages = $this->data->get_accessible_pages($user);
 		if (!$pages) return true;
 		$query->set('post__in',$pages);
@@ -58,6 +59,7 @@ class WL_Access_Manager {
 	function repair_page_counts($views) {
 		global $wp_query;
 		global $wpdb;
+		WL_Dev::log("repair_page_counts");
 		$request = $wp_query->request; //take original request used to build this page
 		$new_requests = array();
 		$status_types = array('publish','future','draft','pending','private'); //take all possible statuses post can have
@@ -86,11 +88,19 @@ class WL_Access_Manager {
 	}
 	
 	function run_page_filters($query) {
+		//if (!function_exists('get_current_screen')) return true;
+		
+		//if (!$s instanceof WP_Screen) return true; //stop filtering if on a screenless page
+		//WL_Dev::log($s->id);
 		if ($this->on_edit_page_form()) {
 			$this->filter_editable();
 		};
-		if ($this->on_page_listing()) {
+		if (is_admin()) {
 			$this->filter_displayed($query);
+			if (!function_exists('get_current_screen')) return true;
+			$s = get_current_screen();
+			if ( ! $s instanceof WP_Screen ) return true;
+			add_filter( "views_".$s->id , array($this, 'repair_page_counts'), 10, 1);
 		}		
 	}
 	
@@ -112,7 +122,6 @@ class WL_Access_Manager {
 	function new_page_check($post) {
 		if (get_post_type($post) != 'page') return;
 		if ($this->can_create_new()) {
-			WL_Dev::log("user can create pages");
 			$page_id = $post->ID;
 			$lists = $this->data->get_user_whitelists(wp_get_current_user());
 			foreach ($lists as $list) {

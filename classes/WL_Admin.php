@@ -14,7 +14,8 @@ class WL_Admin {
 	
 	
 	public function add_menus() {
-		$plugin_title = __("Page Whitelists",'page-whitelists');
+		//$plugin_title = __("Page Whitelists",'page-whitelists');
+		$plugin_title = "Page Whitelists";
 		
 		
 		add_submenu_page( 

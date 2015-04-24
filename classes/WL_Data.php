@@ -205,7 +205,6 @@ class WL_Data {
 			} else if (get_class($user) !== 'WP_User') {
 				throw new Exception('$user is neither id nor an instance of WP_User.',0);
 			}
-			//WL_Dev::log("getting user whitelists for user $user->user_login");
 			$all_whitelists = $this->get_all_whitelists();
 			$whitelist_ids = array();
 			foreach ($user->allcaps as $cap => $v) {

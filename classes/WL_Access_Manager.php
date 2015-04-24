@@ -6,12 +6,6 @@ class WL_Access_Manager {
 	public function __construct($data) {
 		$this->data = $data;
 	}
-	
-	function on_page_listing($s) {
-		if ( ! is_admin() || ! current_user_can( 'edit_pages' ) ) return false; 
-		//apply only on backend pages and only if the user can edit pages at all
-		return true;
-	}
 			
 	function on_edit_page_form() {
 		if ( ! function_exists('get_current_screen') || ! is_admin() || !current_user_can( 'edit_pages' ) ) return false;
@@ -49,17 +43,17 @@ class WL_Access_Manager {
 	}
 	
 	function filter_displayed($query) {
-		if (!isset($query) || strpos($query->get('post_type'),'page')) return true; //if the current query doesn't display pages, do nothing		
+		if (!isset($query) || strpos($query->get('post_type'),'page')===false) return false; //if the current query doesn't display pages, do nothing		
 		$user = wp_get_current_user(); 
 		$pages = $this->data->get_accessible_pages($user);
-		if (!$pages) return true;
+		if (!$pages) return $query;
 		$query->set('post__in',$pages);
+		return true;
 	}
 	
 	function repair_page_counts($views) {
 		global $wp_query;
 		global $wpdb;
-		WL_Dev::log("repair_page_counts");
 		$request = $wp_query->request; //take original request used to build this page
 		$new_requests = array();
 		$status_types = array('publish','future','draft','pending','private'); //take all possible statuses post can have
@@ -88,19 +82,17 @@ class WL_Access_Manager {
 	}
 	
 	function run_page_filters($query) {
-		//if (!function_exists('get_current_screen')) return true;
-		
-		//if (!$s instanceof WP_Screen) return true; //stop filtering if on a screenless page
-		//WL_Dev::log($s->id);
 		if ($this->on_edit_page_form()) {
 			$this->filter_editable();
 		};
 		if (is_admin()) {
-			$this->filter_displayed($query);
-			if (!function_exists('get_current_screen')) return true;
+			$was_filtered = $this->filter_displayed($query);
+			if (!$was_filtered) return false;
+			if (!function_exists('get_current_screen')) return false; //we're on some screen-less support page (e.g. AJAX supplier)
 			$s = get_current_screen();
-			if ( ! $s instanceof WP_Screen ) return true;
+			if ( ! $s instanceof WP_Screen ) return true; //still a screen-less page
 			add_filter( "views_".$s->id , array($this, 'repair_page_counts'), 10, 1);
+			//repair numbers of in the counter of a filtered page (this MIGHT, technically, catch even plugin lists, but probably won't)			
 		}		
 	}
 	
@@ -144,7 +136,6 @@ class WL_Access_Manager {
 	function access_check() {
 		if (current_user_can("manage_options")) return;
 		if (is_admin()) add_action( 'pre_get_posts', array($this, 'run_page_filters') );
-		add_filter( "views_edit-page" , array($this, 'repair_page_counts'), 10, 1);
 		add_action( 'wp_before_admin_bar_render', array($this, 'filter_admin_bar') );
 		add_action('admin_menu',array($this, 'filter_menus'));
 		add_action('new_to_auto-draft', array($this,'new_page_check'), 10, 3);

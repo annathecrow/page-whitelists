@@ -6,13 +6,26 @@ class WL_Access_Manager {
 	public function __construct($data) {
 		$this->data = $data;
 	}
-			
+	
+	/*
+	 * Check if we're on page edit form
+	 * 
+	 * @return bool  
+	 */			
 	function on_edit_page_form() {
 		if ( ! function_exists('get_current_screen') || ! is_admin() || !current_user_can( 'edit_pages' ) ) return false;
-		$s = get_current_screen();	
+		$s = get_current_screen();
 		return ($s instanceof WP_Screen && $s->id === 'page');
 	}
 	
+	/*
+	 * Check if user has access to a page
+	 * 
+	 * @param int $page ID of page to check for
+	 * @param int $user (optional) ID of user to check for (if not set, checking for current user)
+	 * 
+	 * @return bool  
+	 */			
 	function has_access($page,$user = null) {
 		if ($user == null) {
 			$user = wp_get_current_user();
@@ -27,6 +40,13 @@ class WL_Access_Manager {
 		}
 	}
 	
+	/*
+	 * Check if user is allowed to create new pages (does not belong to a stric whitelist)
+	 *
+	 * @param int $user (optional) ID of user to check for (if not set, checking for current user)
+	 * 
+	 * @return bool  
+	 */
 	function can_create_new($user = null) {
 		if ($user == null) {
 			$user = wp_get_current_user();
@@ -39,18 +59,13 @@ class WL_Access_Manager {
 			}
 		}
 		return true;
-		//if user doesn't belong to a strict whitelist, return true
 	}
 	
-	function filter_displayed($query) {
-		if (!isset($query) || strpos($query->get('post_type'),'page')===false) return false; //if the current query doesn't display pages, do nothing		
-		$user = wp_get_current_user(); 
-		$pages = $this->data->get_accessible_pages($user);
-		if (!$pages) return $query;
-		$query->set('post__in',$pages);
-		return true;
-	}
-	
+	/*
+	 * Repair page counts on a page listing
+	 *
+	 * @param $views
+	 */
 	function repair_page_counts($views) {
 		global $wp_query;
 		global $wpdb;
@@ -72,32 +87,77 @@ class WL_Access_Manager {
 		}; 
 		return $views;		
 	}
-	
+
+	/*
+	 * Remove all non-whitelisted pages from page listing
+	 *
+	 * @param WP Query $query
+	 */
+	function filter_displayed($query) {
+		if (!isset($query) || strpos($query->get('post_type'),'page')===false) return; //if the current query doesn't display pages, do nothing		
+		$user = wp_get_current_user(); 
+		$pages = $this->data->get_accessible_pages($user);
+		if (!$pages) return $query;
+		$query->set('post__in',$pages);
+		
+		if (!function_exists('get_current_screen')) return; //we're on some screen-less support page (e.g. AJAX supplier)
+		$s = get_current_screen();
+		if ( ! $s instanceof WP_Screen ) return; //still a screen-less page
+		add_filter( "views_".$s->id , array($this, 'repair_page_counts'), 10, 1);
+		//repair numbers of in the counter of a filtered page (this MIGHT, technically, catch even plugin lists, but probably won't)			
+	}
+		
+	/*
+	 * Bar user from editing non-whitelisted pages
+	 *
+	 */	
 	function filter_editable() {
-		global $post;
-		$page_id = $post->ID;
+		global $typenow;
+		if (!$typenow=='page') return;
+		if (!isset($_GET['post'])) return;
+		$page_id = $_GET['post'];
 		if (!$this->has_access($page_id)) {
-			wp_die( __('You are not allowed to edit this page.') );
+			wp_die(__('You are not allowed to edit this page.'));			
+		};
+	}
+	
+	/*
+	 * Bar user from creating pages if the user is assigned to a strict whitelist
+	 *
+	 */	
+	function filter_can_create() {
+		global $typenow;
+		if (!$typenow=='page') return;
+		if (!$this->can_create_new()) {
+			wp_die(__('You are not allowed to create new pages.'));
 		}
 	}
 	
-	function run_page_filters($query) {
-		if ($this->on_edit_page_form()) {
-			$this->filter_editable();
-		};
-		if (is_admin()) {
-			$was_filtered = $this->filter_displayed($query);
-			if (!$was_filtered) return false;
-			if (!function_exists('get_current_screen')) return false; //we're on some screen-less support page (e.g. AJAX supplier)
-			$s = get_current_screen();
-			if ( ! $s instanceof WP_Screen ) return true; //still a screen-less page
-			add_filter( "views_".$s->id , array($this, 'repair_page_counts'), 10, 1);
-			//repair numbers of in the counter of a filtered page (this MIGHT, technically, catch even plugin lists, but probably won't)			
-		}		
+	/*
+	 * Add newly created page to all user's whitelists
+	 *
+	 */	
+	function add_new_to_list($new,$old,$post) {
+		if ($new == 'inherit' || $new == 'auto-draft') return;
+		if ($old != 'new' && $old != 'auto-draft') return;
+		if ($this->can_create_new()) {
+			$page_id = $post->ID;
+			$lists = $this->data->get_user_whitelists(wp_get_current_user());
+			foreach ($lists as $list) {
+				$list->add_page($page_id);
+			}
+		} else {
+			wp_die(__('You are not allowed to create new pages.'));
+		}
 	}
 	
+	/*
+	 * Remove edit link from admin bar if user isn't allowed to edit page
+	 *
+	 */	
 	function filter_admin_bar() {
 		global $wp_admin_bar;
+		if (!isset($wp_admin_bar)) return;
 		if (!$this->can_create_new()) {
 			$wp_admin_bar->remove_node('new-page');			
 		};
@@ -107,38 +167,44 @@ class WL_Access_Manager {
 		if (!$this->has_access($page_id)) {
 			$wp_admin_bar->remove_menu('edit');			
 		};
-		
-		
 	}
 	
-	function new_page_check($post) {
-		if (get_post_type($post) != 'page') return;
-		if ($this->can_create_new()) {
-			$page_id = $post->ID;
-			$lists = $this->data->get_user_whitelists(wp_get_current_user());
-			foreach ($lists as $list) {
-				$list->add_page($page_id);
-			}
-		} else {
-			wp_die(__('You are not allowed to create new pages.'));
-		}		
-	}
-	function css_cleanup() {
-		echo '<style>.edit-php.post-type-page .add-new-h2,.post-php.post-type-page .add-new-h2 {display:none;}</style>';
+	/*
+	 * Hide links to add new pages if user isn't allowed to
+	 *
+	 */	
+	function css() {
+		if ($this->can_create_new()) return;
+		if (!function_exists('get_current_screen')) return;
+		$s = get_current_screen();
+		if ($s->id == 'edit-page') {
+			echo '<style>.edit-php.post-type-page .add-new-h2,.post-php.post-type-page .add-new-h2 {display:none;}</style>';
+		} elseif ($s->id == 'pages_page_cms-tpv-page-page') {
+			echo '<style>p.cms_tpv_action_add_and_edit_page {display:none}</style>';
+		}		  
 	}
 
+
+	/*
+	 * Remove Add Page option from menu if user isn't allowed to create new pages 
+	 *
+	 */
 	function filter_menus() {
 		if ($this->can_create_new()) return;
-		add_action('admin_head',array($this, 'css_cleanup'));
-		$page = remove_submenu_page( 'edit.php?post_type=page', 'post-new.php?post_type=page' );
+		$create_page = remove_submenu_page( 'edit.php?post_type=page', 'post-new.php?post_type=page' );
 	}
-	
+		
 	function access_check() {
 		if (current_user_can("manage_options")) return;
-		if (is_admin()) add_action( 'pre_get_posts', array($this, 'run_page_filters') );
+		if (is_admin()) {
+			add_action( 'pre_get_posts', array($this, 'filter_displayed') );
+			add_action('load-post-new.php',array($this,'filter_can_create'));
+			add_action('load-post.php',array($this,'filter_editable'));
+			add_action('transition_post_status',array($this,'add_new_to_list'),10,3);
+			add_action('admin_head',array($this,'css'));
+		}
 		add_action( 'wp_before_admin_bar_render', array($this, 'filter_admin_bar') );
 		add_action('admin_menu',array($this, 'filter_menus'));
-		add_action('new_to_auto-draft', array($this,'new_page_check'), 10, 3);
 	}
 	
 	

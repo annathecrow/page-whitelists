@@ -106,7 +106,9 @@ class WL_Admin {
 			'err' => __('Error.','page-whitelists'),
 			'confirmLeave' => __('You have unsaved changes. Do you want to continue?','page-whitelists'),
 			'confirmDelete' => __('Are you sure you want to delete whitelist {listName}?','page-whitelists'),
-) );
+			'selectAll' => __('select all','page-whitelists'),
+			'selectNone' => __('select none','page-whitelists'),
+		) );
 	}
 	
 	public function register_ajax() {

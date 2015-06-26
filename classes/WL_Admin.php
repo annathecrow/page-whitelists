@@ -155,7 +155,7 @@ class WL_Admin {
 		$user_query = new WP_User_Query($query_args); 
 		$users = $user_query->results;
 		foreach($users as $user) {
-			if (!user_can($user,"manage_options")) {
+			if (!user_can($user,"manage_options") && user_can($user,'edit_pages')) {
 				$data['users'][] = array(
 					'login' => $user->user_login,
 					'id' => $user->ID,
@@ -167,7 +167,7 @@ class WL_Admin {
 		$all_roles = get_editable_roles();
 		$data['roles'] = array();
 		foreach ($all_roles as $rolename=>$roledata) {
-			if (!isset($roledata['capabilities']['manage_options'])) {
+			if (!isset($roledata['capabilities']['manage_options']) && isset($roledata['capabilities']['edit_pages'])) {
 				$data['roles'][$rolename] = false;	
 			}
 		}

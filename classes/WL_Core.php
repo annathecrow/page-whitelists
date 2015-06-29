@@ -24,13 +24,7 @@ class Whitelists
 		add_action( 'plugins_loaded', array($this, 'load_textdomain') );
 		add_action('init',array($this->access_manager, 'access_check'));
 		add_action('before_delete_post',array($this->data,'remove_page_from_all'));
-		add_action('add_meta_boxes', array($this->admin, 'add_metabox'));
-		add_action('save_post', array($this->admin, 'save_metabox'));
-		add_action('admin_menu',array($this->admin, 'add_menus'));
-		add_action('admin_enqueue_scripts',array($this->admin,'enqueue_assets'));
-		add_action('admin_init',array($this->admin,'register_ajax'));
-		add_action('manage_users_columns',array($this->admin,'user_column_header'));
-		add_action('manage_users_custom_column',array($this->admin,'user_column_content'),10,3);
+		add_action('init',array($this->admin, 'admin_setup'));		
 	}
 	
 	

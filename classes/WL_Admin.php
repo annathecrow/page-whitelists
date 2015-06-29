@@ -12,8 +12,18 @@ class WL_Admin {
 		$this->data = $data;
 	}
 	
+	public function admin_setup() {
+		add_action('add_meta_boxes', array($this, 'add_metabox'));
+		add_action('save_post', array($this, 'save_metabox'));
+		add_action('admin_menu',array($this, 'add_menus'));
+		add_action('admin_enqueue_scripts',array($this,'enqueue_assets'));
+		add_action('admin_init',array($this,'register_ajax'));
+		add_action('manage_users_columns',array($this,'user_column_header'));
+		add_action('manage_users_custom_column',array($this,'user_column_content'),10,3);
+	}
 	
-	public function add_menus() {
+	
+	function add_menus() {
 		//$plugin_title = __("Page Whitelists",'page-whitelists');
 		$plugin_title = "Page Whitelists";
 		
@@ -28,12 +38,12 @@ class WL_Admin {
 		);	
 	}
 	
-	public function render_lists_page() {
+	function render_lists_page() {
 		$lists = $this->data->get_all_whitelists();
 		require_once $this->template_path."lists_page.php";
 	}
 	
-	public function add_metabox() {
+	function add_metabox() {
 		if (!current_user_can('manage_options')) return;
 		add_meta_box(
 			'wlist-metabox',
@@ -44,13 +54,13 @@ class WL_Admin {
 		);
 	}
 	
-	public function render_metabox($post) {
+	function render_metabox($post) {
 		wp_nonce_field(-1,'wlist_onpage_edit');
 		$all_wlists = $this->data->get_all_whitelists();
 		require_once $this->template_path."metabox.php";		
 	}
 	
-	public function save_metabox($page_id) {
+	function save_metabox($page_id) {
 		if (!isset( $_POST['wlist_onpage_edit'])) {
 			return;
 		} //nonce not set
@@ -76,12 +86,12 @@ class WL_Admin {
 		}
 	}
 
-	public function user_column_header($column_headers) {
+	function user_column_header($column_headers) {
 		$column_headers['whitelists'] = 'Assigned Whitelists';
   		return $column_headers;
 	}
 	
-	public function user_column_content($value,$column_name,$user_id) {
+	function user_column_content($value,$column_name,$user_id) {
 		if ($column_name == 'whitelists') {
 			$whitelists = $this->data->get_user_whitelists($user_id);
 			$listnames = array();
@@ -99,7 +109,7 @@ class WL_Admin {
 	
 	/***************** SCRIPTS AND STYLES **********************/
 	
-	public function enqueue_assets($hook) {
+	function enqueue_assets($hook) {
 		$screen = get_current_screen();
 		if($screen->id != 'settings_page_wl_lists') {
 			return;
@@ -132,7 +142,7 @@ class WL_Admin {
 		) );
 	}
 	
-	public function register_ajax() {
+	function register_ajax() {
 		add_action('wp_ajax_wl_delete', array($this,'ajax_delete'));
 		add_action('wp_ajax_wl_load', array($this,'ajax_load'));
 		add_action('wp_ajax_wl_save', array($this,'ajax_save'));
@@ -140,7 +150,7 @@ class WL_Admin {
 	
 	/***************** AJAX **********************/
 	
-	public function ajax_delete() {
+	function ajax_delete() {
 		if (!current_user_can("manage_options")) die('user not allowed to edit settings');
 		$id = $_POST['id'];
 		$passed = check_ajax_referer( 'delete-wlist-'.$id, 'nonce', false);
@@ -154,7 +164,7 @@ class WL_Admin {
 		die($reply);
 	}
 	
-	public function ajax_load() {
+	function ajax_load() {
 		//FIRST STEP: build a "fresh" data array
 		$data = array();
 		$data['pages'] = array();
@@ -229,7 +239,7 @@ class WL_Admin {
 		die(json_encode($data)); 		
 	}
 	
-	public function ajax_save() {
+	function ajax_save() {
 		try {
 			if (!current_user_can("manage_options")) {
 				throw new Exception("insufficient capabilities");

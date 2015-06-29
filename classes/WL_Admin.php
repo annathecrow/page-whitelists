@@ -20,6 +20,8 @@ class WL_Admin {
 		add_action('admin_init',array($this,'register_ajax'));
 		add_action('manage_users_columns',array($this,'user_column_header'));
 		add_action('manage_users_custom_column',array($this,'user_column_content'),10,3);
+		add_action('edit_user_profile', array($this,'profile_field'));
+		add_action('edit_user_profile_update', array($this,'profile_field_update'));
 	}
 	
 	
@@ -105,6 +107,24 @@ class WL_Admin {
 			return $output;
 		}
 		return $value;
+	}
+	
+	function profile_field($user) {
+		if (!current_user_can("manage_options")) return;
+		$whitelists = $this->data->get_all_whitelists();
+		require_once $this->template_path."profile_field.php";
+	}
+	
+	function profile_field_update($user_id) {
+		$whitelists = $this->data->get_all_whitelists();
+		$assigned_wlists = $_POST['wl_assigned_whitelists'];
+		foreach ($whitelists as $wlist) {
+			if (in_array($wlist->get_id(),$assigned_wlists)) {
+				$wlist->add_user($user_id);
+			} else {
+				$wlist->remove_user($user_id);
+			}
+		}
 	}
 	
 	/***************** SCRIPTS AND STYLES **********************/

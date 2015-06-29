@@ -29,8 +29,18 @@ class WL_List {
 		return $this->id;
 	}
 	
+	public function the_id() {
+		echo $this->id;
+		return true;
+	}
+	
 	public function get_name() {
 		return $this->name;
+	}
+	
+	public function the_name() {
+		echo $this->name;
+		return true;
 	}
 	
 	public function get_time() {

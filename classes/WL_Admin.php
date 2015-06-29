@@ -75,6 +75,27 @@ class WL_Admin {
 			}
 		}
 	}
+
+	public function user_column_header($column_headers) {
+		$column_headers['whitelists'] = 'Assigned Whitelists';
+  		return $column_headers;
+	}
+	
+	public function user_column_content($value,$column_name,$user_id) {
+		if ($column_name == 'whitelists') {
+			$whitelists = $this->data->get_user_whitelists($user_id);
+			$listnames = array();
+			$output = "";
+			foreach ($whitelists as $whitelist) {
+				$listnames[] = $whitelist->get_name();
+			}
+			if (sizeof($listnames)!=0) {
+				$output = implode(", ", $listnames); 
+			}
+			return $output;
+		}
+		return $value;
+	}
 	
 	/***************** SCRIPTS AND STYLES **********************/
 	

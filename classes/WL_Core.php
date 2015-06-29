@@ -29,7 +29,8 @@ class Whitelists
 		add_action('admin_menu',array($this->admin, 'add_menus'));
 		add_action('admin_enqueue_scripts',array($this->admin,'enqueue_assets'));
 		add_action('admin_init',array($this->admin,'register_ajax'));
-		
+		add_action('manage_users_columns',array($this->admin,'user_column_header'));
+		add_action('manage_users_custom_column',array($this->admin,'user_column_content'),10,3);
 	}
 	
 	

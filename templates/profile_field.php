@@ -27,10 +27,10 @@
 									$output = implode(", ",$listed_pages);
 								}								
 								echo $output;  
-							?></em> <a href="#">(edit)</a> 
+							?></em> <a href="<?php echo admin_url('options-general.php?page=wl_lists')."#edit=".$wlist->get_id(); ?>">(edit)</a> 
 							</label></li>
 					<?php endforeach; ?>
-					<li><a href="<?php echo admin_url('options-general.php?page=wl_lists'); ?>">Create new...</a></li>
+					<li><a href="<?php echo admin_url('options-general.php?page=wl_lists')."#new"; ?>">Create new...</a></li>
 				</ul>
 			</td>
     	</tr>

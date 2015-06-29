@@ -133,9 +133,31 @@ class WL_List {
 		$this->page_ids = $pages;
 		return $pages;
 	}	
-	public function the_pages($delimiter = ", ") {
+	
+	public function get_pages() {
+		if (isset($this->pages)) return $this->pages;
 		$page_ids = $this->get_page_ids();
-		echo implode($delimiter,$page_ids);
+		$pages = array();
+		foreach($page_ids as $page_id) {
+			$pages[] = get_post($page_id);
+		}
+		$this->$pages = $pages;
+		return $pages;
+	}
+	
+	public function the_pages($delimiter = ", ",$full=false) {
+		if ($full) {
+			$pages = $this->get_pages();
+			$out_a = array();
+			foreach ($pages as $page) {
+				$out_a[] = $page->post_title."(".$page->ID.")";
+			}
+			echo implode(", ",$out_a);			
+		} else {
+			$page_ids = $this->get_page_ids();
+			echo implode($delimiter,$page_ids);
+		}
+		
 	}
 	
 	public function add_user($user) {

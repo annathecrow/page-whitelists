@@ -1,7 +1,7 @@
-<h3>Assigned Page Whitelists</h3>
+<h3><?php _e('Assigned Page Whitelists','page-whitelists'); ?></h3>
 <table class="form-table">
 	<tbody>
-		<tr><th scope="row">Page Whitelists</th>
+		<tr><th scope="row"><?php _ex('Page Whitelists','on edit user form','page-whitelists'); ?></th>
 			<td>
 				<ul>
 					<?php foreach($whitelists as $wlist):

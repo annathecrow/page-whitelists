@@ -89,7 +89,7 @@ class WL_Admin {
 	}
 
 	function user_column_header($column_headers) {
-		$column_headers['whitelists'] = 'Assigned Whitelists';
+		$column_headers['whitelists'] = _x('Assigned Whitelists','user table column','page-whitelists');
   		return $column_headers;
 	}
 	
@@ -146,11 +146,11 @@ class WL_Admin {
 			'assignedTo' => __('Assigned to users','page-whitelists'),
 			'asToUsers' => __('Assigned to users','page-whitelists'),
 			'asToRoles' => __('Assigned to roles','page-whitelists'),
-			'cancel' => __('Cancel','page-whitelists'),
+			'cancel' => _x('Cancel','cancel editing/creating whitelist','page-whitelists'),
 			'save' => __('Save','page-whitelists'),
 			'createNew' => __('Create new...','page-whitelists'),
 			'edit' => __('Edit','page-whitelists'),
-			'saveWNameErr' => __('cannot save a whitelist without a name.','page-whitelists'),
+			'saveWNameErr' => __('Cannot save a whitelist without a name.','page-whitelists'),
 			'createdSuccess' => __('Whitelist successfully created.','page-whitelists'),
 			'editedSuccess' => __('Whitelist successfully edited.','page-whitelists'),
 			'deletedSuccess' => __('Whitelist successfully deleted.','page-whitelists'),

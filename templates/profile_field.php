@@ -27,10 +27,10 @@
 									$output = implode(", ",$listed_pages);
 								}								
 								echo $output;  
-							?></em> <a href="<?php echo admin_url('options-general.php?page=wl_lists')."#edit=".$wlist->get_id(); ?>">(edit)</a> 
+							?></em> <a href="<?php echo admin_url('options-general.php?page=wl_lists')."#edit=".$wlist->get_id(); ?>">(<?php _ex('edit','user form: edit whitelist link','page-whitelists'); ?>)</a> 
 							</label></li>
 					<?php endforeach; ?>
-					<li><a href="<?php echo admin_url('options-general.php?page=wl_lists')."#new"; ?>">Create new...</a></li>
+					<li><a href="<?php echo admin_url('options-general.php?page=wl_lists')."#new"; ?>"><?php _ex('Create new...','user form: create new whitelist link','page-whitelists'); ?></a></li>
 				</ul>
 			</td>
     	</tr>

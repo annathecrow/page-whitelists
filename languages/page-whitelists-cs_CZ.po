@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Page Whitelists v0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-03 10:27+0100\n"
-"PO-Revision-Date: 2015-07-03 10:28+0100\n"
+"POT-Creation-Date: 2015-07-03 10:35+0100\n"
+"PO-Revision-Date: 2015-07-03 10:36+0100\n"
 "Last-Translator: annathecrow <annathecrow@corvidism.com>\n"
 "Language-Team: Corvidism <annathecrow@corvidism.com>\n"
 "Language: cs_CZ\n"
@@ -34,6 +34,16 @@ msgid_plural "and %d more."
 msgstr[0] "a %d další."
 msgstr[1] "a %d další."
 msgstr[2] "a %d dalších."
+
+#: ../templates/profile_field.php:30
+msgctxt "user form: edit whitelist link"
+msgid "edit"
+msgstr "upravit"
+
+#: ../templates/profile_field.php:33
+msgctxt "user form: create new whitelist link"
+msgid "Create new..."
+msgstr "Vytvořit nový..."
 
 #: ../templates/lists_page.php:2
 msgid "Page Whitelists"

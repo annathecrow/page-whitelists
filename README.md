@@ -24,6 +24,13 @@ Page Whitelists is an administration tool that can be used to allow selected use
 
 ## Changelog
 
+### 3.0
+Bug fix - fixed an issue with plugins that allow creation of pages
+Plugin compatibility fix - Tree Page View.
+New - column with assigned whitelists in User Table
+New - field on User Profile editor
+New - select all/none pages when creating/editing whitelist. 
+
 ### 2.0
 Bug fix - plugin now doesn't fail on screen-less admin pages (various AJAX helpers etc.)
 New - plugin now filters all backend queries that request pages (including those made by AJAX).
@@ -39,6 +46,6 @@ First published version.
 
 ## FAQ
 
-#### Known problems/conflicts
-* Some plugins (i.e. Tree Page View) display the number of all pages, not just the whitelisted. (unfixable, as there is no way for the plugin to intercept these numbers when the GUI is being drawn)
+### What happens when user is assigned more than one whitelist? 
+Whitelists are additive - every user has access to all pages in all whitelists they're assigned to. 'Strict' whitelists have priority - once a user is assigned to a whitelist that disables creation of new pages, they are not allowed to do so (even if other whitelists are 'non-strict').
 

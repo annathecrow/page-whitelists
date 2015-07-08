@@ -1,7 +1,8 @@
 # page-whitelists
 
 Requires at least: 3.6  
-Tested up to: 4.1.1  
+Tested up to: 4.2.2  
+Stable version: 3.0.1
 License: GPLv2 or later  
 License URI: http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -23,6 +24,9 @@ Page Whitelists is an administration tool that can be used to allow selected use
 1. Add users/roles and pages to it. 
 
 ## Changelog
+
+### 3.0.1
+Bug fix - setting strict whitelist also blocked creation of new posts (creator-introduced bug, I am very sorry)
 
 ### 3.0
 Bug fix - fixed an issue with plugins that allow creation of pages

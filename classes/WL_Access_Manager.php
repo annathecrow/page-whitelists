@@ -113,12 +113,14 @@ class WL_Access_Manager {
 	 */	
 	function filter_editable() {
 		global $typenow;
-		if (!$typenow=='page') return;
-		if (!isset($_GET['post'])) return;
-		$page_id = $_GET['post'];
-		if (!$this->has_access($page_id)) {
-			wp_die(__('You are not allowed to edit this page.'));			
-		};
+		if ($typenow == 'page') {
+			if (isset($_GET['post'])) {
+				$page_id = $_GET['post'];
+				if (!$this->has_access($page_id)) {
+					wp_die(__('You are not allowed to edit this page.'));			
+				};	
+			}			
+		}		
 	}
 	
 	/*
@@ -127,10 +129,11 @@ class WL_Access_Manager {
 	 */	
 	function filter_can_create() {
 		global $typenow;
-		if (!$typenow=='page') return;
-		if (!$this->can_create_new()) {
-			wp_die(__('You are not allowed to create new pages.'));
-		}
+		if ($typenow == 'page') {
+			if (!$this->can_create_new()) {
+				wp_die(__('You are not allowed to create new pages.'));
+			}
+		}		
 	}
 	
 	/*
@@ -138,6 +141,7 @@ class WL_Access_Manager {
 	 *
 	 */	
 	function add_new_to_list($new,$old,$post) {
+		if ($post->post_type =='post') return;
 		if ($new == 'inherit' || $new == 'auto-draft') return;
 		if ($old != 'new' && $old != 'auto-draft') return;
 		if ($this->can_create_new()) {

@@ -3,7 +3,7 @@ Contributors: corvidism
 Tags: pages, user access management, UAM, editing pages, deleting pages, admin tools, user capabilities, access rights, limit access
 Requires at least: 3.6
 Tested up to: 4.2.2
-Stable tag: 3.0.1
+Stable tag: 3.0.2
 Author URI: http://corvidism.com
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -29,6 +29,12 @@ Whitelists are additive - every user has access to all pages in all whitelists t
 
 == Changelog ==
 
+= 3.0.2 = 
+Bug fix - missing file `wp-content/plugins/page-whitelists/templates/profile_field.php` causes Fatal Error on Edit User page.
+
+= 3.0.1 =
+Bug fix - setting strict whitelist also blocked creation of new posts (creator-introduced bug, I am very sorry)
+
 = 3.0.0 =
 Bug fix - fixed an issue with plugins that allow creation of pages
 Plugin compatibility fix - Tree Page View.
@@ -44,6 +50,9 @@ New - plugin now filters all backend queries that request pages (usually by othe
 Bug fix - automatic addition of newly created pages to non-strict whitelists now works.
 
 == Upgrade Notice ==
+
+= 3.0.1 =
+Fixes a bug which blocked creation of new posts for users in strict whitelists. Update necessary. I am very sorry for the inconvenience.
 
 = 3.0.0 =
 Fixes possible conflicts with page creating plugins, adds new GUI options. Update recomended.

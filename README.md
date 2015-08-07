@@ -25,6 +25,9 @@ Page Whitelists is an administration tool that can be used to allow selected use
 
 ## Changelog
 
+### 3.0.2
+Bug fix (bug is only in the version from Wordpress Plugin Repository) - missing file `wp-content/plugins/page-whitelists/templates/profile_field.php` causes Fatal Error on Edit User page.
+
 ### 3.0.1
 Bug fix - setting strict whitelist also blocked creation of new posts (creator-introduced bug, I am very sorry)
 

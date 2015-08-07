@@ -12,7 +12,9 @@ This plugin enables admins to limit user access only to selected pages by creati
 
 == Description ==
 
-Page Whitelists is an administration tool that can be used to allow selected users to edit only certain pages, leaving the rest inaccessible. This is done by creating "whitelists", and assigning them to users and/or roles. Each whitelist can also alow/deny users to create additional pages. Every page, user and role can belong to multiple whitelists. 
+Page Whitelists is an administration tool that can be used to allow selected users to edit only certain pages, leaving the rest inaccessible. This is done by creating "whitelists", and assigning them to users and/or roles. Each whitelist can also alow/deny users to create additional pages. Every page, user and role can belong to multiple whitelists.
+
+This plugin was written as a light-weight replacement for the whitelisting functionality of Role Scoper.  
 
 == Installation ==
 
@@ -27,8 +29,15 @@ You can also add page to a whitelist when editing it in Page Editor, or a user t
 = What happens when user is assigned more than one whitelist? = 
 Whitelists are additive - every user has access to all pages in all whitelists they're assigned to. 'Strict' whitelists have priority - once a user is assigned to a whitelist that disables creation of new pages, they are not allowed to do so (even if other whitelists are 'non-strict').
 
-== Changelog ==
+= I set up Page Whitelists, but my users still can't access Pages. What's happening? = 
+This is most likely caused by a missing capability 'edit-pages'. Page Whitelists is substractive, so the user must have access to all pages first. This can happen if you previously used another access manager, especially Role Scoper, and it didn't reset the capabilities properly when uninstalling. 
+You can fix that easily with any plugin that can edit user roles (for example [User Role Editor](https://wordpress.org/plugins/user-role-editor/)).
 
+
+= Advanced: I need the most recent code of this plugin. Where can I find it? =
+Github: <https://github.com/corvidism/page-whitelists> :ike many other WP plugin developers, I primarily use git for versioning, so this is the most recent version of the plugin. If you ever wanted to make modifications to the code, I recommend using files from the Github repo. 
+
+== Changelog ==
 = 3.0.2 = 
 Bug fix - missing file `wp-content/plugins/page-whitelists/templates/profile_field.php` causes Fatal Error on Edit User page.
 

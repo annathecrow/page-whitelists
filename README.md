@@ -11,11 +11,17 @@ Wordpress plugin limiting user access to pages. Allows administrators to create 
 
 ## Description
 
-Page Whitelists is an administration tool that can be used to allow selected users to edit only certain pages, leaving the rest inaccessible. This is done by creating "whitelists", and assigning them to users and/or roles. Each whitelist can also limit creation of new pages.Every page, user and role can belong to multiple whitelists. 
+Page Whitelists is an administration tool that can be used to allow selected users to edit only certain pages, leaving the rest inaccessible. This is done by creating "whitelists", and assigning them to users and/or roles. Each whitelist can also limit creation of new pages.Every page, user and role can belong to multiple whitelists.
+
+This plugin was written as a light-weight replacement for the whitelisting functionality of Role Scoper. 
 
 #### Combining whitelists:
 * Whitelists are additive - every user has access to all pages in all whitelists they're assigned to.
 * 'Strict' whitelists have priority - once a user is assigned to a whitelist that disables creation of new pages, they are not allowed to do so (even if other whitelists are 'non-strict').
+
+#### I set up Page Whitelists, but my users still can't access Pages. What's happening? 
+This is most likely caused by a missing capability 'edit-pages'. Page Whitelists is substractive, so the user must have access to all pages first. This can happen if you previously used another access manager, especially Role Scoper, and it didn't reset the capabilities properly when uninstalling. 
+You can fix that easily with any plugin that can edit user roles (for example [User Role Editor](https://wordpress.org/plugins/user-role-editor/)).
 
 ## Installation
 

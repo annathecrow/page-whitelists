@@ -60,6 +60,9 @@ Bug fix - automatic addition of newly created pages to non-strict whitelists now
 
 == Upgrade Notice ==
 
+= 3.0.2 =
+Fixes a bug resulting in Fatal error on the Edit User page (missing file profile_field.php). Update strongly recomended.
+
 = 3.0.1 =
 Fixes a bug which blocked creation of new posts for users in strict whitelists. Update necessary. I am very sorry for the inconvenience.
 

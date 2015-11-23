@@ -40,7 +40,7 @@ class WL_Data {
 			try {	
 				dbDelta($sql);
 			} catch (Exception $e) {
-				WL_Dev::log("creation/update of ".$table_name." failed: ".$e->getMessage());
+				WL_Dev::error("creation/update of ".$table_name." failed: ".$e->getMessage());
 			}			
 		};		
 		
@@ -135,7 +135,7 @@ class WL_Data {
 				}
 			};
 		} catch (Exception $e) {
-			WL_Dev::log($e->getMessage());
+			WL_Dev::error($e->getMessage());
 			switch ($e->getCode()) {
 				case 2:
 					$message = 'missing'; 

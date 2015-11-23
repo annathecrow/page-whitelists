@@ -141,7 +141,7 @@ class WL_Access_Manager {
 	 *
 	 */	
 	function add_new_to_list($new,$old,$post) {
-		if ($post->post_type =='post') return;
+		if ($post->post_type != 'page') return;
 		if ($new == 'inherit' || $new == 'auto-draft') return;
 		if ($old != 'new' && $old != 'auto-draft') return;
 		if ($this->can_create_new()) {

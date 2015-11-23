@@ -1,8 +1,8 @@
 # page-whitelists
 
 Requires at least: 3.6  
-Tested up to: 4.2.2  
-Stable version: 3.0.1
+Tested up to: 4.3.1  
+Stable version: 3.0.3
 License: GPLv2 or later  
 License URI: http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -30,6 +30,10 @@ You can fix that easily with any plugin that can edit user roles (for example [U
 1. Add users/roles and pages to it. 
 
 ## Changelog
+
+### 3.0.3
+Bug fix - fixed compatibility issues with NextGen Gallery - creating albums when user is assigned to a strict whitelist.
+Enhancement - less log messages when WP_Debug is on.
 
 ### 3.0.2
 Bug fix (bug is only in the version from Wordpress Plugin Repository) - missing file `wp-content/plugins/page-whitelists/templates/profile_field.php` causes Fatal Error on Edit User page.

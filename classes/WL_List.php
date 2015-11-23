@@ -52,7 +52,6 @@ class WL_List {
 	}
 	
 	public function is_strict() {
-		WL_Dev::log($this->strict);
 		return ($this->strict);
 	}
 	
@@ -341,7 +340,7 @@ class WL_List {
 					array ('id'=>$this->id)
 				);
 				if (!$success) {
-					throw new Exception("Database coulnd't be updated.",0);
+					throw new Exception("Database couldn't be updated.",0);
 				} else {
 					$this->name = $new_name;
 					return true;					
@@ -372,7 +371,7 @@ class WL_List {
 					array ('id'=>$this->id)
 				);
 				if (!$success) {
-					throw new Exception("Database coulnd't be updated.",0);
+					throw new Exception("Database couldn't be updated.",0);
 				} else {
 					$this->strict = $strict;
 					return true;					

@@ -2,8 +2,8 @@
 Contributors: corvidism
 Tags: pages, user access management, UAM, editing pages, deleting pages, admin tools, user capabilities, access rights, limit access
 Requires at least: 3.6
-Tested up to: 4.2.2
-Stable tag: 3.0.2
+Tested up to: 4.3.1
+Stable tag: 3.0.3
 Author URI: http://corvidism.com
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -35,9 +35,13 @@ You can fix that easily with any plugin that can edit user roles (for example [U
 
 
 = Advanced: I need the most recent code of this plugin. Where can I find it? =
-Github: <https://github.com/corvidism/page-whitelists> :ike many other WP plugin developers, I primarily use git for versioning, so this is the most recent version of the plugin. If you ever wanted to make modifications to the code, I recommend using files from the Github repo. 
+Github: <https://github.com/corvidism/page-whitelists> Like many other WP plugin developers, I primarily use git for versioning, so this is the most recent version of the plugin. If you ever wanted to make modifications to the code, I recommend using files from the Github repo. 
 
 == Changelog ==
+= 3.0.3 =
+Bug fix - fixed compatibility issues with NextGen Gallery - creating albums when user is assigned to a strict whitelist.
+Enhancement - less log messages when WP_Debug is on.
+
 = 3.0.2 = 
 Bug fix - missing file `wp-content/plugins/page-whitelists/templates/profile_field.php` causes Fatal Error on Edit User page.
 
@@ -59,6 +63,9 @@ New - plugin now filters all backend queries that request pages (usually by othe
 Bug fix - automatic addition of newly created pages to non-strict whitelists now works.
 
 == Upgrade Notice ==
+
+== 3.0.3 ==
+Fixes a compatibility bug between NextGen Gallery and strict whitelists. Update recommended if you use the plugin and the feature together.
 
 = 3.0.2 =
 Fixes a bug resulting in Fatal error on the Edit User page (missing file profile_field.php). Update strongly recomended.

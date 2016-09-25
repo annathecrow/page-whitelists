@@ -31,7 +31,29 @@
 					<span class="trash"><a href="<?php echo wp_create_nonce("delete-wlist-".$list->get_id()); ?>" id="delete-wlist-<?php echo $list->get_id(); ?>"><?php _e("Delete",'page-whitelists'); ?></a></span>
 				</div>
 			</td>
-			<td class="wlist-pages"><?php $list->the_pages(); ?></td>
+			<td class="wlist-pages">
+			    <?php $pages = $list->get_pages();
+                    $page_strings = array();
+                    $pagelength = sizeof($pages);
+                    for($i = 0; $i < $pagelength; $i++) {
+                        if (!is_numeric($pages[$i]->ID)) {
+                            continue;
+                        }
+                        $link = '<a href="'.get_permalink($pages[$i]->ID).'">'.$pages[$i]->post_title.'</a> ('.$pages[$i]->ID.')';
+                        if ($i < 5) {
+                            $page_strings[] ='<span class="wlist-page">'.$link.', </span>';
+                        } elseif ($i == $pagelength - 1) {
+                            $page_strings[] ='<span class="wlist-page more"><a href="'.$link.'</span>'; //no comma
+                        } else {
+                            $page_strings[] ='<span class="wlist-page more"><a href="'.$link.', </span>';
+                        }
+                    };
+                    echo implode("",$page_strings);
+                    if (sizeof($pages) > 5) {
+                        echo '...<a href="" class="more-link">(more)</a>';
+                    }
+			    ?>
+			</td>
 			<td class="wlist-roles"><?php $list->the_roles();	?></td>
 			<td class="wlist-users"><?php $list->the_users(); ?></td>
 			<td class="wlist-strict"><?php echo ($list->is_strict())?__('no','page-whitelists'):__('yes','page-whitelists');?></td>

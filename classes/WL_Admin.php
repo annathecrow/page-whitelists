@@ -137,8 +137,8 @@ class WL_Admin {
 		//enqueue main script & style
 		$script_path = $this->template_url. 'js/wl_lists.js';
 		$style_path = $this->template_url. 'css/wl_lists.css';
-		wp_enqueue_style('wl_lists_style', $style_path);
-		wp_enqueue_script('wl_lists_js', $script_path, array('jquery'),'1.0.0',true);
+		wp_enqueue_style('wl_lists_style', $style_path,false,'1.1.0');
+		wp_enqueue_script('wl_lists_js', $script_path, array('jquery'),'1.1.0',true);
         
         //enqueue jstree script & style
         $jstree_script_path = $this->template_url. 'jstree/jstree.min.js';
@@ -204,6 +204,7 @@ class WL_Admin {
 				'title'=> $query->post->post_title,
 				'id' => $query->post->ID,
 				'parent' => $query->post->post_parent,
+				'url' => get_permalink($query->post->ID),				
 				'assigned'=>false
 			);
 		}
@@ -310,6 +311,7 @@ class WL_Admin {
 			}
 			
 			$assigned_pages = $list->get_page_ids();
+			//TODO rethink. this is vulnerable to badly coded frontend and can lead to unassigning all pages of a list accidentally.
 			if ($_POST['pages']=='') {
 				foreach ($assigned_pages as $page) {
 					$success = $list->remove_page($page);
@@ -364,18 +366,31 @@ class WL_Admin {
 			} else {
 				$list->set_strict();
 			}
-			
-			$result = array(
+            
+            $result = array(
 				"success"=>true,
 				"id"=>$list->get_id(),
 				"name"=>$list->get_name(),
 				"message"=>$list_status,
-				"pages"=>$list->get_page_ids(),				
+				"pages"=>array(),				
 				"users"=>$list->get_user_logins(),
 				"roles"=>$list->get_role_names(),
 				'strict'=>$list->is_strict(),
 			);
-			$result['deleteNonce'] = ($list_status=="created")?wp_create_nonce("delete-wlist-".$list->get_id()):null;
+            
+            $assigned_pages = $list->get_pages(); //the current list
+            
+            foreach($assigned_pages as $page) {
+                $result["pages"][] = array(
+                    'title'=> $page->post_title,
+                    'id' => $page->ID,
+                    'parent' => $page->post_parent,
+                    'url' => get_permalink($page->ID),               
+                    'assigned'=>false
+                );
+            }
+            
+            $result['deleteNonce'] = ($list_status=="created")?wp_create_nonce("delete-wlist-".$list->get_id()):null;
 			if (!$success) {
 				$result['success']=false;
 				$result['message']='addition-errors';

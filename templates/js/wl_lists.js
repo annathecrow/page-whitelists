@@ -63,81 +63,49 @@ function buildEditWindow(data,line,id) {
 		rolesList.append(item);
 	});
 	
-	//TODO this is all very nice but it orders the pages by ids. which sucks. do this so it's in whatever order it came in?
-	var root = [];
-	//use Array.prototype.find() ?? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
-	//http://stackoverflow.com/questions/143847/best-way-to-find-if-an-item-is-in-a-javascript-array
-	
-	
-	
-		
-	$.each(data.pages, function(key,page){
-		if (page.parent !== 0) {
-			//here. find parent.
-			if (!("children" in data.pages[page.parent])) {
-				data.pages[page.parent].children = []; 
-			}
-			data.pages[page.parent].children.push(key);		 
-		} else {
-			root.push(key);
-		}
-	});
-	
-	console.log("pages?");
-	console.log(data.pages);
-	console.log("root?");
-	console.log(root);
-	
-	
-	var loopAndAttach = function(arrayOfIDs,parent) {
-		console.log("-----function start");
-		console.log("appending to this:");
-		console.log(parent);
-		console.log("list of ids:");
-		console.log(arrayOfIDs);
-		
-		for (var i = 0; i<arrayOfIDs.length;i++) {
-			var pageId = arrayOfIDs[i];
-			var item = $('<li id="page-'+pageId+'"></li>');
-			item.append('<label class="selectit"><input value="'+pageId+'" type="checkbox" name="pages[]" id="page-id-'+pageId+'">'+data.pages[pageId].title+' ('+pageId+')</label>');
-			console.log("item: ");
-			console.log(item);
-			item.appendTo(parent);
-			//here. find parent index and use it below.
-			if (("children" in data.pages[pageId]) && data.pages[pageId].children.length > 0) {
-				var ul = $('<ul class="page-list" id="page'+pageId+'"></ul>');
-				console.log("ul:");
-				console.log(ul);
-				
-				ul.appendTo(item);
-				loopAndAttach(data.pages[pageId].children,ul); //and here
-			}			
-		}
-		
-		console.log("are we done? srsly?");
-		return;	
-	};
 	
 	var pagesList = editWindow.find("#pages-list");
-	loopAndAttach(root,pagesList);
 	
+	var jstreeData = [];
+		
+	$.each(data.pages, function(key,page){
+		var item = {
+			"id":page.id,
+			"parent":page.parent,
+			"text": page.title+' ('+page.id+')',
+			"state":{
+				"selected":page.assigned
+			}
+		};
+		
+		if (page.parent == 0) {
+			item.parent = "#";
+		};
+		jstreeData.push(item);
+	});
 	
+	pagesList.jstree({
+		'core': {
+			'data':jstreeData,
+			'themes':{
+				'icons':false,
+			}
+		},
+		'plugins':["checkbox"],
+		'checkbox':{
+			'keep_selected_style':false,
+		},
+	});
 	
-	
-	//append <li> to DOM
-		//check if page has children
-		//if it does
-		//if it does loop through them
-		//append to dom
 	editWindow.find(".all-none .select-all").click(function(e){
-		//select all 
-		$("#pages-list li input").prop('checked',true);
+		//select none
+		pagesList.jstree(true).select_all();
 		e.preventDefault();
 	});
 	
 	editWindow.find(".all-none .select-none").click(function(e){
 		//select none
-		$("#pages-list li input").prop('checked',false);
+		pagesList.jstree(true).deselect_all();
 		e.preventDefault();
 	});
 	
@@ -182,9 +150,8 @@ function buildEditWindow(data,line,id) {
 			return true;
 		}
 		var pagesArray = [];
-		pagesList.find('input:checked').each(function(key,item){
-			pagesArray.push(item.value);
-		});
+		console.log(pagesList);
+		pagesArray = pagesList.jstree().get_selected();
 		var usersArray = [];
 		usersList.find('input:checked').each(function(key,item){
 			usersArray.push(item.value);
@@ -225,7 +192,27 @@ function buildEditWindow(data,line,id) {
 						line.find(".wlist-name").text(result.name);
 						line.find(".wlist-users").text(result.users.join(", "));
 						line.find(".wlist-roles").text(result.roles.join(", "));
-						line.find(".wlist-pages").text(result.pages.join(", "));
+						
+						console.log(result.pages);
+						var assignedPages = [];
+						for(i = 0; i < result.pages.length; i++) {
+							var page = result.pages[i];
+							console.log(page);
+							var link = '<a href="'+page.url+'">'+page.title+'</a> ('+page.id+')';
+							if (i<5) {
+								assignedPages.push('<span class="wlist-page">'+link+', </span>');	 
+							} else if (i == result.pages.length - 1) {
+								assignedPages.push('<span class="wlist-page more">'+link+'</span>'); //no comma for the last link	
+							} else {
+								assignedPages.push('<span class="wlist-page more">'+link+', </span>');
+							}						
+						};
+						var pagesHtml = assignedPages.join("");
+						if (result.pages.length>5) {
+							pagesHtml+='...<a href="" class="more-link">(more)</a>';	
+						}
+						
+						line.find(".wlist-pages").html(pagesHtml);
 						strictText = (result.strict)?'no':'yes';
 						line.find(".wlist-strict").text(strictText);	
 						editWindow.replaceWith(line);
@@ -359,6 +346,14 @@ $("span.edit a").click(function(e){
 });
 $("span.trash a").click(function(e){
 	deleteWlist($(this));
+	e.preventDefault();
+});
+
+$(document).on('click','a.more-link',function(e) {
+	var moreLink = $(this);
+	moreLink.parent().find("span.wlist-page.more").toggle();
+	var text = moreLink.text();
+	moreLink.text(text == "(more)" ? "(less)" : "(more)");
 	e.preventDefault();
 });
 

@@ -1,0 +1,37 @@
+What to test on Page Whitelists
+===============================
+
+
+Manual
+------
+* create whitelist
+- with new pages enabled
+- without new pages enabled
+- role checked
+- user checked
+
+* open and cancel whitelist editing
+
+* edit whitelist
+- add user
+- remove user
+- add role
+- remove role
+- add page
+- remove page
+
+* delete whitelist
+
+* add user to whitelist from User Editor
+* visual check: page whitelist column in User Table
+
+* add page to whitelist from Page Editor
+
+* 
+
+
+
+Automatic
+---------
+[TODO] Write this!
+[TODO] Update PHPUnit tests!

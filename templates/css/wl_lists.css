@@ -52,4 +52,11 @@
 	}
 }
 
+#pages-list .jstree-container-ul {
+    margin-left: 0;
+}
+
+.wlist-pages .more {
+	display:none;
+}
 

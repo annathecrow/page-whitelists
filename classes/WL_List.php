@@ -137,6 +137,8 @@ class WL_List {
 		if (isset($this->pages)) return $this->pages;
 		$page_ids = $this->get_page_ids();
 		$pages = array();
+        
+        //do a single query?
 		foreach($page_ids as $page_id) {
 			$pages[] = get_post($page_id);
 		}
@@ -149,7 +151,7 @@ class WL_List {
 			$pages = $this->get_pages();
 			$out_a = array();
 			foreach ($pages as $page) {
-				$out_a[] = $page->post_title."(".$page->ID.")";
+				$out_a[] = '<a href="'.get_permalink($page->ID).'">'.$page->post_title."</a> (".$page->ID.")";
 			}
 			echo implode(", ",$out_a);			
 		} else {

@@ -136,13 +136,24 @@ class WL_List {
 	public function get_pages() {
 		if (isset($this->pages)) return $this->pages;
 		$page_ids = $this->get_page_ids();
-		$pages = array();
+        $pages = array();
         
-        //do a single query?
-		foreach($page_ids as $page_id) {
-			$pages[] = get_post($page_id);
-		}
-		$this->$pages = $pages;
+        if (sizeof($page_ids)==0) { //no pages
+            $this->pages = $pages;
+            return $pages;
+        }
+        
+		
+        $args = array(
+            'posts_per_page'=>'-1',
+            'include' =>implode(", ",$page_ids),
+            'post_type'=>'page',
+            'post_status'=>'publish,private,draft,pending,future'
+        );
+        
+        $pages = get_posts($args);
+               
+		$this->pages = $pages;
 		return $pages;
 	}
 	

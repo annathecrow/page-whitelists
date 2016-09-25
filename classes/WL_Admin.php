@@ -134,10 +134,19 @@ class WL_Admin {
 		if($screen->id != 'settings_page_wl_lists') {
 			return;
 		}
+		//enqueue main script & style
 		$script_path = $this->template_url. 'js/wl_lists.js';
 		$style_path = $this->template_url. 'css/wl_lists.css';
-		wp_enqueue_style('style-name', $style_path);
+		wp_enqueue_style('wl_lists_style', $style_path);
 		wp_enqueue_script('wl_lists_js', $script_path, array('jquery'),'1.0.0',true);
+        
+        //enqueue jstree script & style
+        $jstree_script_path = $this->template_url. 'jstree/jstree.min.js';
+        $jstree_style_path = $this->template_url. 'jstree/style.min.css';
+        wp_enqueue_style('wl_lists_jstree_style', $jstree_style_path);
+        wp_enqueue_script('wl_lists_jstree_js', $jstree_script_path, array('jquery'),'1.0.0',true);
+        
+        
 		wp_localize_script( 'wl_lists_js', 'jsi18n', array(
 			'del' => __( 'Delete', 'page-whitelists' ),
 			'title' => __( 'Title', 'page-whitelists' ),
@@ -191,9 +200,10 @@ class WL_Admin {
 		$query = new WP_Query('post_type=page&posts_per_page=-1');
 		while ($query->have_posts()) {
 			$query->the_post();
-			$data['pages'][] = array(
+			$data['pages'][$query->post->ID] = array(
 				'title'=> $query->post->post_title,
 				'id' => $query->post->ID,
+				'parent' => $query->post->post_parent,
 				'assigned'=>false
 			);
 		}

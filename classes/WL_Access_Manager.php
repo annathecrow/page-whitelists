@@ -96,6 +96,7 @@ class WL_Access_Manager {
 	function filter_displayed($query) {
 		if (!isset($query) || strpos($query->get('post_type'),'page')===false) return; //if the current query doesn't display pages, do nothing		
 		$user = wp_get_current_user(); 
+        //TODO check for screen - filter non-screen pages only if it's enabled in the settings
 		$pages = $this->data->get_accessible_pages($user);
 		if (!$pages) return $query;
 		$query->set('post__in',$pages);

@@ -63,16 +63,72 @@ function buildEditWindow(data,line,id) {
 		rolesList.append(item);
 	});
 	
-	var pagesList = editWindow.find("#pages-list");
+	//TODO this is all very nice but it orders the pages by ids. which sucks. do this so it's in whatever order it came in?
+	var root = [];
+	//use Array.prototype.find() ?? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+	//http://stackoverflow.com/questions/143847/best-way-to-find-if-an-item-is-in-a-javascript-array
+	
+	
+	
+		
 	$.each(data.pages, function(key,page){
-		var item = $('<li id="page-'+page.id+'"><label class="selectit"><input value="'+page.id+'" type="checkbox" name="pages[]" id="page-id-'+page.id+'"> '+page.title+' ('+page.id+')</label></li>');
-		if (page.assigned) {
-			item.find("input").prop('checked',true);
+		if (page.parent !== 0) {
+			//here. find parent.
+			if (!("children" in data.pages[page.parent])) {
+				data.pages[page.parent].children = []; 
+			}
+			data.pages[page.parent].children.push(key);		 
+		} else {
+			root.push(key);
 		}
-		pagesList.append(item);
 	});
 	
+	console.log("pages?");
+	console.log(data.pages);
+	console.log("root?");
+	console.log(root);
 	
+	
+	var loopAndAttach = function(arrayOfIDs,parent) {
+		console.log("-----function start");
+		console.log("appending to this:");
+		console.log(parent);
+		console.log("list of ids:");
+		console.log(arrayOfIDs);
+		
+		for (var i = 0; i<arrayOfIDs.length;i++) {
+			var pageId = arrayOfIDs[i];
+			var item = $('<li id="page-'+pageId+'"></li>');
+			item.append('<label class="selectit"><input value="'+pageId+'" type="checkbox" name="pages[]" id="page-id-'+pageId+'">'+data.pages[pageId].title+' ('+pageId+')</label>');
+			console.log("item: ");
+			console.log(item);
+			item.appendTo(parent);
+			//here. find parent index and use it below.
+			if (("children" in data.pages[pageId]) && data.pages[pageId].children.length > 0) {
+				var ul = $('<ul class="page-list" id="page'+pageId+'"></ul>');
+				console.log("ul:");
+				console.log(ul);
+				
+				ul.appendTo(item);
+				loopAndAttach(data.pages[pageId].children,ul); //and here
+			}			
+		}
+		
+		console.log("are we done? srsly?");
+		return;	
+	};
+	
+	var pagesList = editWindow.find("#pages-list");
+	loopAndAttach(root,pagesList);
+	
+	
+	
+	
+	//append <li> to DOM
+		//check if page has children
+		//if it does
+		//if it does loop through them
+		//append to dom
 	editWindow.find(".all-none .select-all").click(function(e){
 		//select all 
 		$("#pages-list li input").prop('checked',true);

@@ -1,5 +1,5 @@
 <div class="wrap">
-<h1>Page Whitelists - manage lists</h1>
+<h1>Page Whitelists - <?php _e('manage whitelists','page-whitelists') ?></h1>
 <style>
 	.id-column {
 		width:2em;

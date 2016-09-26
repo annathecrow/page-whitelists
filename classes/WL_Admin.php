@@ -29,14 +29,14 @@ class WL_Admin {
         register_setting( 'wl_lists', 'wlist_settings', '' ); //TODO add validation
         add_settings_section(
             'wl_general_settings', //id for the section
-            'General Settings', //title of section
+            __('General Settings','page-whitelists'), //title of section
             array($this,'render_settings_section'), //callback to render the html
             'wl_lists' //slug of the page
         );
         
         add_settings_field(
             'strict_as_default',
-            'Default whitelist strictness',
+            __('Default whitelist strictness','page-whitelists'),
             array($this,'render_settings_field_strictness'),
             'wl_lists',
             'wl_general_settings'             
@@ -50,8 +50,9 @@ class WL_Admin {
     function render_settings_field_strictness() {
         WL_Dev::log("rendering settings field. settings:");
         WL_Dev::log($this->data->settings);
-        echo "<input id='wl_strict_as_default' name='wlist_settings[strict_as_default]' size='40' type='checkbox' value='1' ".($this->data->settings['strict_as_default'] == 1 ? " checked=\"checked\"" : "")."/> Set new whitelists as 'strict' by default. ";
-        echo '<p class="description">Whitelists will by default not allow assigned users to create new pages.</p>';                
+        echo "<input id='wl_strict_as_default' name='wlist_settings[strict_as_default]' size='40' type='checkbox' value='1' ".($this->data->settings['strict_as_default'] == 1 ? " checked=\"checked\"" : "")."/>";
+        _e('Set new whitelists as "strict" by default. "','page-whitelists');
+        echo '<p class="description">'.__('Whitelists will by default not allow assigned users to create new pages.','page-whitelists').'</p>';                
     }
  	
 	function add_menus() {
@@ -69,7 +70,7 @@ class WL_Admin {
         
         add_submenu_page(
             'wl_lists',
-            $plugin_title." - settings", //title of the main options page
+            $plugin_title." - ".__('settings','page-whitelists'), //title of the main options page
             'Settings',
             'manage_options',
             'wl_lists'            
@@ -77,8 +78,8 @@ class WL_Admin {
         
 		add_submenu_page( 
 			'wl_lists',
-			$plugin_title." - manage lists", //title of the main options page
-			'Manage lists', //label of the sidebar link
+			$plugin_title." - ".__('manage whitelists','page-whitelists'), //title of the main options page
+			__('Manage whitelists','page-whitelists'), //label of the sidebar link
 			'manage_options',
 			'wl_lists_manage', //the slug of the options page
 			array($this,'render_lists_page')  
@@ -225,6 +226,9 @@ class WL_Admin {
 			'selectAll' => __('select all','page-whitelists'),
 			'selectNone' => __('select none','page-whitelists'),
 			'missingParent' => __('missing parent page','page-whitelists'),
+			'moreLink' => _x('more','more link in whitelist editor','page-whitelists'),
+			'jstreeLoading' => __('Loading...','page-whitelists'),
+            
 		) );
 	}
 	

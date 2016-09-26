@@ -100,7 +100,10 @@ function buildEditWindow(data,line,id) {
 			'data':jstreeData,
 			'themes':{
 				'icons':false,
-			}
+			},
+			'strings' : {
+	            'Loading ...' : jsi18n.jstreeLoading
+	        }
 		},
 		'plugins':["checkbox"],
 		'checkbox':{
@@ -221,7 +224,7 @@ function buildEditWindow(data,line,id) {
 						};
 						var pagesHtml = assignedPages.join("");
 						if (result.pages.length>5) {
-							pagesHtml+='...<a href="" class="more-link">(more)</a>';	
+							pagesHtml+='...<a href="" class="more-link">('+jsi18n.moreLink+')</a>';	
 						}
 						
 						line.find(".wlist-pages").html(pagesHtml);

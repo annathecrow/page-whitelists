@@ -33,7 +33,7 @@ function throwNotice(success,message) {
 }
 
 function buildEditWindow(data,line,id) {
-	//console.log(data);
+	console.log(data);
 	var titleHtml = '<fieldset class="inline-edit-col" id="title-block"><h4></h4><div class="inline-edit-col"><label class="left"><span class="title">'+jsi18n.title+'</span><span class="input-text-wrap"><input type="text" name="wlist_title" id="wlist-title" value=""></span></label><label class="right"><span>'+jsi18n.allowNew+'</span><span><input type="checkbox" name="wlist_strict" id="wlist-strict" value=""></span></label></div></fieldset>';
 	var pagesHtml = '<fieldset class="inline-edit-col-left wl-col"><div class="inline-edit-col"><span class="title">'+jsi18n.wlistedPages+'</span><ul class="cat-checklist" id="pages-list"></ul></div><div class="all-none"><a href="" class="select-all">'+jsi18n.selectAll+'</a>/<a href="" class="select-none">'+jsi18n.selectNone+'</a></div></fieldset>';
 	var usersHtml = '<fieldset class="inline-edit-col-center wl-col"><div class="inline-edit-col"><span class="title">'+jsi18n.asToUsers+'</span><ul class="cat-checklist" id="users-list"></ul></div></fieldset>';
@@ -67,7 +67,7 @@ function buildEditWindow(data,line,id) {
 	var pagesList = editWindow.find("#pages-list");
 	
 	var jstreeData = [];
-		
+	
 	$.each(data.pages, function(key,page){
 		var item = {
 			"id":page.id,
@@ -83,6 +83,8 @@ function buildEditWindow(data,line,id) {
 		};
 		jstreeData.push(item);
 	});
+	
+	console.log(jstreeData);
 	
 	pagesList.jstree({
 		'core': {

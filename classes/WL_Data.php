@@ -13,9 +13,11 @@ class WL_Data {
 		$this->list_page_table = get_option("wlist_list_page_table");
         $this->settings = unserialize(get_option("wlist_settings",false));
         
+        
         if (!$this->settings) {
             $this->init_settings();
         }
+        
         	 
 	}
     
@@ -29,7 +31,7 @@ class WL_Data {
         update_option('wlist_settings',serialize($settings));
         return true;
     }
-	
+    	
 	public function initialize() {
 		global $wpdb;
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );

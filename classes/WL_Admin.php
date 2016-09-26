@@ -18,36 +18,103 @@ class WL_Admin {
 		add_action('admin_menu',array($this, 'add_menus'));
 		add_action('admin_enqueue_scripts',array($this,'enqueue_assets'));
 		add_action('admin_init',array($this,'register_ajax'));
+        add_action('admin_init',array($this,'add_settings'));
 		add_action('manage_users_columns',array($this,'user_column_header'));
 		add_action('manage_users_custom_column',array($this,'user_column_content'),10,3);
 		add_action('edit_user_profile', array($this,'profile_field'));
 		add_action('edit_user_profile_update', array($this,'profile_field_update'));
 	}
 	
-	
+    function add_settings() {
+        WL_Dev::log("adding settings");
+        
+        register_setting( 'wl_lists', 'wlist_settings', '' ); //TODO add validation
+        add_settings_section(
+            'wl_general_settings', //id for the section
+            'General Settings', //title of section
+            array($this,'render_settings_section'), //callback to render the html
+            'wl_lists' //slug of the page
+        );
+        
+        add_settings_field(
+            'strict_as_default',
+            'Default whitelist strictness',
+            array($this,'render_settings_field_strictness'),
+            'wl_lists',
+            'wl_general_settings'             
+        );
+    }
+
+    function render_settings_section() {
+        WL_Dev::log("rendering settings section?");
+        return;
+    }
+    
+    function render_dummy_page() {
+        ?>
+        <div>
+        <h2>My custom plugin</h2>
+        Options relating to the Custom Plugin.
+        <form action="options.php" method="post">
+        <?php settings_fields('wl_lists'); ?>
+        <?php do_settings_sections('wl_lists'); ?>
+        
+        <input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
+        </form></div>
+        
+        <?php
+    }
+    
+    function render_settings_field_strictness() {
+        WL_Dev::log("rendering settings field. settings:");
+        WL_Dev::log($this->data->settings);
+        echo "<input id='wl_strict_as_default' name='wlist_settings[strict_as_default]' size='40' type='checkbox' value='1' ".($this->data->settings['strict_as_default'] == 1 ? " checked=\"checked\"" : "")."/> Set new whitelists as 'strict' by default. ";
+        echo '<p class="description">Whitelists will by default not allow assigned users to create new pages.</p>';                
+    }
+ 	
 	function add_menus() {
 		//$plugin_title = __("Page Whitelists",'page-whitelists');
 		$plugin_title = "Page Whitelists";
 		
-		
+        
+        add_menu_page(
+            $plugin_title,
+            $plugin_title,
+            'manage_options',
+            'wl_lists',
+            array($this,'render_admin_page')
+        );
+        
+        add_submenu_page(
+            'wl_lists',
+            $plugin_title." - settings", //title of the main options page
+            'Settings',
+            'manage_options',
+            'wl_lists'            
+        );
+        
 		add_submenu_page( 
-			'options-general.php',
-			$plugin_title, //label of the sidebar link
-			$plugin_title, //title of the main options page
+			'wl_lists',
+			$plugin_title." - manage lists", //title of the main options page
+			'Manage lists', //label of the sidebar link
 			'manage_options',
-			'wl_lists', //the slug of the options page
+			'wl_lists_manage', //the slug of the options page
 			array($this,'render_lists_page')  
 		);	
 	}
 	
+    function render_admin_page() {
+        if (!current_user_can('manage_options')) { return; }
+        require_once $this->template_path."admin_page.php";        
+    }
+    
 	function render_lists_page() {
-	    //TODO REDO THIS USING SETTINGS API http://ottopress.com/2009/wordpress-settings-api-tutorial/
-	    //https://developer.wordpress.org/plugins/settings/custom-settings-page/
-	    //https://developer.wordpress.org/plugins/settings/using-settings-api/
-	    //*SCREECH OF DESPAIR*
-		$lists = $this->data->get_all_whitelists();
-        $filter_all_listings = $this->data->settings['filter_all_listings'];
-        $strict_as_default = $this->data->settings['strict_as_default'];
+	    // check user capabilities
+        if (!current_user_can('manage_options')) { return; }
+        
+	    $lists = $this->data->get_all_whitelists();
+        //$filter_all_listings = $this->data->settings['filter_all_listings'];
+        //$strict_as_default = $this->data->settings['strict_as_default'];
         require_once $this->template_path."lists_page.php";
 	}
 	
@@ -137,7 +204,8 @@ class WL_Admin {
 	
 	function enqueue_assets($hook) {
 		$screen = get_current_screen();
-		if($screen->id != 'settings_page_wl_lists') {
+        $admin_pages = Array('page-whitelists_page_wl_lists_manage','toplevel_page_wl_lists');
+		if(!in_array($screen->id, $admin_pages)) {
 			return;
 		}
 		//enqueue main script & style

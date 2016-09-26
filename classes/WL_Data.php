@@ -11,8 +11,7 @@ class WL_Data {
 	public function __construct() {
 		$this->list_table = get_option("wlist_list_table");
 		$this->list_page_table = get_option("wlist_list_page_table");
-        $this->settings = unserialize(get_option("wlist_settings",false));
-        
+        $this->settings = get_option("wlist_settings",false);
         
         if (!$this->settings) {
             $this->init_settings();
@@ -27,8 +26,7 @@ class WL_Data {
             'strict_as_default'=>true,
         );
         
-        WL_Dev::log($settings);
-        update_option('wlist_settings',serialize($settings));
+        update_option('wlist_settings',$settings);
         return true;
     }
     	

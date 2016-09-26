@@ -26,7 +26,7 @@ class WL_Admin {
 	}
 	
     function add_settings() {
-        register_setting( 'wl_lists', 'wlist_settings', '' ); //TODO add validation
+        register_setting( 'wl_lists', 'wlist_settings', array($this,'validate_settings') );
         add_settings_section(
             'wl_general_settings', //id for the section
             __('General Settings','page-whitelists'), //title of section
@@ -41,18 +41,50 @@ class WL_Admin {
             'wl_lists',
             'wl_general_settings'             
         );
+        
+        add_settings_field(
+            'filter_all_listings',
+            __('Plugin compatibility','page-whitelists'),
+            array($this,'render_settings_field_all_listings'),
+            'wl_lists',
+            'wl_general_settings'             
+        );
     }
 
+    function validate_settings($input) {
+        //TODO make this more universal or move it to WL_Data
+        
+        $output = Array();
+        
+        if ($input['filter_all_listings'] == 1) {
+            $output['filter_all_listings'] = 1;
+        } elseif (!isset($input['filter_all_listings']) || $input['filter_all_listings'] == 0) {
+            $output['filter_all_listings'] = 0;
+        }
+        
+        if ($input['strict_as_default'] == 1) {
+            $output['strict_as_default'] = 1;
+        } elseif(!isset($input['strict_as_default']) || $input['strict_as_default'] == 0) {
+            $output['strict_as_default'] = 0;
+        }
+
+        return $output;
+    }
+    
     function render_settings_section() {
         return;
     }
     
     function render_settings_field_strictness() {
-        WL_Dev::log("rendering settings field. settings:");
-        WL_Dev::log($this->data->settings);
         echo "<input id='wl_strict_as_default' name='wlist_settings[strict_as_default]' size='40' type='checkbox' value='1' ".($this->data->settings['strict_as_default'] == 1 ? " checked=\"checked\"" : "")."/>";
         _e('Set new whitelists as "strict" by default. "','page-whitelists');
         echo '<p class="description">'.__('Whitelists will by default not allow assigned users to create new pages.','page-whitelists').'</p>';                
+    }
+    
+    function render_settings_field_all_listings() {
+        echo "<input id='wl_filter_all_listings' name='wlist_settings[filter_all_listings]' size='40' type='checkbox' value='1' ".($this->data->settings['filter_all_listings'] == 1 ? " checked=\"checked\"" : "")."/>";
+        _e('Filter all page listings in Admin area.','page-whitelists');
+        echo '<p class="description">'.__('Attempts to remove restricted pages from plugin generated listings. Doesn\'t always work correctly.','page-whitelists').'</p>';                
     }
  	
 	function add_menus() {

@@ -54,6 +54,7 @@
                     if (sizeof($pages) > 5) {
                         echo '...<a href="" class="more-link">(more)</a>';
                     }
+                    //TODO strip dangling comma
 			    ?>
 			</td>
 			<td class="wlist-roles"><?php $list->the_roles();	?></td>

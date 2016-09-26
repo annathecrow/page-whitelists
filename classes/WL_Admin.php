@@ -26,8 +26,6 @@ class WL_Admin {
 	}
 	
     function add_settings() {
-        WL_Dev::log("adding settings");
-        
         register_setting( 'wl_lists', 'wlist_settings', '' ); //TODO add validation
         add_settings_section(
             'wl_general_settings', //id for the section
@@ -46,23 +44,7 @@ class WL_Admin {
     }
 
     function render_settings_section() {
-        WL_Dev::log("rendering settings section?");
         return;
-    }
-    
-    function render_dummy_page() {
-        ?>
-        <div>
-        <h2>My custom plugin</h2>
-        Options relating to the Custom Plugin.
-        <form action="options.php" method="post">
-        <?php settings_fields('wl_lists'); ?>
-        <?php do_settings_sections('wl_lists'); ?>
-        
-        <input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
-        </form></div>
-        
-        <?php
     }
     
     function render_settings_field_strictness() {
@@ -242,6 +224,7 @@ class WL_Admin {
 			'confirmDelete' => __('Are you sure you want to delete whitelist {listName}?','page-whitelists'),
 			'selectAll' => __('select all','page-whitelists'),
 			'selectNone' => __('select none','page-whitelists'),
+			'missingParent' => __('missing parent page','page-whitelists'),
 		) );
 	}
 	
@@ -272,17 +255,36 @@ class WL_Admin {
 		$data = array();
 		$data['pages'] = array();
 		$query = new WP_Query('post_type=page&posts_per_page=-1');
+		
+        $found_ids = Array();
+        
 		while ($query->have_posts()) {
 			$query->the_post();
-			$data['pages'][$query->post->ID] = array(
+			$data['pages'][] = array(
 				'title'=> $query->post->post_title,
 				'id' => $query->post->ID,
 				'parent' => $query->post->post_parent,
 				'url' => get_permalink($query->post->ID),				
 				'assigned'=>false
 			);
+            $found_ids[] = $query->post->ID;
 		}
-		wp_reset_postdata();
+        
+        wp_reset_postdata();
+        
+        foreach ($data['pages'] as $key=>$page) {
+            if ($page['parent'] == 0) {
+                continue;
+            }
+            if (!in_array($page['parent'],$found_ids)) {
+                $data['pages'][$key]['parent']=-1;
+            }            
+        }
+        
+        //check if all pages have parents
+        
+        //e
+        
 		
 		$data['users'] = array();
 		$query_args = array(

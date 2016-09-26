@@ -80,12 +80,21 @@ function buildEditWindow(data,line,id) {
 		
 		if (page.parent == 0) {
 			item.parent = "#";
+		} else if (page.parent == -1) {
+			var emptyParent = {
+				"id":page.parent+".x",
+				"parent":"#",
+				"text":"--("+jsi18n.missingParent+")--",
+				"state":{
+					"disabled":true
+				}
+			};
+			jstreeData.push(emptyParent);
+			item.parent = emptyParent.id;
 		};
 		jstreeData.push(item);
 	});
-	
-	console.log(jstreeData);
-	
+		
 	pagesList.jstree({
 		'core': {
 			'data':jstreeData,
@@ -110,6 +119,7 @@ function buildEditWindow(data,line,id) {
 		pagesList.jstree(true).deselect_all();
 		e.preventDefault();
 	});
+	
 	
 	var titleInput = editWindow.find("#wlist-title");
 	var idInput = editWindow.find("#wlist-id");

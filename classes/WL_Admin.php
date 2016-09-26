@@ -41,8 +41,14 @@ class WL_Admin {
 	}
 	
 	function render_lists_page() {
+	    //TODO REDO THIS USING SETTINGS API http://ottopress.com/2009/wordpress-settings-api-tutorial/
+	    //https://developer.wordpress.org/plugins/settings/custom-settings-page/
+	    //https://developer.wordpress.org/plugins/settings/using-settings-api/
+	    //*SCREECH OF DESPAIR*
 		$lists = $this->data->get_all_whitelists();
-		require_once $this->template_path."lists_page.php";
+        $filter_all_listings = $this->data->settings['filter_all_listings'];
+        $strict_as_default = $this->data->settings['strict_as_default'];
+        require_once $this->template_path."lists_page.php";
 	}
 	
 	function add_metabox() {
@@ -263,7 +269,7 @@ class WL_Admin {
 			$data['time'] = $list->get_time();
 			$data['nonce'] = wp_create_nonce("edit-wlist".$list->get_id());
 		} else {
-			$data['strict'] = true;
+			$data['strict'] = $this->data->settings['strict_as_default'];
 			$data['id'] = '';
 			$data['nonce'] = wp_create_nonce("create-wlist");
 		}

@@ -10,8 +10,25 @@ class WL_Data {
 	
 	public function __construct() {
 		$this->list_table = get_option("wlist_list_table");
-		$this->list_page_table = get_option("wlist_list_page_table");		 
+		$this->list_page_table = get_option("wlist_list_page_table");
+        $this->settings = unserialize(get_option("wlist_settings",false));
+        
+        if (!$this->settings) {
+            $this->init_settings();
+        }
+        	 
 	}
+    
+    private function init_settings() {
+        $settings = Array(
+            'filter_all_listings'=>false,
+            'strict_as_default'=>true,
+        );
+        
+        WL_Dev::log($settings);
+        update_option('wlist_settings',serialize($settings));
+        return true;
+    }
 	
 	public function initialize() {
 		global $wpdb;
@@ -58,11 +75,14 @@ class WL_Data {
 	 * create whitelist
 	 * @param $name
 	 */
-	public function create_whitelist($name,$strict = 1) {
+	public function create_whitelist($name,$strict = -1) {
 		global $wpdb;
 		$id = 0;
 		$time = date('Y-m-d H:i:s');
 		$table = $this->list_table;
+		if ($strict == -1) {
+		    $strict = $this->settings['strict_as_default'];
+		}
 		try {
 			if ($this->get_whitelist_by('name',$name)==false) {
 				$success = $wpdb->insert(

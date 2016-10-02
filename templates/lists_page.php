@@ -38,23 +38,21 @@
                     $page_strings = array();
                     $pagelength = sizeof($pages);
                     for($i = 0; $i < $pagelength; $i++) {
-                        if (!is_numeric($pages[$i]->ID)) {
-                            continue;
-                        }
                         $link = '<a href="'.get_permalink($pages[$i]->ID).'">'.$pages[$i]->post_title.'</a> ('.$pages[$i]->ID.')';
-                        if ($i < 5) {
-                            $page_strings[] ='<span class="wlist-page">'.$link.', </span>';
-                        } elseif ($i == $pagelength - 1) {
-                            $page_strings[] ='<span class="wlist-page more"><a href="'.$link.'</span>'; //no comma
+                        if ($i == $pagelength - 1 && $i < 5) {
+                            $page_strings[] ='<span class="wlist-page"><a href="'.$link.'</span>'; //no comma (last, visible)
+                        } elseif ($i == $pagelength - 1 && $i >= 5) {
+                            $page_strings[] ='<span class="wlist-page more"><a href="'.$link.'</span>'; //no comma (last, hidden)                                              
+                        } elseif ($i < 5) {
+                            $page_strings[] ='<span class="wlist-page">'.$link.', </span>'; //visible
                         } else {
-                            $page_strings[] ='<span class="wlist-page more"><a href="'.$link.', </span>';
+                            $page_strings[] ='<span class="wlist-page more"><a href="'.$link.', </span>'; //hidden
                         }
                     };
                     echo implode("",$page_strings);
-                    if (sizeof($pages) > 5) {
-                        echo '...<a href="" class="more-link">(more)</a>';
+                    if ($pagelength > 5) {
+                        echo '<span class="dots">...</span><a href="" class="more-link">(more)</a>';
                     }
-                    //TODO strip dangling comma
 			    ?>
 			</td>
 			<td class="wlist-roles"><?php $list->the_roles();	?></td>

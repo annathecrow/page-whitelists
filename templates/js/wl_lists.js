@@ -33,7 +33,7 @@ function throwNotice(success,message) {
 }
 
 function buildEditWindow(data,line,id) {
-	console.log(data);
+	//console.log(data);
 	var titleHtml = '<fieldset class="inline-edit-col" id="title-block"><h4></h4><div class="inline-edit-col"><label class="left"><span class="title">'+jsi18n.title+'</span><span class="input-text-wrap"><input type="text" name="wlist_title" id="wlist-title" value=""></span></label><label class="right"><span>'+jsi18n.allowNew+'</span><span><input type="checkbox" name="wlist_strict" id="wlist-strict" value=""></span></label></div></fieldset>';
 	var pagesHtml = '<fieldset class="inline-edit-col-left wl-col"><div class="inline-edit-col"><span class="title">'+jsi18n.wlistedPages+'</span><ul class="cat-checklist" id="pages-list"></ul></div><div class="all-none"><a href="" class="select-all">'+jsi18n.selectAll+'</a>/<a href="" class="select-none">'+jsi18n.selectNone+'</a></div></fieldset>';
 	var usersHtml = '<fieldset class="inline-edit-col-center wl-col"><div class="inline-edit-col"><span class="title">'+jsi18n.asToUsers+'</span><ul class="cat-checklist" id="users-list"></ul></div></fieldset>';
@@ -165,7 +165,6 @@ function buildEditWindow(data,line,id) {
 			return true;
 		}
 		var pagesArray = [];
-		console.log(pagesList);
 		pagesArray = pagesList.jstree().get_selected();
 		var usersArray = [];
 		usersList.find('input:checked').each(function(key,item){
@@ -208,23 +207,26 @@ function buildEditWindow(data,line,id) {
 						line.find(".wlist-users").text(result.users.join(", "));
 						line.find(".wlist-roles").text(result.roles.join(", "));
 						
-						console.log(result.pages);
+						//console.log(result.pages);
 						var assignedPages = [];
 						for(i = 0; i < result.pages.length; i++) {
 							var page = result.pages[i];
-							console.log(page);
+							//console.log(page);
 							var link = '<a href="'+page.url+'">'+page.title+'</a> ('+page.id+')';
-							if (i<5) {
-								assignedPages.push('<span class="wlist-page">'+link+', </span>');	 
-							} else if (i == result.pages.length - 1) {
-								assignedPages.push('<span class="wlist-page more">'+link+'</span>'); //no comma for the last link	
-							} else {
-								assignedPages.push('<span class="wlist-page more">'+link+', </span>');
-							}						
+							
+							if (i == page.length - 1 && i < 5) {
+	                            assignedPages.push('<span class="wlist-page">'+link+'</span>'); //no comma (last, visible)
+	                        } else if (i == page.length - 1 && i >= 5) {
+	                            assignedPages.push('<span class="wlist-page more">'+link+'</span>'); //no comma (last, hidden)                                                        
+	                        } else if (i < 5) { //visible
+	                            assignedPages.push('<span class="wlist-page">'+link+', </span>');
+	                        } else { //hidden
+	                            assignedPages.push('<span class="wlist-page more">'+link+', </span>');
+	                        }													
 						};
 						var pagesHtml = assignedPages.join("");
 						if (result.pages.length>5) {
-							pagesHtml+='...<a href="" class="more-link">('+jsi18n.moreLink+')</a>';	
+							pagesHtml+='<span class="dots">...</span><a href="" class="more-link">('+jsi18n.moreLink+')</a>';	
 						}
 						
 						line.find(".wlist-pages").html(pagesHtml);
@@ -367,6 +369,7 @@ $("span.trash a").click(function(e){
 $(document).on('click','a.more-link',function(e) {
 	var moreLink = $(this);
 	moreLink.parent().find("span.wlist-page.more").toggle();
+	moreLink.find(".dots").toggle();
 	var text = moreLink.text();
 	moreLink.text(text == "(more)" ? "(less)" : "(more)");
 	e.preventDefault();

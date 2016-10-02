@@ -95,17 +95,30 @@ class WL_Access_Manager {
 	 */
 	function filter_displayed($query) {
 		if (!isset($query) || strpos($query->get('post_type'),'page')===false) return; //if the current query doesn't display pages, do nothing		
-		$user = wp_get_current_user(); 
-        //TODO check for screen - filter non-screen pages only if it's enabled in the settings
-		$pages = $this->data->get_accessible_pages($user);
-		if (!$pages) return $query;
-		$query->set('post__in',$pages);
-		
-		if (!function_exists('get_current_screen')) return; //we're on some screen-less support page (e.g. AJAX supplier)
-		$s = get_current_screen();
-		if ( ! $s instanceof WP_Screen ) return; //still a screen-less page
-		add_filter( "views_".$s->id , array($this, 'repair_page_counts'), 10, 1);
-		//repair numbers of in the counter of a filtered page (this MIGHT, technically, catch even plugin lists, but probably won't)			
+		$user = wp_get_current_user();
+        
+        WL_Dev::log("filtering listing");
+        
+        if (function_exists('get_current_screen')) {
+            $s = get_current_screen();
+            $screenless = !($s instanceof WP_Screen);
+           
+        } else {
+            $screenless = true;
+        }
+        
+        if ((!$screenless && $s->id == 'edit-page') || $this->data->settings['filter_all_listings']) {
+            $pages = $this->data->get_accessible_pages($user);
+            if (!$pages) return $query;
+            $query->set('post__in',$pages);
+            
+            
+            if (!$screenless) {
+                WL_Dev::log("adding repair_page_counts filter");
+                add_filter( "views_".$s->id , array($this, 'repair_page_counts'), 10, 1); //attempt to repair page counts     
+            }
+        }
+        return $query;			
 	}
 		
 	/*

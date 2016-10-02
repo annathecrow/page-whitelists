@@ -56,17 +56,17 @@ class WL_Admin {
         
         $output = Array();
         
-        if ($input['filter_all_listings'] == 1) {
-            $output['filter_all_listings'] = 1;
-        } elseif (!isset($input['filter_all_listings']) || $input['filter_all_listings'] == 0) {
+        if (!isset($input['filter_all_listings']) || $input['filter_all_listings'] == 0) {
             $output['filter_all_listings'] = 0;
-        }
+        } else if ($input['filter_all_listings'] == 1) {
+            $output['filter_all_listings'] = 1;
+        };
         
-        if ($input['strict_as_default'] == 1) {
-            $output['strict_as_default'] = 1;
-        } elseif(!isset($input['strict_as_default']) || $input['strict_as_default'] == 0) {
+        if(!isset($input['strict_as_default']) || $input['strict_as_default'] == 0) {
             $output['strict_as_default'] = 0;
-        }
+        } else if ($input['strict_as_default'] == 1) {
+            $output['strict_as_default'] = 1;
+        };
 
         return $output;
     }
@@ -78,13 +78,13 @@ class WL_Admin {
     function render_settings_field_strictness() {
         echo "<input id='wl_strict_as_default' name='wlist_settings[strict_as_default]' size='40' type='checkbox' value='1' ".($this->data->settings['strict_as_default'] == 1 ? " checked=\"checked\"" : "")."/>";
         _e('Set new whitelists as "strict" by default. "','page-whitelists');
-        echo '<p class="description">'.__('Whitelists will by default not allow assigned users to create new pages.','page-whitelists').'</p>';                
+        echo '<p class="description">'.__('New whitelists will by default not allow assigned users to create new pages.','page-whitelists').'</p>';                
     }
     
     function render_settings_field_all_listings() {
         echo "<input id='wl_filter_all_listings' name='wlist_settings[filter_all_listings]' size='40' type='checkbox' value='1' ".($this->data->settings['filter_all_listings'] == 1 ? " checked=\"checked\"" : "")."/>";
-        _e('Filter all page listings in Admin area.','page-whitelists');
-        echo '<p class="description">'.__('Attempts to remove restricted pages from plugin generated listings. Doesn\'t always work correctly.','page-whitelists').'</p>';                
+        _e('Filter all page listings in the Admin area.','page-whitelists');
+        echo '<p class="description">'.__('Attempts to remove restricted pages also from plugin generated listings (i.e. alternative page management tools). Sometimes "disappears" pages from these. Try disabling this if you suspect plugin conflict.','page-whitelists').'</p>';                
     }
  	
 	function add_menus() {
@@ -92,24 +92,18 @@ class WL_Admin {
 		$plugin_title = "Page Whitelists";
 		
         
-        add_menu_page(
-            $plugin_title,
-            $plugin_title,
-            'manage_options',
-            'wl_lists',
-            array($this,'render_admin_page')
-        );
         
         add_submenu_page(
-            'wl_lists',
+            'options-general.php',
             $plugin_title." - ".__('settings','page-whitelists'), //title of the main options page
-            'Settings',
+            $plugin_title,
             'manage_options',
-            'wl_lists'            
+            'wl_lists',
+            array($this,'render_admin_page')           
         );
         
 		add_submenu_page( 
-			'wl_lists',
+			'users.php',
 			$plugin_title." - ".__('manage whitelists','page-whitelists'), //title of the main options page
 			__('Manage whitelists','page-whitelists'), //label of the sidebar link
 			'manage_options',

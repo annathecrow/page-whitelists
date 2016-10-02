@@ -22,7 +22,7 @@ class WL_Data {
     
     private function init_settings() {
         $settings = Array(
-            'filter_all_listings'=>false,
+            'filter_all_listings'=>true,
             'strict_as_default'=>true,
         );
         

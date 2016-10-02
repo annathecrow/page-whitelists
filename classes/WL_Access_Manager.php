@@ -97,8 +97,6 @@ class WL_Access_Manager {
 		if (!isset($query) || strpos($query->get('post_type'),'page')===false) return; //if the current query doesn't display pages, do nothing		
 		$user = wp_get_current_user();
         
-        WL_Dev::log("filtering listing");
-        
         if (function_exists('get_current_screen')) {
             $s = get_current_screen();
             $screenless = !($s instanceof WP_Screen);

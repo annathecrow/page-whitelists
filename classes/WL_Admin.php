@@ -200,6 +200,7 @@ class WL_Admin {
 	function profile_field_update($user_id) {
 		$whitelists = $this->data->get_all_whitelists();
 		$assigned_wlists = $_POST['wl_assigned_whitelists'];
+        if (!is_array($assigned_wlists)) return;
 		foreach ($whitelists as $wlist) {
 			if (in_array($wlist->get_id(),$assigned_wlists)) {
 				$wlist->add_user($user_id);

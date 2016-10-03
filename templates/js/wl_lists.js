@@ -198,8 +198,7 @@ function buildEditWindow(data,line,id) {
 					if (result.success) {
 						if (line == undefined) {
 							line = $('<tr id="wlist-'+result.id+'" class="whitelist-row"><th scope="row" class="id-column">'+result.id+'</th><td><span class="wlist-name"></span><div class="row-actions"><span class="edit"><a href="#" id="edit-wlist-'+result.id+'">'+jsi18n.edit+'</a>|</span><span class="trash"><a href="#" id="delete-wlist-'+result.id+'">'+jsi18n.del+'</a></span></div></td><td class="wlist-pages"></td><td class="wlist-roles"></td><td class="wlist-users"></td><td class="wlist-strict"></td></tr>');
-							line.find("span.edit a").click(editWlist);
-							line.find("span.trash a").click(deleteWlist).attr("href",result.deleteNonce);
+							line.find("span.trash a").attr("href",result.deleteNonce);
 							line.appendTo("#wl-lists tbody");
 							
 						} 
@@ -298,7 +297,7 @@ function editWlist(clicked) {
 	} else {
 		editing = true;	
 	}
-	var caller = clicked;
+	var caller = $(clicked);
 	line = caller.closest("tr");
 	spinner.tackRight(line.find(".wlist-name"));
 	id = caller.attr("id").replace("edit-wlist-","");
@@ -322,7 +321,7 @@ function editWlist(clicked) {
 
 
 function deleteWlist(clicked) {
-	var caller = clicked;
+	var caller = $(clicked);
 	var id = caller.attr("id").replace("delete-wlist-","");
 	line = caller.closest("tr");
 	var name = line.find(".wlist-name").text();
@@ -353,17 +352,17 @@ function deleteWlist(clicked) {
 	});
 }
 
-$("#create-wlist").click(function(e) {
+$(document).on('click','#create-wlist',function(e) {
 	e.preventDefault();
 	createWlist();	
 });
-$("span.edit a").click(function(e){
+$(document).on('click','span.edit a',function(e) {
 	e.preventDefault();
-	editWlist($(this));
+	editWlist(e.target);
 });
-$("span.trash a").click(function(e){
+$(document).on('click','span.trash a',function(e) {
 	e.preventDefault();
-	deleteWlist($(this));
+	deleteWlist(e.target);
 });
 
 $(document).on('click','a.more-link',function(e) {

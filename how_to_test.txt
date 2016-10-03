@@ -30,10 +30,6 @@ Manual - as ADMIN
 
 * delete whitelist
 
-* create new page as a user assigned to a whitelist...
-- ...that's allows it
-- ...that doesn't allow it
-
 * add user to whitelist from User Editor
 * visual check: page whitelist column in User Table
 
@@ -47,6 +43,10 @@ Manual - as USER
 - is it filtered?
 - are the numbers correct?
 
+* create new page as a user assigned to a whitelist...
+- ...that allows it
+- ...that doesn't allow it
+
 * test settings - plugin filtering
 - turn on/off plugin filtering
 - test plugin listing filtering (e.g. something like CMS Tree Page view)
@@ -58,3 +58,8 @@ Automatic
 ---------
 [TODO] Write this!
 [TODO] Update PHPUnit tests!
+
+thoughts:
+* can PHPUnit do output testing? i.e. sth like Laravel's see()?
+* test class methods
+* test AJAX output

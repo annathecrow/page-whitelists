@@ -3,7 +3,7 @@ Contributors: corvidism
 Tags: pages, user access management, UAM, editing pages, deleting pages, admin tools, user capabilities, access rights, limit access
 Requires at least: 3.6
 Tested up to: 4.3.1
-Stable tag: 3.0.3
+Stable tag: 3.1.0
 Author URI: http://corvidism.com
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html

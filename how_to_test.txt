@@ -39,7 +39,7 @@ Manual
 
 * delete whitelist
 
-* create new page as a user assigned to a whitelists
+* create new page as a user assigned to a whitelist...
 - ...that's allows it
 - ...that doesn't allow it
 

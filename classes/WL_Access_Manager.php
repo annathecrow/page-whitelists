@@ -112,7 +112,6 @@ class WL_Access_Manager {
             
             
             if (!$screenless) {
-                WL_Dev::log("adding repair_page_counts filter");
                 add_filter( "views_".$s->id , array($this, 'repair_page_counts'), 10, 1); //attempt to repair page counts     
             }
         }
@@ -194,10 +193,10 @@ class WL_Access_Manager {
 		if (!function_exists('get_current_screen')) return;
 		$s = get_current_screen();
 		if ($s->id == 'edit-page') {
-			echo '<style>.edit-php.post-type-page .add-new-h2,.post-php.post-type-page .add-new-h2 {display:none;}</style>';
+		    echo '<style>.edit-php.post-type-page .add-new-h2,.post-php.post-type-page .add-new-h2,.edit-php .page-title-action {display:none;}</style>';
 		} elseif ($s->id == 'pages_page_cms-tpv-page-page') {
 			echo '<style>p.cms_tpv_action_add_and_edit_page {display:none}</style>';
-		}		  
+		}	  
 	}
 
 

@@ -2,12 +2,15 @@ New version checklist
 =====================
 
 * readme.txt
-	"Stable tag: x.y.z"
+	- "Stable tag: x.y.z"
+	- check description - still acurate?
+	- update Changelog and Upgrade notice
 * page-whitelists.php
-	"Version: x.y.z" (in the WP comment block up top)
+	- "Version: x.y.z" (in the WP comment block up top)
+	- check description - still acurate?
 * README.md
-	"Stable version: 3.0.3" 
-	(not necessary for the WP version system)
+	- "Stable version: 3.0.3" (not necessary for the WP version system)
+	- copy description and Changelog from readme.txt
 * commit new code in svn
 	- do `svn up` (to make sure the repo is up-to-date)
 	- copy new code to the repo

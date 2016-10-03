@@ -3,7 +3,7 @@ Contributors: corvidism
 Tags: pages, user access management, UAM, editing pages, deleting pages, admin tools, user capabilities, access rights, limit access
 Requires at least: 3.6
 Tested up to: 4.6.1
-Stable tag: 4.0.0
+Stable tag: 4.0.1
 Author URI: http://corvidism.com
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -69,6 +69,12 @@ New - plugin now filters all backend queries that request pages (usually by othe
 Bug fix - automatic addition of newly created pages to non-strict whitelists now works.
 
 == Upgrade Notice ==
+
+== 4.0.1 ==
+Version upgrade error - this is the working version.
+
+== 4.0.0 ==
+Major version upgrade.
 
 == 3.0.3 ==
 Fixes a compatibility bug between NextGen Gallery and strict whitelists. Update recommended if you use the plugin and the feature together.

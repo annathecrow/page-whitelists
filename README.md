@@ -2,7 +2,7 @@
 
 Requires at least: 3.6  
 Tested up to: 4.6.1  
-Stable version: 4.0.0
+Stable version: 4.0.1
 License: GPLv2 or later  
 License URI: http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -30,6 +30,9 @@ You can fix that easily with any plugin that can edit user roles (for example [U
 You can also add page to a whitelist when editing it in Page Editor, or a user through User Editor. Additional (default) plugin settings can be edited in Settings->Page Whitelists.
 
 ## Changelog
+
+### 4.0.1
+Version upgrade error - this is the working version.
 
 ### 4.0.0
 New - pages in Whitelist editor are now arranged in a tree, so parent-child branches can be selected simultaneously.

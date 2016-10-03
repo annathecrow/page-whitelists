@@ -14,6 +14,7 @@ New version checklist
 * commit new code in svn
 	- do `svn up` (to make sure the repo is up-to-date)
 	- copy new code to the repo
+	- ADD ALL NEW FILES: `svn add --force .`  
 	- do `svn stat` (to see that the code has been modified)
 	- do `svn diff` (to see the changes)
 	- do `svn ci -m "commit message"` (= the commit)

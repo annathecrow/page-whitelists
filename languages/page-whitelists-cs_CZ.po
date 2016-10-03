@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Page Whitelists v0.5\n"
+"Project-Id-Version: Page Whitelists\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-03 10:35+0100\n"
-"PO-Revision-Date: 2015-07-03 10:36+0100\n"
+"POT-Creation-Date: 2016-10-03 17:29+0200\n"
+"PO-Revision-Date: 2016-10-03 17:39+0200\n"
 "Last-Translator: annathecrow <annathecrow@corvidism.com>\n"
 "Language-Team: Corvidism <annathecrow@corvidism.com>\n"
 "Language: cs_CZ\n"
@@ -13,27 +13,194 @@ msgstr ""
 "X-Poedit-KeywordsList: _n:1,2;gettext;gettext_noop;__;_e;_x:1,2c;_n_noop:1,2;"
 "_nx:1,2;_nx_noop:1,2;_ex:1,2c\n"
 "X-Poedit-Basepath: .\n"
-"Plural-Forms: nplurals=3; plural=n>=2 && n<=4 ? 1 : n==1 ? 0 : 2;\n"
-"X-Generator: Poedit 1.5.4\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: ..\n"
 
+#: ../classes/WL_Access_Manager.php:131
+msgid "You are not allowed to edit this page."
+msgstr "Nemáte povoleno editovat tuto stránku."
+
+#: ../classes/WL_Access_Manager.php:145 ../classes/WL_Access_Manager.php:165
+msgid "You are not allowed to create new pages."
+msgstr "Nemáte povoleno vytvářet nové stránky."
+
+#: ../classes/WL_Admin.php:32
+msgid "General Settings"
+msgstr "Obecné možnosti"
+
+#: ../classes/WL_Admin.php:39
+msgid "Default whitelist strictness"
+msgstr "Výchozí \"striktnost\" whitelistů"
+
+#: ../classes/WL_Admin.php:47
+msgid "Plugin compatibility"
+msgstr "Kompatibilita s pluginy"
+
+#: ../classes/WL_Admin.php:80
+msgid "Set new whitelists as \"strict\" by default."
+msgstr "Nastavit nové seznamy jako \"striktní\"."
+
+#: ../classes/WL_Admin.php:81
+msgid "New whitelists will not allow assigned users to create new pages."
+msgstr "V nových whitelist uživatelům nebude povoleno vytvářet nové stránky."
+
+#: ../classes/WL_Admin.php:86
+msgid "Filter all page listings in the Admin area."
+msgstr "Filtrovat všechny seznamy stránek v Administrátorské oblasti."
+
+#: ../classes/WL_Admin.php:87
+msgid ""
+"Attempts to remove restricted pages also from plugin generated listings (i."
+"e. alternative page management tools). Sometimes \"disappears\" pages from "
+"these. Try disabling this if you suspect plugin conflict."
+msgstr ""
+"Pokouší se schovat stránky také ze seznamů generovaných pluginy (např. "
+"alternativní správce stránek). Někdy v nich díky tomu některé stránky chybí "
+"- zkuste tuto možnost vypnout, pokud tušíte konflikt s pluginem."
+
+#: ../classes/WL_Admin.php:98 ../templates/admin_page.php:2
+msgid "settings"
+msgstr "nastavení"
+
+#: ../classes/WL_Admin.php:107 ../classes/WL_Admin.php:108
+msgid "Manage whitelists"
+msgstr "Správa whitelistů"
+
+#: ../classes/WL_Admin.php:134
+msgid "Associated Whitelists"
+msgstr "Přiřazené seznamy povolených stránek"
+
+#: ../classes/WL_Admin.php:174
+msgctxt "user table column"
+msgid "Assigned Whitelists"
+msgstr "Přiřazené whitelisty"
+
+#: ../classes/WL_Admin.php:235 ../templates/lists_page.php:60
+msgid "no"
+msgstr "ne"
+
+#: ../classes/WL_Admin.php:236 ../templates/lists_page.php:60
+msgid "yes"
+msgstr "ano"
+
+#: ../classes/WL_Admin.php:237 ../templates/lists_page.php:33
+msgid "Delete"
+msgstr "Smazat"
+
+#: ../classes/WL_Admin.php:238 ../templates/lists_page.php:17
+msgid "Title"
+msgstr "Název"
+
+#: ../classes/WL_Admin.php:239 ../templates/lists_page.php:21
+msgid "Allow creation of new pages"
+msgstr "Povolit vytváření nových stránek"
+
+#: ../classes/WL_Admin.php:240 ../templates/lists_page.php:18
+msgid "Whitelisted pages"
+msgstr "Povolené stránky"
+
+#: ../classes/WL_Admin.php:241 ../classes/WL_Admin.php:242
+#: ../templates/lists_page.php:20
+msgid "Assigned to users"
+msgstr "Přiřazeno uživatelům"
+
+#: ../classes/WL_Admin.php:243 ../templates/lists_page.php:19
+msgid "Assigned to roles"
+msgstr "Přiřazeno rolím"
+
+#: ../classes/WL_Admin.php:244
+msgctxt "cancel editing/creating whitelist"
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: ../classes/WL_Admin.php:245
+msgid "Save"
+msgstr "Uložit"
+
+#: ../classes/WL_Admin.php:246 ../templates/lists_page.php:65
+msgid "Create new..."
+msgstr "Vytvořit..."
+
+#: ../classes/WL_Admin.php:247 ../templates/lists_page.php:32
+msgid "Edit"
+msgstr "Upravit"
+
+#: ../classes/WL_Admin.php:248
+msgid "Cannot save a whitelist without a name."
+msgstr "Nelze uložit seznam bez názvu."
+
+#: ../classes/WL_Admin.php:249
+msgid "Whitelist successfully created."
+msgstr "Whitelist úspěšně vytvořen."
+
+#: ../classes/WL_Admin.php:250
+msgid "Whitelist successfully edited."
+msgstr "Whitelist úspěšně upraven."
+
+#: ../classes/WL_Admin.php:251
+msgid "Whitelist successfully deleted."
+msgstr "Whitelist úspěšně smazán."
+
+#: ../classes/WL_Admin.php:252
+msgid "Error."
+msgstr "Chyba."
+
+#: ../classes/WL_Admin.php:253
+msgid "You have unsaved changes. Do you want to continue?"
+msgstr "Máte neuložené změny. Určitě chcete pokračovat?"
+
+#: ../classes/WL_Admin.php:254
+msgid "Are you sure you want to delete whitelist {listName}?"
+msgstr "Chcete určitě smazat whitelist \"{listName}\"?"
+
+#: ../classes/WL_Admin.php:255
+msgid "select all"
+msgstr "vše"
+
+#: ../classes/WL_Admin.php:256
+msgid "select none"
+msgstr "žádné"
+
+#: ../classes/WL_Admin.php:257
+msgid "missing parent page"
+msgstr "nadřazená stránka chybí"
+
+#: ../classes/WL_Admin.php:258
+msgctxt "more link in whitelist editor"
+msgid "more"
+msgstr "více"
+
+#: ../classes/WL_Admin.php:259
+msgid "Loading..."
+msgstr "Načítání..."
+
+#: ../templates/admin_page.php:6
+msgid "Save settings"
+msgstr "Uložit nastavení"
+
+#: ../templates/lists_page.php:2
+msgid "manage whitelists"
+msgstr "Správa whitelistů"
+
+#: ../templates/lists_page.php:12
+msgid "Edit Whitelists"
+msgstr "Upravit whitelisty"
+
 #: ../templates/profile_field.php:1
 msgid "Assigned Page Whitelists"
-msgstr "Přiřazené seznamy stránek (page whitelists)"
+msgstr "Přiřazené whitelisty"
 
 #: ../templates/profile_field.php:4
 msgctxt "on edit user form"
 msgid "Page Whitelists"
-msgstr "Seznamy"
+msgstr "Whitelisty"
 
 #: ../templates/profile_field.php:22
-#, php-format
+#, fuzzy, php-format
 msgid "and %d more."
-msgid_plural "and %d more."
-msgstr[0] "a %d další."
-msgstr[1] "a %d další."
-msgstr[2] "a %d dalších."
+msgstr "a %d další."
 
 #: ../templates/profile_field.php:30
 msgctxt "user form: edit whitelist link"
@@ -45,112 +212,8 @@ msgctxt "user form: create new whitelist link"
 msgid "Create new..."
 msgstr "Vytvořit nový..."
 
-#: ../templates/lists_page.php:2
-msgid "Page Whitelists"
-msgstr "Seznamy povolených stránek"
-
-#: ../templates/lists_page.php:15 ../classes/WL_Admin.php:143
-msgid "Title"
-msgstr "Název"
-
-#: ../templates/lists_page.php:16 ../classes/WL_Admin.php:145
-msgid "Whitelisted pages"
-msgstr "Povolené stránky"
-
-#: ../templates/lists_page.php:17 ../classes/WL_Admin.php:148
-msgid "Assigned to roles"
-msgstr "Přiřazeno rolím"
-
-#: ../templates/lists_page.php:18 ../classes/WL_Admin.php:146
-#: ../classes/WL_Admin.php:147
-msgid "Assigned to users"
-msgstr "Přiřazeno uživatelům"
-
-#: ../templates/lists_page.php:19 ../classes/WL_Admin.php:144
-msgid "Allow creation of new pages"
-msgstr "Povolit vytváření nových stránek"
-
-#: ../templates/lists_page.php:30 ../classes/WL_Admin.php:152
-msgid "Edit"
-msgstr "Upravit"
-
-#: ../templates/lists_page.php:31 ../classes/WL_Admin.php:142
-msgid "Delete"
-msgstr "Smazat"
-
-#: ../templates/lists_page.php:37
-msgid "no"
-msgstr "ne"
-
-#: ../templates/lists_page.php:37
-msgid "yes"
-msgstr "ano"
-
-#: ../templates/lists_page.php:42 ../classes/WL_Admin.php:151
-msgid "Create new..."
-msgstr "Vytvořit..."
-
-#: ../classes/WL_Access_Manager.php:120
-msgid "You are not allowed to edit this page."
-msgstr "Nemáte povoleno editovat tuto stránku."
-
-#: ../classes/WL_Access_Manager.php:132 ../classes/WL_Access_Manager.php:150
-msgid "You are not allowed to create new pages."
-msgstr "Nemáte povoleno vytvářet nové stránky."
-
-#: ../classes/WL_Admin.php:52
-msgid "Associated Whitelists"
-msgstr "Přiřazené seznamy povolených stránek"
-
-#: ../classes/WL_Admin.php:92
-msgctxt "user table column"
-msgid "Assigned Whitelists"
-msgstr "Přiřazené whitelisty"
-
-#: ../classes/WL_Admin.php:149
-msgctxt "cancel editing/creating whitelist"
-msgid "Cancel"
-msgstr "Zrušit"
-
-#: ../classes/WL_Admin.php:150
-msgid "Save"
-msgstr "Uložit"
-
-#: ../classes/WL_Admin.php:153
-msgid "Cannot save a whitelist without a name."
-msgstr "Nelze uložit seznam bez názvu."
-
-#: ../classes/WL_Admin.php:154
-msgid "Whitelist successfully created."
-msgstr "Seznam úspěšně vytvořen."
-
-#: ../classes/WL_Admin.php:155
-msgid "Whitelist successfully edited."
-msgstr "Seznam úspěšně upraven."
-
-#: ../classes/WL_Admin.php:156
-msgid "Whitelist successfully deleted."
-msgstr "Seznam úspěšně smazán."
-
-#: ../classes/WL_Admin.php:157
-msgid "Error."
-msgstr "Chyba."
-
-#: ../classes/WL_Admin.php:158
-msgid "You have unsaved changes. Do you want to continue?"
-msgstr "Máte neuložené změny. Určitě chcete pokračovat?"
-
-#: ../classes/WL_Admin.php:159
-msgid "Are you sure you want to delete whitelist {listName}?"
-msgstr "Chcete určitě smazat seznam {listName}?"
-
-#: ../classes/WL_Admin.php:160
-msgid "select all"
-msgstr "vše"
-
-#: ../classes/WL_Admin.php:161
-msgid "select none"
-msgstr "žádné"
+#~ msgid "Page Whitelists"
+#~ msgstr "Seznamy povolených stránek"
 
 #~ msgctxt "edit user form"
 #~ msgid "Page Whitelists"

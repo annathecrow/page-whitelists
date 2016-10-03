@@ -40,13 +40,13 @@
                     for($i = 0; $i < $pagelength; $i++) {
                         $link = '<a href="'.get_permalink($pages[$i]->ID).'">'.$pages[$i]->post_title.'</a> ('.$pages[$i]->ID.')';
                         if ($i == $pagelength - 1 && $i < 5) {
-                            $page_strings[] ='<span class="wlist-page"><a href="'.$link.'</span>'; //no comma (last, visible)
+                            $page_strings[] ='<span class="wlist-page">'.$link.'</span>'; //no comma (last, visible)
                         } elseif ($i == $pagelength - 1 && $i >= 5) {
-                            $page_strings[] ='<span class="wlist-page more"><a href="'.$link.'</span>'; //no comma (last, hidden)                                              
+                            $page_strings[] ='<span class="wlist-page more">'.$link.'</span>'; //no comma (last, hidden)                                              
                         } elseif ($i < 5) {
                             $page_strings[] ='<span class="wlist-page">'.$link.', </span>'; //visible
                         } else {
-                            $page_strings[] ='<span class="wlist-page more"><a href="'.$link.', </span>'; //hidden
+                            $page_strings[] ='<span class="wlist-page more">'.$link.', </span>'; //hidden
                         }
                     };
                     echo implode("",$page_strings);
@@ -64,4 +64,4 @@
 </table>
 <p><a href="#" id="create-wlist"><?php _e("Create new...",'page-whitelists'); ?></a>
 </p>
-</div><img id="spinner" src="<?php echo site_url("/wp-admin/images/wpspin_light.gif");?>"/>
+</div><img id="spinner" style="display:none" src="<?php echo site_url("/wp-admin/images/wpspin_light.gif");?>"/>

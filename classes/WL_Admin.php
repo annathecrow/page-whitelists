@@ -213,7 +213,8 @@ class WL_Admin {
 	
 	function enqueue_assets($hook) {
 		$screen = get_current_screen();
-        $admin_pages = Array('page-whitelists_page_wl_lists_manage','toplevel_page_wl_lists');
+        WL_Dev::log($screen);
+        $admin_pages = Array('page-whitelists_page_wl_lists_manage','toplevel_page_wl_lists','users_page_wl_lists_manage');
 		if(!in_array($screen->id, $admin_pages)) {
 			return;
 		}

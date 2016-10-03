@@ -354,25 +354,26 @@ function deleteWlist(clicked) {
 }
 
 $("#create-wlist").click(function(e) {
-	createWlist();
 	e.preventDefault();
+	createWlist();	
 });
 $("span.edit a").click(function(e){
-	editWlist($(this));
 	e.preventDefault();
+	editWlist($(this));
 });
 $("span.trash a").click(function(e){
-	deleteWlist($(this));
 	e.preventDefault();
+	deleteWlist($(this));
 });
 
 $(document).on('click','a.more-link',function(e) {
-	var moreLink = $(this);
-	moreLink.parent().find("span.wlist-page.more").toggle();
-	moreLink.find(".dots").toggle();
-	var text = moreLink.text();
-	moreLink.text(text == "(more)" ? "(less)" : "(more)");
 	e.preventDefault();
+	var moreLink = $(this);
+	wlistPages = moreLink.parent();
+	wlistPages.find("span.wlist-page.more").toggle();
+	wlistPages.find(".dots").toggle();
+	var text = moreLink.text();
+	moreLink.text(text == "(more)" ? "(less)" : "(more)");	
 });
 
 var hash = window.location.hash.substr(1);

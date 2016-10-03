@@ -4,6 +4,11 @@ What to test on Page Whitelists
 
 Manual
 ------
+* test what user sees
+- check page listing
+- is it filtered?
+- are the numbers correct?
+
 * test menus
 - is 'Page Whitelists' under Settings?
 - is 'Manage Whitelists' under Users?
@@ -14,7 +19,6 @@ Manual
 
 * test settings - plugin filtering
 - turn on/off plugin filtering
-- test default page listing filtering
 - test plugin listing filtering (e.g. something like CMS Tree Page view)
 
 * create whitelist
@@ -34,6 +38,10 @@ Manual
 - remove page
 
 * delete whitelist
+
+* create new page as a user assigned to a whitelists
+- ...that's allows it
+- ...that doesn't allow it
 
 * add user to whitelist from User Editor
 * visual check: page whitelist column in User Table

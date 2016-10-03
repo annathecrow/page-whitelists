@@ -77,8 +77,8 @@ class WL_Admin {
     
     function render_settings_field_strictness() {
         echo "<input id='wl_strict_as_default' name='wlist_settings[strict_as_default]' size='40' type='checkbox' value='1' ".($this->data->settings['strict_as_default'] == 1 ? " checked=\"checked\"" : "")."/>";
-        _e('Set new whitelists as "strict" by default. "','page-whitelists');
-        echo '<p class="description">'.__('New whitelists will by default not allow assigned users to create new pages.','page-whitelists').'</p>';                
+        _e('Set new whitelists as "strict" by default.','page-whitelists');
+        echo '<p class="description">'.__('New whitelists will not allow assigned users to create new pages.','page-whitelists').'</p>';                
     }
     
     function render_settings_field_all_listings() {
@@ -213,7 +213,6 @@ class WL_Admin {
 	
 	function enqueue_assets($hook) {
 		$screen = get_current_screen();
-        WL_Dev::log($screen);
         $admin_pages = Array('page-whitelists_page_wl_lists_manage','toplevel_page_wl_lists','users_page_wl_lists_manage');
 		if(!in_array($screen->id, $admin_pages)) {
 			return;
@@ -232,6 +231,8 @@ class WL_Admin {
         
         
 		wp_localize_script( 'wl_lists_js', 'jsi18n', array(
+		    'no' => __("no",'page-whitelists'),
+		    'yes' => __("yes",'page-whitelists'),
 			'del' => __( 'Delete', 'page-whitelists' ),
 			'title' => __( 'Title', 'page-whitelists' ),
 			'allowNew' => __('Allow creation of new pages','page-whitelists'),
@@ -385,7 +386,7 @@ class WL_Admin {
 			if ($_POST['name']=='') {
 				throw new Exception("name-missing");
 			} else {
-				$name = $_POST['name'];
+			    $name = stripslashes($_POST['name']);
 			};			
 			
 			if ($_POST['id']=='') {

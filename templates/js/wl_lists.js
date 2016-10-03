@@ -187,7 +187,7 @@ function buildEditWindow(data,line,id) {
 					'roles': rolesArray.join(),
 					'strict': !$('#wlist-strict').prop('checked'),
 					'nonce': data.nonce
-					},
+				},
 				error: function() {
 						var message = "Server error";
 						throwNotice(false,result.message);
@@ -230,7 +230,7 @@ function buildEditWindow(data,line,id) {
 						}
 						
 						line.find(".wlist-pages").html(pagesHtml);
-						strictText = (result.strict)?'no':'yes';
+						strictText = (result.strict)?jsi18n.no:jsi18n.yes;
 						line.find(".wlist-strict").text(strictText);	
 						editWindow.replaceWith(line);
 						successNotice = (result.message=='created')?jsi18n.createdSuccess:jsi18n.editedSuccess;

@@ -1,0 +1,19 @@
+New version checklist
+=====================
+
+* readme.txt
+	"Stable tag: x.y.z"
+* page-whitelists.php
+	"Version: x.y.z" (in the WP comment block up top)
+* README.md
+	"Stable version: 3.0.3" 
+	(not necessary for the WP version system)
+* commit new code in svn
+	- do `svn up` (to make sure the repo is up-to-date)
+	- copy new code to the repo
+	- do `svn stat` (to see that the code has been modified)
+	- do `svn diff` (to see the changes)
+	- do `svn ci -m "commit message"` (= the commit)
+* tag new version in svn
+	- do `svn cp trunk tags/x.y.z` (creates the new tag)
+	- do `svn ci -m "tagging version x.y.z"` (commits the change)

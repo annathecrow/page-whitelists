@@ -1,7 +1,5 @@
 TO DO
 =====
 
-- display accurate post totals on edit.php
-
-- strict option for whitelists:
-	cannot create new pages when in a whitelist
+- add option to automatically inherit parent whitelist when page is set as a child
+- add whitelist settings to Quick Edit form

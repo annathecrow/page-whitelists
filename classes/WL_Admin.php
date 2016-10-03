@@ -104,7 +104,7 @@ class WL_Admin {
         
 		add_submenu_page( 
 			'users.php',
-			$plugin_title." - ".__('manage whitelists','page-whitelists'), //title of the main options page
+			__('Manage whitelists','page-whitelists'), //title of the main options page
 			__('Manage whitelists','page-whitelists'), //label of the sidebar link
 			'manage_options',
 			'wl_lists_manage', //the slug of the options page

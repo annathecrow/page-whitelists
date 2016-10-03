@@ -8,11 +8,13 @@ Author URI: http://corvidism.com
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Limit user access only to selected ("whitelisted") pages, by creating Whitelists and assigning them to users or roles. Using this plugin, you can let user edit only a single page (or a handful of them), while the rest of the content is out of sight. Useful when for dynamic, shortcode-heavy sites with content that still needs to be edited by inexperienced users (i.e. an 'About us' section), or a company website whith multiple administrators each maintaining their own section. 
+Limit user access only to selected ("whitelisted") pages by creating whitelists and assigning them to users or roles.  
 
 == Description ==
 
-Page Whitelists is an administration tool that can be used to allow selected users to edit only certain pages, leaving the rest inaccessible. This is done by creating "whitelists", and assigning them to users and/or roles. Each whitelist can also alow/deny users to create additional pages. Every page, user and role can belong to multiple whitelists. The user sees only the pages they are allowed to edit - reducing confusion and clutter on the Page listing.
+Page Whitelists is an administration tool that can be used to allow selected users to edit only certain pages, leaving the rest inaccessible. Using this plugin, you can let user edit only a single page (or a handful of them), while the rest of the content is out of sight. Typical use cases would be a dynamic, shortcode-heavy sites with content that still needs to be edited by inexperienced users (i.e. an 'About us' section), or a company website whith multiple administrators each maintaining their own section.
+
+To use this plugin, you create "whitelists" and assign them to users and/or roles. Each whitelist can also alow/deny users to create additional pages. Every page, user and role can belong to multiple whitelists. The user sees only the pages they are allowed to edit - reducing confusion and clutter on the Page listing.
 
 This plugin was written as a light-weight replacement for the whitelisting functionality of Role Scoper.  
 

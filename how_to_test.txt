@@ -4,6 +4,19 @@ What to test on Page Whitelists
 
 Manual
 ------
+* test menus
+- is 'Page Whitelists' under Settings?
+- is 'Manage Whitelists' under Users?
+
+* test settings - default strictness
+- turn on/off default strictness
+- open new whitelist and see if the checkbox selects properly
+
+* test settings - plugin filtering
+- turn on/off plugin filtering
+- test default page listing filtering
+- test plugin listing filtering (e.g. something like CMS Tree Page view)
+
 * create whitelist
 - with new pages enabled
 - without new pages enabled

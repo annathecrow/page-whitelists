@@ -388,8 +388,8 @@ class WL_Admin {
 				throw new Exception("name-missing");
 			} else {
 			    $name = stripslashes($_POST['name']);
-			};			
-			
+			};
+            
 			if ($_POST['id']=='') {
 				$passed = check_ajax_referer( 'create-wlist', 'nonce', false);
 				if (!$passed) throw new Exception("nonce-failed");	
@@ -422,6 +422,7 @@ class WL_Admin {
 			$assigned_pages = $list->get_page_ids();
 			//TODO rethink. this is vulnerable to badly coded frontend and can lead to unassigning all pages of a list accidentally.
 			if ($_POST['pages']=='') {
+			    
 				foreach ($assigned_pages as $page) {
 					$success = $list->remove_page($page);
 				}				
@@ -470,8 +471,7 @@ class WL_Admin {
 					}
 				}	
 			}
-			if ($_POST['strict']=='false') {
-				$list->set_strict(false);
+			if ($_POST['strict']=='false') {$list->set_strict(false);
 			} else {
 				$list->set_strict();
 			}

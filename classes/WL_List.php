@@ -279,7 +279,7 @@ class WL_List {
 						'page_id'=>$page_id
 					)				
 				);
-				if (!$success) {
+				if ($success===false) {
 					throw new Exception("Couldn't write into database.",0);
 				} else {
 					if (!isset($this->page_ids)) {
@@ -317,7 +317,7 @@ class WL_List {
 						'page_id'=>$page_id
 					)				
 				);
-				if (!$success) {
+				if ($success===false) {
 					throw new Exception("Not in database.",1);
 				} else {
 					if (!isset($this->page_ids)) {
@@ -352,7 +352,7 @@ class WL_List {
 					), 
 					array ('id'=>$this->id)
 				);
-				if (!$success) {
+				if ($success===false) {
 					throw new Exception("Database couldn't be updated.",0);
 				} else {
 					$this->name = $new_name;
@@ -374,7 +374,7 @@ class WL_List {
 	
 	function set_strict($strict = true) {
 		try {
-			$strict_num = ($strict)?1:0;
+		    $strict_num = ($strict)?1:0;
 			global $wpdb;
 				$success = $wpdb->update(
 					$this->data->get_list_table(), 
@@ -383,7 +383,7 @@ class WL_List {
 					), 
 					array ('id'=>$this->id)
 				);
-				if (!$success) {
+				if ($success===false) {
 					throw new Exception("Database couldn't be updated.",0);
 				} else {
 					$this->strict = $strict;

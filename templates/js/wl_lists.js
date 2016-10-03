@@ -206,16 +206,14 @@ function buildEditWindow(data,line,id) {
 						line.find(".wlist-users").text(result.users.join(", "));
 						line.find(".wlist-roles").text(result.roles.join(", "));
 						
-						//console.log(result.pages);
 						var assignedPages = [];
 						for(i = 0; i < result.pages.length; i++) {
 							var page = result.pages[i];
 							//console.log(page);
 							var link = '<a href="'+page.url+'">'+page.title+'</a> ('+page.id+')';
-							
-							if (i == page.length - 1 && i < 5) {
+							if (i == result.pages.length - 1 && i < 5) {
 	                            assignedPages.push('<span class="wlist-page">'+link+'</span>'); //no comma (last, visible)
-	                        } else if (i == page.length - 1 && i >= 5) {
+	                        } else if (i == result.pages.length - 1 && i >= 5) {
 	                            assignedPages.push('<span class="wlist-page more">'+link+'</span>'); //no comma (last, hidden)                                                        
 	                        } else if (i < 5) { //visible
 	                            assignedPages.push('<span class="wlist-page">'+link+', </span>');

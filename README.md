@@ -1,3 +1,9 @@
+
+<p>
+<strong>⚠ NOTICE: This plugin is no longer in active development.</strong><br>
+I no longer use this plugin in any way and don't plan to work on it further. You can of course continue to use it, just be aware that I will not offer any support or fix any bugs. You're also welcome to fork it and base your own plugin on it. 
+</p>
+
 # page-whitelists
 
 Requires at least: 3.6  

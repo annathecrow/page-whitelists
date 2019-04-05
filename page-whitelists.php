@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Page Whitelists
-Version: 4.0.1
-Description: This plugin allows administrators to limit access only to selected pages - either for single users, or for entire roles (also works with roles created by other plugins).  
+Version: 4.0.2
+Description: **NOTICE: This plugin is no longer in active development.** This plugin allows administrators to limit access only to selected pages - either for single users, or for entire roles (also works with roles created by other plugins).  
 Author: Anna Frankova
 Author URI: http://corvidism.com
 Licence: GPL2

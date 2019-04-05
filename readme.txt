@@ -3,14 +3,18 @@ Contributors: corvidism
 Tags: pages, user access management, UAM, editing pages, deleting pages, admin tools, user capabilities, access rights, limit access
 Requires at least: 3.6
 Tested up to: 4.6.1
-Stable tag: 4.0.1
+Stable tag: 4.0.2
 Author URI: http://corvidism.com
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Limit user access only to selected ("whitelisted") pages by creating whitelists and assigning them to users or roles.  
+**NOTICE: This plugin is no longer in active development.** Limit user access only to selected ("whitelisted") pages by creating whitelists and assigning them to users or roles.  
 
 == Description ==
+
+**NOTICE: This plugin is no longer in active development.** 
+
+I no longer use this plugin in any way and don't plan to work on it further. You can of course continue to use it, just be aware that I will not offer any support or fix any bugs. You're also welcome to [fork it on GitHub](https://github.com/corvidism/page-whitelists) and base your own plugin on it. 
 
 Page Whitelists is an administration tool that can be used to allow selected users to edit only certain pages, leaving the rest inaccessible. Using this plugin, you can let user edit only a single page (or a handful of them), while the rest of the content is out of sight. Typical use cases would be a dynamic, shortcode-heavy sites with content that still needs to be edited by inexperienced users (i.e. an 'About us' section), or a company website whith multiple administrators each maintaining their own section.
 
@@ -40,6 +44,10 @@ You can fix that easily with any plugin that can edit user roles (for example [U
 Github: <https://github.com/corvidism/page-whitelists> Like many other WP plugin developers, I primarily use git for versioning, so this is the most recent version of the plugin. If you ever wanted to make modifications to the code, I recommend using files from the Github repo. 
 
 == Changelog ==
+
+= 4.0.2=
+Last version.
+
 = 4.0.0 = 
 New - pages in Whitelist editor are now arranged in a tree, so parent-child branches can be selected simultaneously.
 New - names and links to assigned pages in the Whitelist table.
@@ -71,6 +79,9 @@ New - plugin now filters all backend queries that request pages (usually by othe
 Bug fix - automatic addition of newly created pages to non-strict whitelists now works.
 
 == Upgrade Notice ==
+
+== 4.0.2 ==
+NOTICE: This plugin is no longer in active development.
 
 == 4.0.1 ==
 Version upgrade error - this is the working version.

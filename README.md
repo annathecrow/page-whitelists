@@ -1,4 +1,4 @@
-
+﻿
 <p>
 <strong>⚠ NOTICE: This plugin is no longer in active development.</strong><br>
 I no longer use this plugin in any way and don't plan to work on it further. You can of course continue to use it, just be aware that I will not offer any support or fix any bugs. You're also welcome to fork it and base your own plugin on it. 
@@ -8,7 +8,7 @@ I no longer use this plugin in any way and don't plan to work on it further. You
 
 Requires at least: 3.6  
 Tested up to: 4.6.1  
-Stable version: 4.0.1
+Stable version: 4.0.2
 License: GPLv2 or later  
 License URI: http://www.gnu.org/licenses/gpl-2.0.html  
 
